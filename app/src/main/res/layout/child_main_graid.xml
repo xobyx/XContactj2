@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bases"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_base"
+    android:orientation="vertical"
+    android:paddingBottom="2dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="2dp"
+    android:showDividers="none"
+    android:weightSum="1">
+
+    <xobyx.xcontactj.views.LetterImageView
+        android:id="@+id/imagec"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_marginLeft="0dp"
+        android:filterTouchesWhenObscured="false"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/ptextname"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center|center_horizontal"
+
+        android:text="السلام عليكم"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#3e3e3e"
+         />
+
+    <TextView
+        android:id="@+id/numberc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="right"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+</LinearLayout>

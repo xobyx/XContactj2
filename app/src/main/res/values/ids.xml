@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="cliv_name_textview" type="id">50000055</item>
+    <item name="cliv_label_textview" type="id">500000054</item>
+    <item name="cliv_phoneticname_textview" type="id">2200000022</item>
+    <item name="cliv_data_view" type="id">1110000002</item>
+</resources>

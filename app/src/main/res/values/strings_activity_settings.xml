@@ -1,0 +1,11 @@
+<resources>
+    <string-array name="list_mode">
+        <item>List Menu</item>
+        <item>Grid Menu</item>
+
+    </string-array>
+    <string-array name="list_mode_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+</resources>

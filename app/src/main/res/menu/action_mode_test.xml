@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:actionViewClass="android.widget.TextView"
+    android:showAsAction="always"
+    android:id="@+id/r_text"
+
+    android:title="number"></item>
+ <group android:menuCategory="container">
+<item android:title="Add 1 sec"></item>
+
+ </group>
+</menu>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    tools:ignore="UnusedAttribute"
+    >
+
+<!--just a background view for the header, so that it won't interfere with the headers changes and row-clicking-->
+
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/pinned_header_listview_side_header"/>
+    </FrameLayout>
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="6dp"
+
+    android:paddingEnd="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="6dp"
+    android:layout_weight="1">
+
+    <xobyx.xcontactj.views.LetterImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imagec"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:scaleType="centerCrop"/>
+
+    <xobyx.xcontactj.views.FontTextView
+        android:id="@+id/ptextname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+
+        app:font="bein.ttf"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:singleLine="true"
+        android:text="friend name"
+        android:textSize="15sp"
+        tools:ignore="HardcodedText,NewApi"/>
+    <xobyx.xcontactj.views.FontTextView
+        app:font="as.ttf"
+        android:id="@+id/numberc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center|right"
+        android:gravity="center_vertical|center_horizontal"
+
+        android:singleLine="true"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="15sp" />
+
+</LinearLayout>
+
+
+</LinearLayout>

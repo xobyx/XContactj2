@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="xobyx.xcontactj.fragments.fragment_all_phones">
+    <item
+        android:id="@+id/action_search"
+
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/search_d"
+        app:showAsAction="always"
+        android:title="@string/Search" />
+</menu>

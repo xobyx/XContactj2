@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rep_me"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+
+
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/repl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <xobyx.xcontactj.views.HeaderTabs xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/mhrader"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+
+            android:background="@drawable/ab_solid_dark_holo"
+            android:orientation="horizontal"
+            app:net1="@drawable/i_zain"
+            app:net2="@drawable/i_sudani"
+            app:net3="@drawable/i_mtn" />
+
+
+        <xobyx.xcontactj.views.xViewPager xmlns:me="http://schemas.android.com/apk/res-auto"
+
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            me:lock_move="true" />
+
+
+    </LinearLayout>
+    <!--app:backgroundTint="#3e3e3e"-->
+    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+
+        app:rippleColor= "#e0e0e0"
+
+
+        android:src="@android:drawable/ic_menu_call"/>
+
+
+    <FrameLayout
+        android:id="@+id/di_ground"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+    </FrameLayout>
+</LinearLayout>

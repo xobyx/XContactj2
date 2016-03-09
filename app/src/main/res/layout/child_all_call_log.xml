@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="112dp">
+
+        <ImageView
+            android:id="@+id/imagecc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="0dp"
+            android:src="@drawable/ic_action_unknown" />
+
+        <ImageView
+            android:id="@+id/call_log_net_drawable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="0dp"
+            android:src="@drawable/ic_action_unknown"
+            android:layout_below="@+id/imagecc"
+            android:layout_toLeftOf="@+id/call_log_network"
+            android:layout_toStartOf="@+id/call_log_network" />
+
+        <View
+            android:id="@+id/call_log_network"
+            android:layout_width="fill_parent"
+            android:layout_height="2.4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/imagecc"
+            android:background="@color/accent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/imagecc"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="0dp"
+            android:paddingTop="10dp">
+
+            <xobyx.xcontactj.views.FontTextView
+                android:id="@+id/number"
+                app:font="bein.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="adsdsadsa"
+                android:textColor="@color/background"
+                android:textSize="17dp" />
+
+            <xobyx.xcontactj.views.FontTextView
+                android:id="@+id/date"
+                app:font="bein.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="dasdsasdsa"
+                android:textColor="@color/abc_primary_text_material_light"
+                android:textSize="14dp" />
+
+            <xobyx.xcontactj.views.FontTextView
+                android:id="@+id/duration"
+                app:font="bein.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="dasdsasdsa"
+                android:textColor="@color/abc_primary_text_material_light"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/list_item_drawable"
+            android:padding="5dp"
+            android:src="@drawable/memory_kill" />
+    </RelativeLayout>
+</LinearLayout>

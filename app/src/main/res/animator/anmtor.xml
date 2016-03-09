@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="700"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:propertyName="backgroundColor"
+        android:repeatCount="infinite"
+        android:repeatMode="restart"
+        android:valueFrom="#6effffff"
+        android:valueTo="#60ffffff"
+        android:valueType="intType"
+
+        />
+
+
+</set>

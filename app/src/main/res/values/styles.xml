@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LetterImageView">
+        <attr name="randomColor" format="boolean"/>
+
+        <attr name="fchar" format="string"/>
+    </declare-styleable>
+
+    <style name="ButtonStyle">
+        <item name="android:textColor">#3E3E3E</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/selector_base</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:shadowColor">#000000ff</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:layout_weight">0.64</item>
+
+    </style>
+    <style name="Theme.NoAction" parent="Base.Theme.NoAction">
+    </style>
+
+    <style name="Base.Theme.NoAction" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#673AB7</item>
+        <item name="colorPrimaryDark">#512DA8</item>
+        <item name="colorAccent">#FF4081</item>
+        <item name="d1">@drawable/ic_share_n</item>
+        <item name="d2">@drawable/ic_trash_n</item>
+        <item name="d3">@drawable/ic_info_n</item>
+        <item name="d4">@drawable/ic_edit_n</item>
+        <item name="d5">@drawable/ic_revert_n</item>
+        <item name="d6">@drawable/ic_more_n</item>
+        <item name="send_sms">@drawable/sendsms</item>
+        <item name="make_call">@drawable/dialer</item>
+        <item name="expand">@drawable/more</item>
+        <item name="history">@drawable/history_w</item>
+        <item name="messges">@drawable/messges_w</item>
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="p_net_text_color">#aef2f2f2</item>
+    </style>
+
+
+
+
+
+    <style name="sudani" parent="Base.Theme.NoAction">
+        <item name="colorPrimary">#04A7DD</item>
+
+        <item name="colorPrimaryDark">#0496c7</item>
+        <item name="colorAccent">#70b050</item>
+        <item name="d1">@drawable/ic_share_n_su</item>
+        <item name="d2">@drawable/ic_trash_n_su</item>
+        <item name="d3">@drawable/ic_info_n_su</item>
+        <item name="d4">@drawable/ic_edit_n_su</item>
+        <item name="d5">@drawable/ic_revert_n_su</item>
+        <item name="d6">@drawable/ic_more_n_su</item>
+        <item name="send_sms">@drawable/sendsms_su</item>
+        <item name="make_call">@drawable/dialer_su</item>
+        <item name="expand">@drawable/more_su</item>
+        <item name="history">@drawable/history_su</item>
+        <item name="messges">@drawable/messges_su</item>
+        <item name="p_net_text_color">#a2FfFFFF</item>
+        </style>
+
+    <style name="zain" parent="Base.Theme.NoAction">
+        <item name="colorPrimary">#C10278</item>
+        <item name="colorPrimaryDark">#af026d</item>
+        <item name="colorAccent">#5FB5BA</item>
+        <item name="d1">@drawable/ic_share_n_za</item>
+        <item name="d2">@drawable/ic_trash_n_za</item>
+        <item name="d3">@drawable/ic_info_n_za</item>
+        <item name="d4">@drawable/ic_edit_n_za</item>
+        <item name="d5">@drawable/ic_revert_n_za</item>
+        <item name="d6">@drawable/ic_more_n_za</item>
+        <item name="send_sms">@drawable/sendsms_za</item>
+        <item name="make_call">@drawable/dialer_za</item>
+        <item name="expand">@drawable/more_za</item>
+        <item name="history">@drawable/history_za</item>
+        <item name="messges">@drawable/messges_za</item>
+        <item name="p_net_text_color">#a2FfFFFF</item>
+        
+    </style>
+    <style name="mtn" parent="Base.Theme.NoAction">
+        <item name="colorPrimary">#FFf8C810</item>
+        <item name="colorPrimaryDark">#efbe08</item>
+        <item name="colorAccent">#ff2878a8</item>
+        <item name="d1">@drawable/ic_share_n_mt</item>
+        <item name="d2">@drawable/ic_trash_n_mt</item>
+        <item name="d3">@drawable/ic_info_n_mt</item>
+        <item name="d4">@drawable/ic_edit_n_mt</item>
+        <item name="d5">@drawable/ic_revert_n_mt</item>
+        <item name="d6">@drawable/ic_more_n_mt</item>
+        <item name="send_sms">@drawable/sendsms_mt</item>
+        <item name="make_call">@drawable/dialer_mt</item>
+        <item name="expand">@drawable/more_mt</item>
+        <item name="history">@drawable/history_mt</item>
+        <item name="messges">@drawable/messges_mt</item>
+        <item name="p_net_text_color">#a2FfFFFF</item>
+    </style>
+ <style name="TextAppearance.app" parent="TextAppearance.AppCompat.Large">
+     <item name="android:textColor">?attr/p_net_text_color</item>
+ </style>
+    <style name="fd">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:minWidth">25px</item>
+        <item name="android:minHeight">25px</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:clickable">false</item>
+        <item name="android:longClickable">false</item>
+
+
+    </style>
+
+    <style name="index_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@drawable/selector_base</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="xobyx.Light.ListView">
+
+        <item name="android:background">@null</item>
+        <item name="android:itemBackground">@null</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="xobyx.Light.ListView.No_selector_divider">
+
+        <item name="android:listSelector">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@null</item>
+        <item name="android:divider">@null</item>
+
+    </style>
+
+    <style name="xobyx.Light.ListView.kList">
+
+        <item name="android:listSelector">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@null</item>
+
+        <item name="android:background">@null</item>
+        <item name="android:itemBackground">@null</item>
+        <item name="android:focusable">false</item>
+
+    </style>
+
+
+    <declare-styleable name="AZSideBar">
+        <attr name="shape_background" format="color" />
+        <attr name="selector_color" format="color" />
+        <attr name="text_color" format="color" />
+        <attr name="text_selected_color" format="color" />
+        <attr name="enable_animateion" format="boolean"/>
+
+
+    </declare-styleable>
+    <declare-styleable name="HeaderTabs">
+        <attr name="net1" format="reference" />
+        <attr name="net2" format="reference" />
+        <attr name="net3" format="reference" />
+
+
+    </declare-styleable>
+    <declare-styleable name="FontTextView">
+        <attr name="font" format="string" />
+
+        <attr name="efont" format="enum">
+            <enum name="as.ttf" value="0"/>
+            <enum name="Ba.ttf" value="1"/>
+            <enum name="bein.ttf" value="2"/>
+            <enum name="bset.otf" value="3"/>
+            <enum name="kofi.ttf" value="4"/>
+            <enum name="mrb33.ttf" value="5"/>
+
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="SlidingUpPanelLayout">
+        <attr name="panelHeight" format="dimension" />
+        <attr name="shadowHeight" format="dimension" />
+        <attr name="paralaxOffset" format="dimension" />
+        <attr name="fadeColor" format="color" />
+        <attr name="flingVelocity" format="integer" />
+        <attr name="dragView" format="reference" />
+        <attr name="overlay" format="boolean" />
+        <attr name="anchorPoint" format="float" />
+    </declare-styleable>
+
+    <style name="DirectoryHeader">
+        <item name="android:background">@android:color/transparent</item>
+
+    </style>
+
+    <style name="SectionHeaderStyle" parent="@android:style/TextAppearance.Large">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/section_header_text_color</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DirectoryHeaderStyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- TextView style used for headers.
+
+This is similar to ?android:attr/listSeparatorTextView but uses different
+background and text color. See also android:style/Widget.Holo.TextView.ListSeparator
+(which is private, so we cannot specify it as a parent style).  -->
+    <style name="ContactListSeparatorTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!-- See comments for @dimen/list_section_divider_min_height -->
+        <item name="android:minHeight">@dimen/list_section_divider_min_height</item>
+        <item name="android:background">@drawable/abc_list_divider_mtrl_alpha</item>
+        <item name="android:textAppearance">@style/DirectoryHeaderStyle</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:paddingStart">8dip</item>
+        <item name="android:paddingTop">4dip</item>
+        <item name="android:paddingBottom">4dip</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearanceMedium" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="TextAppearanceSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#737373</item>
+    </style>
+
+
+    <style name="ContactListFilterTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
+    </style>
+
+    <style name="CustomContactListFilterView" parent="ContactListFilterTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+
+    <color name="section_header_text_color">#007643</color>
+</resources>

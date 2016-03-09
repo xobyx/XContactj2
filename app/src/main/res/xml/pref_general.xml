@@ -1,0 +1,63 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Visual Settings">
+
+        <ListPreference
+
+            android:defaultValue="0"
+            android:dialogTitle="Set List Mode"
+            android:entries="@array/list_mode"
+            android:entryValues="@array/list_mode_value"
+            android:key="@string/key_list_mode"
+            android:title="List Mode" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_enable_list_anim"
+            android:title="Enable List Animation" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+
+            android:key="@string/key_show_number"
+            android:title="@string/pre_t_show_numbers" />
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="Select Contact Photo shape."
+            android:entries="@array/shaps"
+            android:entryValues="@array/shapsvalue"
+            android:key="PHOTO_MODE"
+            android:title="Select Contact Photo shape" />
+        <ListPreference
+            android:defaultValue="#fff2f7f0"
+            android:dialogTitle="Colors"
+            android:entries="@array/color_text"
+            android:entryValues="@array/color_value"
+            android:key="background"
+            android:title="Set background color" />
+
+        <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+        <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+
+    </PreferenceCategory>
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <PreferenceCategory android:title="Other">
+        <CheckBoxPreference
+            android:defaultValue="true"
+
+            android:key="acra.enable"
+            android:title="Send Errors log" />
+
+        <EditTextPreference
+            android:key="acra.user.email"
+            android:summary="@string/pref_acra_user_email_summary"
+            android:title="@string/pref_acra_user_email" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="acra.alwaysaccept"
+
+            android:title="@string/pref_acra_alwaysaccept" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

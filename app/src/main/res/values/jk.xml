@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="worked_net" format="integer"></attr>
+
+    <declare-styleable name="xViewPager">
+        <attr name="lock_move" format="boolean"></attr>
+    </declare-styleable>
+
+</resources>

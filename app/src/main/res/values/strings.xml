@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">XContactj</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="contact_photo_disp">Contact Photo</string>
+    <string name="d_send_sms">Send SMS</string>
+    <string name="make_call">Make Call</string>
+    <string name="title_activity_send_blance">Send Blance</string>
+    <string name="Search">Search</string>
+    <string name="contact_photo_dis">Contact Photo</string>
+    <string name="title_activity_settings">App Settings</string>
+    <string name="number_not_match_net">Number isn\'t Matching Network.</string>
+    <string name="not_in_contact">Not in Contacts</string>
+    <string name="empty">Empty</string>
+    <string name="crash_toast_text">XContactj ! I crashed, but a report has been sent to my developer to help fix the issue !</string>
+
+    <string name="crash_dialog_title">Contactj has crashed</string>
+<string name="crash_dialog_text">An unexpected error occurred forcing the
+    application to stop. Please help us fix this by sending us error data,
+    all you have to do is click OK.</string>
+    <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
+    <string name="crash_dialog_ok_toast">Thank you !</string>
+
+    <string-array name="call_history">
+        <item>All calls</item>
+        <item>Incoming calls</item>
+        <item>Outgoing calls</item>
+        <item>Missed calls</item>
+    </string-array>
+    <string-array name="Sudani_net">
+        <item>01</item>
+        <item>+2491</item>
+    </string-array>
+    <string-array name="zain_net">
+        <item>091</item>
+        <item>+24991</item>
+        <item>+24990</item>
+        <item>090</item>
+    </string-array>
+    <string-array name="mtn_net">
+        <item>092</item>
+        <item>+24992</item>
+        <item>099</item>
+        <item>+24999</item>
+    </string-array>
+
+    <string name="title_activity_about">About</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="about">Developed By XOBYX \n email: xobyxm@hotmail.com </string>
+    <string name="title_activity_dialer">Dialer</string>
+    <string name="send_blancd">Send Balance to: %s </string>
+    <string name="title_activity_marge_contacts">MargeContactsActivity</string>
+    <string name="close">Close</string>
+    <string name="key_show_number">LIST_SHOW_NUMBERS</string>
+    <string name="pre_t_show_numbers">Show Phone Numbers in the list</string>
+    <string name="key_enable_list_anim">LIST_ANI</string>
+    <string name="key_list_mode">List_Mode</string>
+    <string name="all_contacts">All Contact</string>
+    <string name="add_new_contact">New Contact</string>
+    <string name="about_program">About</string>
+    <string name="x_notification_title_template">X: %1$s</string>
+    <string name="x_notification_placeholder_text_template">You said %1$s and lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis. Pellentesque vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper ornare lacus. Duis ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis viverra rhoncus sit amet nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec tortor.</string>
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
+
+    <string name="title_activity_main_activity2">All Contacts</string>
+    <string name="title_activity_avbs">avbs</string>
+    <string name="error_log_text">Send Error Log..</string>
+    <string name="error_title">Error Happened</string>
+    <string name="crash_user_email_label">email</string>
+    <string name="pref_acra_user_email">your email</string>
+    <string name="pref_acra_user_email_summary">send email to devlopoer with you email</string>
+    <string name="pref_acra_alwaysaccept">Send errors without prmote</string>
+    <string name="xobyx.name">Oby Magid</string>
+    <string name="xobyx.loading">Loading</string>
+    <string name="xobyx.send_balance_to">Transfer Balance to:</string>
+    <string name="xobyx.contacts">Contacts</string>
+    <string name="xobyx.amount_send">Amount sent</string>
+    <string name="letter_image_font">Ba.ttf</string>
+    <string name="fortest_1">dd55a</string>
+    <string name="no_email_sender">no email sender</string>
+    <string name="title_activity_all_main">AllMainActivity</string>
+    <string name="r">120967154539</string>
+
+</resources>

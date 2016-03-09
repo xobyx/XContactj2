@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/holo_white"
+    android:measureWithLargestChild="false">
+
+    <TextView
+        android:id="@+id/sms_head_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/sms_stute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/sms_head_body"
+        android:layout_alignRight="@+id/sms_head_body"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="10dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/sms_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12dp"
+        android:gravity="center_horizontal" />
+
+    <RelativeLayout
+        android:id="@+id/sms_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/com_android_mms_hairline_right"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+
+        android:layout_gravity="end">
+
+        <xobyx.xcontactj.views.FontTextView xmlns:apps="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/sms_head_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_gravity="right"
+
+
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp"
+            android:text="Medium Text \n fdfdfd\n fddddddddddddd"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="12dp"
+            apps:font="bein.ttf"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp" />
+
+
+    </RelativeLayout>
+</LinearLayout>

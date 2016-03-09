@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+android:id="@+id/to_anm"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    android:layout_margin="5dp"
+    android:background="@android:color/background_light"
+    android:padding="0dp">
+
+
+    <LinearLayout
+        android:id="@+id/front"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.9"
+        android:orientation="vertical"
+        android:tag="front">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:focusableInTouchMode="false"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+
+
+            android:weightSum="1.5">
+
+            <TextView
+                android:id="@+id/d_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="7dp"
+                android:layout_weight="0.3"
+                android:text="Lable"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?attr/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/d_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="+24991301 kkkkk 9kkkk91999221"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textStyle="normal"
+                android:typeface="normal" />
+
+            <ImageView
+                android:id="@+id/d_netimge"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0.2"
+                android:contentDescription="@string/contact_photo_dis"
+                android:scaleType="center" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/num_child_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/num_front"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:divider="#ff008eb8"
+                android:dividerPadding="5dp"
+                android:focusable="false"
+                android:orientation="horizontal"
+                android:showDividers="middle"
+                android:weightSum="2">
+
+
+                <ImageButton
+                    android:id="@+id/d_call"
+                    android:layout_width="98dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_base"
+                    android:contentDescription="@string/make_call"
+                    android:scaleType="fitCenter"
+                    android:src="?attr/make_call" />
+
+                <ImageButton
+                    android:id="@+id/d_sms"
+                    android:layout_width="98dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_base"
+                    android:contentDescription="@string/d_send_sms"
+                    android:scaleType="fitCenter"
+                    android:src="?attr/send_sms" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/back"
+                android:divider="@null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="back"
+                android:visibility="invisible">
+
+                <include
+
+                    layout="@layout/phone_widget"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </FrameLayout>
+        <View
+            android:id="@+id/call_log_network"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+
+            android:background="?attr/colorAccent" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/d_more"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_weight="0.10"
+        android:background="@drawable/selector_base"
+        android:contentDescription="@string/make_call"
+        android:src="?attr/expand"
+
+        android:visibility="visible" />
+
+</LinearLayout>

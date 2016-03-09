@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">XContactj</string>
+    <string name="action_settings">الأعداات</string>
+
+    <string name="contact_photo_disp">الصورة</string>
+    <string name="d_send_sms">إرسال رسالة</string>
+    <string name="make_call">إجراء اتصال</string>
+    <string name="title_activity_send_blance">تحويل رصيد</string>
+
+    <string name="Search">بحث</string>
+
+    <string name="title_activity_settings">إعدادت</string>
+    <string name="number_not_match_net">الرقم غير مطابق للشبكة</string>
+    <string name="not_in_contact">غير مسجل</string>
+    <string name="empty">فارغ</string>
+    <string name="send_blancd">Send Balance to: %s </string>
+    <string name="close">Close</string>
+    <string name="all_contacts">All Contact</string>
+    <string name="add_new_contact">New Contact</string>
+    <string name="about_program">About</string>
+
+</resources>

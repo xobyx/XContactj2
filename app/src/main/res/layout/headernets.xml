@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header"
+    android:layout_width="fill_parent"
+    android:layout_height="50dp"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:orientation="horizontal"
+    android:weightSum="3"
+    android:touchscreenBlocksFocus="true">
+
+    <ImageView
+        android:id="@+id/tab_zain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitXY"
+        android:src="@drawable/i_zain"
+        android:cropToPadding="false"
+        android:baselineAlignBottom="false"
+        android:adjustViewBounds="true" />
+
+    <ImageView
+        android:id="@+id/tab_sudani"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitXY"
+        android:src="@drawable/i_sudani"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:cropToPadding="false"
+        android:baselineAlignBottom="false"
+        android:adjustViewBounds="true"
+        android:elevation="10dp" />
+
+    <ImageView
+        android:id="@+id/tab_mtn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitXY"
+        android:src="@drawable/i_mtn"
+        android:cropToPadding="false"
+        android:baselineAlignBottom="false" />
+</LinearLayout>
