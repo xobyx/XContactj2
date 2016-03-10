@@ -199,6 +199,7 @@ public class fragment_all_call_log extends Fragment {
 
                 logObj.setID(var1.getInt(id));
 
+
                 int var10 = var1.getInt(duration);
                 logObj.setDuration_int(var10);
                 logObj.setDurationStr(FormatTime(var10));

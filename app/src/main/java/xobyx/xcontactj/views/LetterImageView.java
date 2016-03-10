@@ -5,14 +5,15 @@ package xobyx.xcontactj.views;
  * c# to java
  */
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -32,7 +33,9 @@ public class LetterImageView extends ImageView {
     private boolean isOval;
     private int mNet;
     private Rect textBounds=new Rect();
-    private float textSize;
+    private float textSize=0;
+    private boolean isLetter;
+    private float m=1;
 
     public LetterImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,6 +77,14 @@ public class LetterImageView extends ImageView {
             mBackgroundPaint.setColor(getResources().getColor(R.color.transparent));
         }
 
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                m = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
     }
 
     public char getLetter() {
@@ -81,6 +92,7 @@ public class LetterImageView extends ImageView {
     }
 
     public void setLetter(char letter) {
+        isLetter=true;
         mTextPaint.measureText(String.valueOf(letter));
         mLetter = letter;
         invalidate();
@@ -95,6 +107,7 @@ public class LetterImageView extends ImageView {
         invalidate();
     }
 
+    ValueAnimator animator=new ValueAnimator();
     public boolean isOval() {
         return isOval;
     }
@@ -107,10 +120,14 @@ public class LetterImageView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
+        //long v= 0x1c2a344b6bL;
+        canvas.scale(m,m,canvas.getWidth()/2f,canvas.getHeight()/2f);
+
         if (getDrawable() == null) {
 
             // Set a text font size based on the height of the view
-            textSize = canvas.getHeight() - getTextPadding() * 2;
+            if(textSize==0) textSize= canvas.getHeight() - getTextPadding() * 2;
             mTextPaint.setTextSize(textSize);
             if (isOval()) {
                 canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f,
@@ -145,20 +162,35 @@ public class LetterImageView extends ImageView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction()==event.ACTION_DOWN) {
-            setPivotX(getWidth()/2f);
-            setPivotY(getHeight()/2f);
-            ViewCompat.animate(this).scaleX(1.5f).scaleY(1.5f).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    LetterImageView.this.animate().scaleX(1.0f).scaleY(1.0f).start();
-                }
-            });
-            ViewCompat.setElevation(this, 20);
+           /* if(isLetter) {*/
+                animator.setFloatValues(1f, 1.5f,1f);
+
+
+                animator.start();
+           /* }
+            else {
+                setPivotX(getWidth() / 2f);
+                setPivotY(getHeight() / 2f);
+
+                ViewCompat.animate(this).scaleX(1.5f).scaleY(1.5f).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        LetterImageView.this.animate().scaleX(1.0f).scaleY(1.0f).start();
+                    }
+                });
+                ViewCompat.setElevation(this, 20);
+            }*/
         }
 
 
         return super.onTouchEvent(event);
 
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+        isLetter=false;
     }
 
     private int randomColor() {

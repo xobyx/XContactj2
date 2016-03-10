@@ -43,6 +43,7 @@ public class ME {
     0xFFC10278,
     0xff02a7dd,
     0xFFFFCA08,
+    0xFFA093CA,
     };
 
     static public int getNet(Context mContext, String h) {

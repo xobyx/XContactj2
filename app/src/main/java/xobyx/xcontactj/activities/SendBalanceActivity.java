@@ -288,6 +288,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                         public void onClick(DialogInterface dialog, int which) {
 
                             if (CheckInput()) {
+
                                 Intent n = SendBalanceActivity.this.Trans_intent(WORK_NETWORK, String.valueOf(send_to.getEditText().getText()), amount.getEditText().getText().toString(), pin.getEditText().getText().toString());
                                 startActivity(n);
                             }

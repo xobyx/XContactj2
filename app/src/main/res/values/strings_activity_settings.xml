@@ -1,4 +1,4 @@
-<resources>
+<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">>
     <string-array name="list_mode">
         <item>List Menu</item>
         <item>Grid Menu</item>

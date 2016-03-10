@@ -85,10 +85,10 @@ app:tabIndicatorHeight="6dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
-        app:pressedTranslationZ="20dp"
+
         app:layout_anchorGravity="bottom|center_horizontal|end"
         app:fabSize="mini"
-app:elevation="3dp"
+
 
         android:src="@drawable/ic_discuss"
 

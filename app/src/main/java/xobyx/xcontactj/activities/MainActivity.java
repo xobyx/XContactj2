@@ -31,6 +31,8 @@ import xobyx.xcontactj.until.SettingHelp;
 import xobyx.xcontactj.views.HeaderTabs;
 import xobyx.xcontactj.views.xViewPager;
 
+import static xobyx.xcontactj.until.ME.NET_N;
+
 
 public class MainActivity extends AppCompatActivity implements DialerFragment.DialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
 
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
             int net = ME.getNet(MainActivity.this, incomingNumber);
-            String s = ME.NET_N[net];
+            String s = NET_N[net];
             Toast.makeText(MainActivity.this,s,Toast.LENGTH_LONG).show();
         }
     };
@@ -97,17 +99,17 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         setContentView(R.layout.activity_main);
         final ITelephony telephonyService = ME.getTelephonyService(this);
 
-        ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_CELL_INFO);
+        ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
         final Toolbar viewById = (Toolbar) findViewById(R.id.toolbar);
         viewById.inflateMenu(R.menu.main_activity);
         setSupportActionBar(viewById);
-        viewById.setTitle("DSSSSSSSSSSs");
+
         WN_ID = ME.getCurrentNetwork(this);
 
         mCall = (FloatingActionButton) findViewById(R.id.main_call);
         if(WN_ID!=3)
         {
-            WN_NAME=ME.NET_N[WN_ID];
+            WN_NAME= NET_N[WN_ID];
             mCall.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
