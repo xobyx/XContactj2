@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
+import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -84,6 +85,17 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             int net = ME.getNet(MainActivity.this, incomingNumber);
             String s = NET_N[net];
             Toast.makeText(MainActivity.this,s,Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onServiceStateChanged(ServiceState serviceState) {
+            super.onServiceStateChanged(serviceState);
+            int i = serviceState.getState();
+            if(i==ServiceState.STATE_EMERGENCY_ONLY||i==ServiceState.STATE_OUT_OF_SERVICE)
+            {
+                WN_ID=3;
+                WN_NAME="out of service";
+            }
         }
     };
 

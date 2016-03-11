@@ -176,6 +176,8 @@ public class ME {
         TelephonyManager d = (TelephonyManager) a.getSystemService(Context.TELEPHONY_SERVICE);
 
         String net = d.getNetworkOperatorName();
+        String networkOperator = d.getNetworkOperator();
+
         if(net!=null&&!net.isEmpty()) {
             if (net.matches("[Ss]udani") || net.startsWith("[Oo]ne")) {
                 return 1;

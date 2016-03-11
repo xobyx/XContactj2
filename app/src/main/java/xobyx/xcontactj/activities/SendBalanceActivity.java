@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.internal.widget.ThemeUtils;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -39,7 +40,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     CharacterStyle r = new CharacterStyle() {
         @Override
         public void updateDrawState(TextPaint tp) {
-            tp.setColor(0xffcccca2);
+            tp.setColor(ThemeUtils.getThemeAttrColor(SendBalanceActivity.this,R.attr.colorPrimary));
         }
     };
     private int WORK_NETWORK = -1;
@@ -76,18 +77,22 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                 }
                 if (!t) {
 
-                    setNameTitle(getString(R.string.number_not_match_net));
+                    send_to.setError(getString(R.string.number_not_match_net));
                 } else {
                     Cursor ser = getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, s.toString()), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
-                    if (!ser.moveToFirst()) {
-                        setNameTitle(getString(R.string.not_in_contact));
-                    } else {
-                        setNameTitle(ser.getString(0));
+                    if(ser!=null) {
+                        if (!ser.moveToFirst()) {
+                            setNameTitle(getString(R.string.not_in_contact));
+                        } else {
+                            setNameTitle(ser.getString(0));
+
+                        }
                         ser.close();
                     }
+
                 }
             } else {
-                setNameTitle("Not TouchedItem valid Number");
+                setNameTitle(" invalid Number");
             }
 
         }
@@ -100,6 +105,8 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ME.setTheme(this, MainActivity.WN_ID);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_blance);
 
@@ -109,7 +116,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         send_to.setHint("Send to");
          pin = (TextInputLayout) findViewById(R.id.sendb_pinlayout);
         pin.setHint("Pin");
-        WORK_NETWORK = ME.getCurrentNetwork(this);
+        WORK_NETWORK = MainActivity.WN_ID;
 
         if (WORK_NETWORK == 3) {
             Toast.makeText(this, "No Network Found ,canceled", Toast.LENGTH_LONG).show();
@@ -311,7 +318,11 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
             amount.setError( "Invalid Balance value");
             return false;
         }
-        //TODO: Check ..is from working network
+        if(ME.getNet(this,send_to.getEditText().getText().toString())==MainActivity.WN_ID)
+        {
+            send_to.setError("different network..");
+            return false;
+        }
 
         int g = Integer.parseInt(s);
         if (g <= 0 || g > 500) {

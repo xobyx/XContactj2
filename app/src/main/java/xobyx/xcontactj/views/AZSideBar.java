@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.internal.widget.ThemeUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import xobyx.xcontactj.R;
+import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.until.Contact;
 
 /**
@@ -57,6 +59,7 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
     private Drawable mdraw;
     private int m = 0;
     private int[] PHOTO_TEXT_BACKGROUND_COLORS;
+    private int mjH=0;
 
 
     public AZSideBar(Context var1) {
@@ -91,14 +94,22 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
 
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+
+        mjH=oldh;
+        super.onSizeChanged(w, h, oldw, oldh);
+
+    }
+
     private void init(Context var1, AttributeSet var2, int var3) {
         TypedArray var4 = var1.obtainStyledAttributes(var2, R.styleable.AZSideBar, var3, 0);
         if (var4 != null) {
-            this.backgroundColor = var4.getColor(R.styleable.AZSideBar_shape_background, this.backgroundColor);
+            //this.backgroundColor = var4.getColor(R.styleable.AZSideBar_shape_background, this.backgroundColor);
+            this.backgroundColor=ThemeUtils.getThemeAttrColor(var1,R.attr.p_net_text_color);//ThemeUtils.getThemeAttrColor(var1,R.attr.colorPrimary) ;//var4.getColor(R.styleable.AZSideBar_text_color, this.textColor);
             this.selectorColor = var4.getColor(R.styleable.AZSideBar_selector_color, this.selectorColor);
-            this.selectTextColor = var4.getColor(R.styleable.AZSideBar_text_selected_color, this.selectTextColor);
-            this.textColor = var4.getColor(R.styleable.AZSideBar_text_color, this.textColor);
-            var4.recycle();
+            this.selectTextColor =ThemeUtils.getThemeAttrColor(var1, R.attr.colorPrimary) ;// var4.getColor(R.styleable.AZSideBar_text_selected_color, this.selectTextColor);
+            this.textColor = ThemeUtils.getThemeAttrColor(var1,R.attr.colorAccent);var4.recycle();
 
             mdraw = getResources().getDrawable(R.drawable.head);
             mdraw.setCallback(this);
@@ -183,18 +194,18 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
 
     RectF rect = new RectF();
 
-    @test(value = true, me = "fdf")
+
     protected void onDraw(Canvas var1) {
 
         boolean var21;
         int paddingLeft = this.getPaddingLeft();
         int paddingRight = this.getPaddingRight();
         int mpWidth = this.getWidth() - (paddingRight + paddingLeft);
-        int mHeight = this.getHeight();
+        int mHeight =Math.max(this.getHeight(),mjH);
         int mWidth = mpWidth / 2;
 
         int var8 = this.backgroundColor;
-        ;
+
         if (this.mIsDown) {
             // var8 = this.selectorColor;
 
@@ -216,7 +227,7 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
         //var1.drawArc(rect, 0.0F, 180.0F, true, mPaint);
         int paddingLeft1 = this.getPaddingLeft();
         int paddingRight1 = this.getPaddingRight();
-        int height = this.getHeight();
+        int height =Math.max(this.getHeight(), mjH); //Math.max(this.getHeight(),mjH);
         int realWidth = this.getWidth() - (paddingRight1 + paddingLeft1);
         float yBlock = (float) (height - realWidth) / (float) CharsIndex.size();
         int error = realWidth >> 1;
@@ -226,10 +237,10 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
         for (int i = 0; i < CharsIndex.size(); ++i) {
             float yPos = yBlock + yBlock * (float) i + (float) error;
             int var19;
-            if ((i == this.yLast && mIsDown == false) /*||i==CharsIndex.indexOf(mLastChar)*/ || CharsIndex.get(i).charAt(0) == mLastChar) {
+            if ( /*||i==CharsIndex.indexOf(mLastChar)*/ CharsIndex.get(i).charAt(0) == mLastChar) {
                 var19 = this.selectTextColor;
                 size = 35;
-                TextPaint.setColor(selectorColor);
+                TextPaint.setColor(var19);
                 var1.save();
                 Rect newRect = var1.getClipBounds();
 
@@ -244,6 +255,7 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
 
                 // if(show) {
                 mdraw.draw(var1);
+                //var1.restore();
                 TextPaint.measureText(CharsIndex.get(i));
 
                 var1.drawText(CharsIndex.get(i), xPos - m / 2, yPos - m / 2, TextPaint);
@@ -255,7 +267,8 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
                 var19 = this.textColor;
                 size = mTextSize;
                 var21 = false;
-                TextPaint.setColor(PHOTO_TEXT_BACKGROUND_COLORS[(int)((yPos/height)*13)]);
+                TextPaint.setColor(var19);
+//                TextPaint.setColor(PHOTO_TEXT_BACKGROUND_COLORS[(int)((yPos/height)*13)]);
                 TextPaint.measureText(CharsIndex.get(i));
                 TextPaint.setFakeBoldText(var21);
                 var1.drawText(CharsIndex.get(i), xPos, yPos, TextPaint);
@@ -268,10 +281,10 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
           //  TextPaint.setFakeBoldText(var21);
 
 
-            TextPaint.setColor(var19);
-            TextPaint.measureText(CharsIndex.get(i));
-            float x = var21 ? (float) xPos - nb : (float) xPos;
-            float y = var21 ? yPos + 8 : yPos;
+       //     TextPaint.setColor(var19);
+        //    TextPaint.measureText(CharsIndex.get(i));
+         //   float x = var21 ? (float) xPos - nb : (float) xPos;
+         //   float y = var21 ? yPos + 8 : yPos;
           //  if (var21)
             //    var1.drawText(CharsIndex.get(i), x, y, TextPaint);
 
@@ -309,7 +322,13 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
                         invalidate();
                     }
                 });
-                H_Ainmation.start();
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        H_Ainmation.start();
+                    }
+                }, 300);
+
             }
         } else if (!show) {
 
@@ -334,6 +353,7 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
 
         }
     }
+
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -364,6 +384,9 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
         String me();
 
 
+        Class<NetFragment.ContactsAdapter> b();
+
+        String m();
     }
 
     public interface IOnItemTouch {

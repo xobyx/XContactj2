@@ -26,7 +26,7 @@ import xobyx.xcontactj.until.XPickDialog;
  */
 public class NetFragmentPick extends NetFragment {
 
-    private MainActivity mActivity;
+
     public static NetFragmentPick newInstance(int net) {
 
         NetFragmentPick p = new NetFragmentPick();
