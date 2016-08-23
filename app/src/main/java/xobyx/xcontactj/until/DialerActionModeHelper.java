@@ -75,7 +75,7 @@ public class DialerActionModeHelper  {
 
 
         setNumber(dataString, false);
-        ((AppCompatActivity) mContext).startSupportActionMode(callback);
+        ((AppCompatActivity) mContext).getSupportActionBar().startActionMode(callback);
     }
 
     public void finish() {

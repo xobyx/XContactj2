@@ -155,7 +155,7 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
             }
 
         } finally {
-            synchronized (this) {
+            synchronized (lock) {
                 mCancellationSignal = null;
             }
 
@@ -177,7 +177,7 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
 
         // Ensure the loader is stopped
         onStopLoading();
-        //mCursor = null;
+        mCursor = null;
         mList = null;
     }
 

@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +60,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     int net;
     ContactsAdapter mAdapter;
     protected DialerFragment.DialerHandler iDialer;
-    public ContentLoadingProgressBar mLoading;
+    // public ContentLoadingProgressBar mLoading;
 
     /**
      * Returns TouchedItem new instance of this fragment for the given section
@@ -79,7 +78,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     public static LayoutAnimationController getGridLayoutAnim() {
         LayoutAnimationController controller;
         //Animation anim = new AppAnimations.Rotate3dAnimation(90, 0, 0, 0, 0, true);
-        Animation anim=new scale_animation();
+        Animation anim = new scale_animation();
         anim.setDuration(500);
         controller = new LayoutAnimationController(anim, 0.5f);
         controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
@@ -92,7 +91,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
 
         return list_mode == 0 ? var1.inflate(R.layout.fragment_net_list, null) :
-                var1.inflate(R.layout.fragment_net_grid, null);
+                var1.inflate(R.layout.fragment_net_list, null);//var1.inflate(R.layout.fragment_net_grid, null);
     }
 
     @Override
@@ -100,8 +99,8 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
         mlist = (AbsListView) var1.findViewById(android.R.id.list);
         mlist.setOnItemClickListener(this);
-        mLoading=(ContentLoadingProgressBar)var1.findViewById(R.id.mloading);
-        mLoading.show();
+        //  mLoading=(ContentLoadingProgressBar)var1.findViewById(R.id.mloading);
+        ///  mLoading.show();
 
 
         if (getDefaultSharedPreferences(this.getActivity()).getBoolean(getString(R.string.key_enable_list_anim), false))
@@ -110,11 +109,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
             mlist.setLayoutAnimation(null);
 
 
-
-
-
     }
-
 
 
     @Override
@@ -123,13 +118,12 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
         ///// FIXME: 2/27/2016  Add Custom SearchView ...
         setHasOptionsMenu(false);
-if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER))
-        net = this.getArguments().getInt(ARG_SECTION_NUMBER, 0);
+        if (this.getArguments() != null && this.getArguments().containsKey(ARG_SECTION_NUMBER))
+            net = this.getArguments().getInt(ARG_SECTION_NUMBER, 0);
 
 
         list_mode = getListModeForFragment();
         this.getLoaderManager().initLoader(net, null, this);
-
 
 
     }
@@ -142,39 +136,34 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
 
     }
 
-    protected  int getListModeForFragment()
-    {
+    protected int getListModeForFragment() {
         return getListMode(getActivity().getBaseContext());
     }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
         try {
             final Contact d = ((Contact) mAdapter.getItem(position));
-            if(!iDialer.getDialerState()) {
+            if (!iDialer.getDialerState()) {
                 Intent p = new Intent(this.getActivity(), ContactSpecificsActivity.class);
 
                 p.putExtra("pos", ME.$[net].indexOf(d));
                 p.putExtra("net", net);
                 startActivity(p);
-                getActivity().overridePendingTransition(android.support.design.R.anim.abc_slide_in_top,android.support.design.R.anim.abc_slide_out_bottom);
-            }
-            else
-            {
-             if (d.Phone.size()>1)
-             {
-                 final XPickDialog instance = XPickDialog.Instance(getActivity());
-                 instance.SetOnFinish( new XPickDialog.OnFinish() {
-                     @Override
-                     public void DialogFinish(int id, boolean isDefault) {
-                         iDialer.getDialerAction().setNumber(d.Phone.get(id).getNumber(), true);
-                     }
-                 }).setListPhoneList(d.Phone).build().show();
-             }
-                else
-             {
-                 iDialer.getDialerAction().setNumber(d.Phone.get(0).getNumber(),true);
-             }
+                getActivity().overridePendingTransition(android.support.design.R.anim.abc_slide_in_top, android.support.design.R.anim.abc_slide_out_bottom);
+            } else {
+                if (d.Phone.size() > 1) {
+                    final XPickDialog instance = XPickDialog.Instance(getActivity());
+                    instance.SetOnFinish(new XPickDialog.OnFinish() {
+                        @Override
+                        public void DialogFinish(int id, boolean isDefault) {
+                            iDialer.getDialerAction().setNumber(d.Phone.get(id).getNumber(), true);
+                        }
+                    }).setListPhoneList(d.Phone).build().show();
+                } else {
+                    iDialer.getDialerAction().setNumber(d.Phone.get(0).getNumber(), true);
+                }
             }
         } catch (Exception d) {
 
@@ -187,11 +176,7 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-       // this.Me.setAdapter(mAdapter);
-
-
-
-
+        // this.Me.setAdapter(mAdapter);
 
 
     }
@@ -216,6 +201,7 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
 
 
     }
+
     @SuppressWarnings("unchecked assignment")
     @Override
     public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
@@ -225,46 +211,40 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
         ME.$[net].addAll(data);
         mShowNumber = SettingHelp.getShowNumb(getActivity().getBaseContext());
         if (mShowNumber && list_mode == 0) {
-          //  mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), ME.$[net]);
-            mAdapter=new ContactsAdapter(getActivity(),ME.$[net],SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+            //  mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), ME.$[net]);
+            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+        } else {
+            // mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), ME.$[net], list_mode);
+
+            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+
         }
-        else {
-           // mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), ME.$[net], list_mode);
-
-            mAdapter=new ContactsAdapter(getActivity(),ME.$[net],SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
-
-        }
 
 
+        //  mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
 
 
-      //  mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
+        if (mlist != null) {
 
-
-        if(mlist !=null)
-        {
-
-           // int pinnedHeaderBackgroundColor=getResources().getColor(getResIdFromAttribute(this,android.R.attr.colorBackground));
+            // int pinnedHeaderBackgroundColor=getResources().getColor(getResIdFromAttribute(this,android.R.attr.colorBackground));
             setupPinndHeader(false);
             mlist.setAdapter(mAdapter);
-            mLoading.hide();
+//           mLoading.hide();
 
 
-
-           // Me.setAdapter(mAdapter);
+            // Me.setAdapter(mAdapter);
 
         }
 
 
-
-         //mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyDataSetChanged();
 
 
     }
 
     protected void setupPinndHeader(boolean all) {
         mAdapter.setPinnedHeaderBackgroundColor(getResources().getColor(R.color.holo_white));
-        mAdapter.setPinnedHeaderTextColor(!all?ME.nColors2[net]:ME.nColors2[3]);//getResources().getColor(R.color.holo_black));
+        mAdapter.setPinnedHeaderTextColor(!all ? ME.nColors2[net] : ME.nColors2[3]);//getResources().getColor(R.color.holo_black));
         ((PinnedHeaderListView) mlist).setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.pinned_header_listview_side_header, mlist, false));
         ((PinnedHeaderListView) mlist).setDivider(null);
         mlist.setFastScrollEnabled(true);
@@ -274,14 +254,13 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
 
     @Override
     public void onLoaderReset(Loader<List<Contact>> loader) {
-      //
-      // // FIXME: 2/26/2016 This Make list emtye without reload it..{@link loder}
-      // ME.$[net].clear();
-     loader=null;
+        //
+        // // FIXME: 2/26/2016 This Make list emtye without reload it..{@link loader}
+        // ME.$[net].clear();
+        loader = null;
     }
 
-    public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Contact>
-    {
+    public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Contact> {
         private final TextHighlighter mTexth;
         private final LayoutInflater mInflater;
         private final AsyncDrawer ib;
@@ -293,62 +272,54 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
 
 
         @Override
-        public CharSequence getSectionTitle(int sectionIndex)
-        {
-            return ((StringArrayAlphabetIndexer.AlphaBetSection)getSections()[sectionIndex]).getName();
+        public CharSequence getSectionTitle(int sectionIndex) {
+            return ((StringArrayAlphabetIndexer.AlphaBetSection) getSections()[sectionIndex]).getName();
         }
 
-        public ContactsAdapter(Context con,final ArrayList<Contact> contacts,boolean mClisp)
-        {
-            mClip=mClisp;
+        public ContactsAdapter(Context con, final ArrayList<Contact> contacts, boolean mClisp) {
+            mClip = mClisp;
             setData(contacts);
             ib = new AsyncDrawer(con);
             mTexth = new TextHighlighter(Typeface.BOLD, 0xff02a7dd);
             mInflater = LayoutInflater.from(con);
-        //    PHOTO_TEXT_BACKGROUND_COLORS=getResources().getIntArray(R.array.contacts_text_background_colors);
-          //  CONTACT_PHOTO_IMAGE_SIZE=getResources().getDimensionPixelSize(
+            //    PHOTO_TEXT_BACKGROUND_COLORS=getResources().getIntArray(R.array.contacts_text_background_colors);
+            //  CONTACT_PHOTO_IMAGE_SIZE=getResources().getDimensionPixelSize(
             //        R.dimen.list_item__contact_imageview_size);
         }
 
-        public void setData(final ArrayList<Contact> contacts)
-        {
-            this.mContacts=contacts;
-            final String[] generatedContactNames=generateContactNames(contacts);
-            setSectionIndexer(new StringArrayAlphabetIndexer(generatedContactNames,true));
+        public void setData(final ArrayList<Contact> contacts) {
+            this.mContacts = contacts;
+            final String[] generatedContactNames = generateContactNames(contacts);
+            setSectionIndexer(new StringArrayAlphabetIndexer(generatedContactNames, true));
         }
 
-        private String[] generateContactNames(final List<Contact> contacts)
-        {
-            final ArrayList<String> contactNames=new ArrayList<String>();
-            if(contacts!=null)
-                for(final Contact contactEntity : contacts)
+        private String[] generateContactNames(final List<Contact> contacts) {
+            final ArrayList<String> contactNames = new ArrayList<String>();
+            if (contacts != null)
+                for (final Contact contactEntity : contacts)
                     contactNames.add(contactEntity.Name);
             return contactNames.toArray(new String[contactNames.size()]);
         }
 
         @Override
-        public View getView(final int position,final View convertView,final ViewGroup parent)
-        {
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
             final ViewHolder holder;
             final View rootView;
-            if(convertView==null)
-            {
-                holder=new ViewHolder();
-                rootView= mInflater.inflate(R.layout.child_main, null);
+            if (convertView == null) {
+                holder = new ViewHolder();
+                rootView = mInflater.inflate(R.layout.child_main, null);
                 holder.Text = (TextView) rootView.findViewById(R.id.ptextname);
                 holder.Number = (TextView) rootView.findViewById(R.id.numberc);
                 holder.Img = (LetterImageView) rootView.findViewById(R.id.imagec);
-                holder.headerView=(TextView)rootView.findViewById(R.id.header_text);
+                holder.headerView = (TextView) rootView.findViewById(R.id.header_text);
                 holder.pos = position;
                 rootView.setTag(holder);
+            } else {
+                rootView = convertView;
+                holder = (ViewHolder) rootView.getTag();
             }
-            else
-            {
-                rootView=convertView;
-                holder=(ViewHolder)rootView.getTag();
-            }
-            final Contact contact=getItem(position);
-            final String displayName=contact.Name;
+            final Contact contact = getItem(position);
+            final String displayName = contact.Name;
 
             holder.Text.setText(contact.Name);
 
@@ -360,28 +331,26 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
             if (contact.PhotoThumbUri == null) {
                 //hold.Img.setImageDrawable(null);
                 holder.Img.setImageDrawable(null);
-                ib.DrawImageString(contact.Name, holder.Img, mClip, contact.Phone.size()!=0?contact.Phone.get(0).nNet.getValue():0);
+                ib.DrawImageString(contact.Name, holder.Img, mClip, contact.Phone.size() != 0 ? contact.Phone.get(0).nNet.getValue() : 0);
 
             } else
-                ib.GetPhoto(contact, holder.Img, mClip,contact.Phone.size()!=0?contact.Phone.get(0).nNet.getValue():0);
-            bindSectionHeader(holder.headerView,null,position);
+                ib.GetPhoto(contact, holder.Img, mClip, contact.Phone.size() != 0 ? contact.Phone.get(0).nNet.getValue() : 0);
+            bindSectionHeader(holder.headerView, null, position);
             return rootView;
         }
 
         @Override
-        public boolean doFilter(final Contact item,final CharSequence constraint)
-        {
-            x= (String) constraint;
-            if(TextUtils.isEmpty(constraint))
+        public boolean doFilter(final Contact item, final CharSequence constraint) {
+            x = (String) constraint;
+            if (TextUtils.isEmpty(constraint))
                 return true;
-            final String displayName=item.Name;
-            return !TextUtils.isEmpty(displayName)&&displayName.toLowerCase(Locale.getDefault())
+            final String displayName = item.Name;
+            return !TextUtils.isEmpty(displayName) && displayName.toLowerCase(Locale.getDefault())
                     .contains(constraint.toString().toLowerCase(Locale.getDefault()));
         }
 
         @Override
-        public ArrayList<Contact> getOriginalList()
-        {
+        public ArrayList<Contact> getOriginalList() {
             return mContacts;
         }
 
@@ -391,13 +360,12 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
     // /////////////////////////////////////////////////////////////////////////////////////
     // ViewHolder //
     // /////////////
-    private static class ViewHolder
-    {
+    private static class ViewHolder {
         public TextView Text;
         public LetterImageView Img;
 
         public TextView Number,
-        headerView;
+                headerView;
 
 
         public int pos;

@@ -70,7 +70,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
             boolean t = false;
             if (!s.toString().isEmpty() && s.toString().length() > 9) {
 
-                if (ME.getNetForNumber(s.toString()) != MainActivity.WN_ID) {
+                if (ME.getNetForNumber(s.toString()) != WORK_NETWORK) {
 
                     send_to.setError(getString(R.string.number_not_match_net));
                 } else {
@@ -101,7 +101,8 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        ME.setTheme(this, MainActivity.WN_ID);
+        WORK_NETWORK = ME.getCurrentNetwork(this);
+        ME.setTheme(this, WORK_NETWORK);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_blance);
 
@@ -111,7 +112,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         send_to.setHint("Send to");
         pin = (TextInputLayout) findViewById(R.id.sendb_pinlayout);
         pin.setHint("Pin");
-        WORK_NETWORK = MainActivity.WN_ID;
+
 
         if (WORK_NETWORK == 3) {
             Toast.makeText(this, "No Network Found ,canceled", Toast.LENGTH_LONG).show();
@@ -189,7 +190,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
             if (me.getClipData().getItemCount() == 1) {
                 String h = me.getClipData().getItemAt(0).toString();
                 //Pattern d = Pattern.compile("(((\\+249|00249)([,\\s])?)?\\d\\d\\d([,\\s])?\\d+)+");
-                Pattern d = Pattern.compile("(\\+249|00249|09|01)(\\d{8,12})(?:.*?)");
+                Pattern d = Pattern.compile("(\\+249|00249)?(|09|01)(\\d{8,12})(?:.*?)");
                 Matcher matcher = d.matcher(h);
                 // check all occurance
                 int i = 0;
@@ -269,7 +270,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.trb_pik_button:
-                Intent y = new Intent(getBaseContext(), MainActivity.class);
+                Intent y = new Intent(this, MainActivity.class);
                 y.putExtra("local", true);
                 ///FIXME:is this right
                 //y.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -279,7 +280,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                 break;
             case R.id.trb_ok:
                 if (CheckInput()) {
-                    new AlertDialog.Builder(this).setMessage(String.format("Are you sure want transfer %s SB to %s with Number %s ", amount.getEditText().getText(), _name, String.valueOf(send_to.getEditText().getText()))).setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(this).setMessage(String.format("Send %s SDG to %s with Number %s ", amount.getEditText().getText(), _name, String.valueOf(send_to.getEditText().getText()))).setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -304,17 +305,17 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     private boolean CheckInput() {
         final String s = amount.getEditText().getText().toString();
         if (s.isEmpty()) {
-            amount.setError("Invalid Balance value");
+            amount.setError("Invalid..");
             return false;
         }
-        if (ME.getNetForNumber(send_to.getEditText().getText().toString()) == MainActivity.WN_ID) {
-            send_to.setError("different network..");
+        if (ME.getNetForNumber(send_to.getEditText().getText().toString()) != WORK_NETWORK) {
+            send_to.setError("you can't send to a different network..");
             return false;
         }
 
         int g = Integer.parseInt(s);
-        if (g <= 0 || g > 500) {
-            amount.setError("Balance must be greater than zero and less than five hundred");
+        if (g <= 0) {
+            amount.setError("Must be greater than zero..");
             return false;
         }
         final String s1 = send_to.getEditText().getText().toString();
@@ -324,7 +325,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         }
         final String s2 = pin.getEditText().getText().toString();
         if (_tCheck.isChecked() && (s2.isEmpty() || s2.length() < 4)) {
-            pin.setError("PIN is invalid");
+            pin.setError("Invalid PIN code");
             return false;
         }
         return true;

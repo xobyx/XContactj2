@@ -140,7 +140,7 @@ public class fragment_all_phones extends NetFragment {
             setupPinndHeader(true);
 
             mlist.setAdapter(mAdapter);
-            mLoading.hide();
+
         }
 
 

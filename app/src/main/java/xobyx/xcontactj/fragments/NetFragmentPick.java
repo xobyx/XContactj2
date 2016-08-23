@@ -6,18 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
-import java.util.Collections;
-import java.util.List;
-
 import xobyx.xcontactj.activities.MainActivity;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
-import xobyx.xcontactj.until.SettingHelp;
 import xobyx.xcontactj.until.XPickDialog;
 
 /**
@@ -36,16 +31,7 @@ public class NetFragmentPick extends NetFragment {
         p.setArguments(i);
         return p;
     }
-    @Override
-    public void onCreate(Bundle var1) {
 
-
-
-        super.onCreate(var1);
-
-       // list_mode = 0;
-
-    }
 
     @Override
     protected int getListModeForFragment() {
@@ -93,40 +79,7 @@ public class NetFragmentPick extends NetFragment {
             activity.finish();
         }
     }
-    @Override
-    public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
 
-        Collections.sort(data);
-        ME.$[net].clear();
-        ME.$[net].addAll(data);
-        mShowNumber = SettingHelp.getShowNumb(getActivity().getBaseContext());
-        if (mShowNumber && list_mode == 0) {
-            //mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), ME.$[net]);
-            mAdapter=new ContactsAdapter(getActivity(),ME.$[net],SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
-
-        }
-        else {
-          //  mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), ME.$[net], list_mode);
-            mAdapter=new ContactsAdapter(getActivity(),ME.$[net],SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
-
-
-        }
-
-
-       // mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
-
-
-        if(mlist !=null)
-        {
-            mlist.setAdapter(mAdapter);
-        }
-
-
-
-        //mAdapter.notifyDataSetChanged();
-
-
-    }
 
 
 }

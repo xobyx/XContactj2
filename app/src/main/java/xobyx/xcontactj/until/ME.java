@@ -14,7 +14,9 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.android.internal.telephony.ITelephony;
+import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,15 +64,23 @@ public class ME {
     static com.google.i18n.phonenumbers.PhoneNumberUtil a= PhoneNumberUtil.getInstance();
 
     static public int getNetForNumber(String h) {
+        String n;
+        Phonenumber.PhoneNumber sd;
+        try {
+            sd = a.parseAndKeepRawInput(h, "SD");
+            n=a.formatOutOfCountryKeepingAlphaChars(a.parseAndKeepRawInput(h, "SD"),"SD");
 
-
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+            return 3;
+        }
         int net = 3;
-        if (h.length() > 2) {
+        if (n.length() > 2) {
 
             for (int i = 0; i < Mnet.length; i++) {
 
                 for (String s1 : Mnet[i]) {
-                    if (h.startsWith(s1)) {
+                    if (n.startsWith(s1)) {
                        return i;
                     }
                 }
@@ -81,21 +91,21 @@ public class ME {
 
     static final String[] Sudani_net = {
             "01",
-            "+2491"
+
     };
     static final String[] zain_net = {
             "091",
-            "+24991",
-            "+24990",
+
             "090",
+
             "096",
-            "+24996"
+
     };
     static final String[] mtn_net = {
             "092",
-            "+24992",
+
             "099",
-            "+24999"
+
     };
     public final static String[][] Mnet = {zain_net, Sudani_net, mtn_net};
     /**

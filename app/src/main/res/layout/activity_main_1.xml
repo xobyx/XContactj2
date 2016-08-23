@@ -1,13 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:id="@+id/rep_me" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <android.support.v7.widget.Toolbar android:id="@+id/toolbar" android:layout_width="fill_parent" android:layout_height="50.0dip" app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
-        <LinearLayout android:orientation="vertical" android:id="@+id/repl" android:layout_width="fill_parent" android:layout_height="wrap_content">
-            <xobyx.xcontactj.views.HeaderTabs android:orientation="horizontal" android:id="@+id/mhrader" android:background="@drawable/ab_solid_dark_holo" android:layout_width="fill_parent" android:layout_height="50.0dip" app:net1="@drawable/i_zain" app:net2="@drawable/i_sudani" app:net3="@drawable/i_mtn" xmlns:app="http://schemas.android.com/apk/res-auto" />
-            <xobyx.xcontactj.views.xViewPager android:id="@+id/pager" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:layout_weight="1.0" me:lock_move="true" xmlns:me="http://schemas.android.com/apk/res-auto" />
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rep_me"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="50.0dip"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/repl"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <xobyx.xcontactj.views.HeaderTabs
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mhrader"
+                android:layout_width="fill_parent"
+                android:layout_height="50.0dip"
+                android:background="@drawable/ab_solid_dark_holo"
+                android:orientation="horizontal"
+                app:net1="@drawable/i_zain"
+                app:net2="@drawable/i_sudani"
+                app:net3="@drawable/i_mtn" />
+
+            <xobyx.xcontactj.views.xViewPager
+                xmlns:me="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/pager"
+                android:layout_width="fill_parent"
+                android:layout_height="0.0dip"
+                android:layout_marginLeft="5.0dip"
+                android:layout_marginRight="5.0dip"
+                android:layout_weight="1.0"
+                me:lock_move="true" />
         </LinearLayout>
-        <android.support.design.widget.FloatingActionButton android:layout_gravity="bottom|right|center" android:id="@+id/main_call" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="16.0dip" android:src="@android:drawable/ic_menu_call" app:rippleColor="#ffe0e0e0" app:fabSize="normal" xmlns:app="http://schemas.android.com/apk/res-auto" />
-        <FrameLayout android:layout_gravity="bottom" android:id="@+id/di_ground" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right|center"
+            app:borderWidth="0dp"
+            android:layout_margin="16.0dip"
+            android:src="@android:drawable/ic_menu_call"
+            app:fabSize="normal"
+             />
+
+        <FrameLayout
+            android:id="@+id/di_ground"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
     </FrameLayout>
 </LinearLayout>
