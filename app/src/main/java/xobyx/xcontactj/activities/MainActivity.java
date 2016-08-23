@@ -3,7 +3,6 @@ package xobyx.xcontactj.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +20,6 @@ import com.android.internal.telephony.ITelephony;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
-import xobyx.xcontactj.enums.QKPreference;
 import xobyx.xcontactj.fragments.DialerFragment;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.fragments.NetFragmentPick;
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
         DB = new MDatabase(getBaseContext());
 
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
+       // PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
 
         // Set up the action bar.
 

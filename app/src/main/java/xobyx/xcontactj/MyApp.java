@@ -9,8 +9,6 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
-import com.android.mms.util.DownloadManager;
-import com.android.mms.util.RateController;
 import com.google.android.gms.analytics.Tracker;
 
 import org.acra.ACRA;
@@ -19,15 +17,7 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.util.Locale;
 
-import xobyx.xcontactj.common.LiveViewManager;
-import xobyx.xcontactj.common.google.DraftCache;
-import xobyx.xcontactj.common.google.PduLoaderManager;
-import xobyx.xcontactj.common.google.ThumbnailManager;
-import xobyx.xcontactj.data.Contact;
-import xobyx.xcontactj.data.Conversation;
-import xobyx.xcontactj.ui.ThemeManager;
-import xobyx.xcontactj.ui.mms.layout.LayoutManager;
-import xobyx.xcontactj.until.NotificationManager;
+
 import xobyx.xcontactj.until.ReportSenderFac;
 /**
  * Created by xobyx on 8/5/2015.
@@ -38,7 +28,7 @@ import xobyx.xcontactj.until.ReportSenderFac;
         resDialogText = R.string.crash_dialog_text,
         reportSenderFactoryClasses = ReportSenderFac.class,
 
-        resDialogIcon = R.drawable.ic_launcher, //optional. default is a warning sign
+        resDialogIcon = R.mipmap.ic_launcher, //optional. default is a warning sign
         resDialogTitle = R.string.crash_dialog_title, // optional. default is your application name
         resDialogCommentPrompt = R.string.crash_dialog_comment_prompt, // optional. When defined, adds a user text field input with this text resource as a label
         // optional. When defined, adds a user email text entry with this text resource as label. The email address will be populated from SharedPreferences and will be provided as an ACRA field if configured.
@@ -64,8 +54,7 @@ public class MyApp extends Application {
     public static Tracker tracker;
     private static MyApp mApp;
     public static mTraker tracker$;
-    private PduLoaderManager mPduLoaderManager;
-    private ThumbnailManager mThumbnailManager;
+
     private TelephonyManager mTelephonyManager;
     private DrmManagerClient drmManagerClient;
 
@@ -93,20 +82,12 @@ public class MyApp extends Application {
         Country country = new Country(Locale.getDefault().getCountry(), Country.COUNTRY_SOURCE_LOCALE);
         mCountryIso = country.getCountryIso();
         Context context = getApplicationContext();
-        mPduLoaderManager = new PduLoaderManager(context);
-        mThumbnailManager = new ThumbnailManager(context);
 
 
-        ThemeManager.init(this);
-        MmsConfig.init(this);
-        Contact.init(this);
-        DraftCache.init(this);
-        Conversation.init(this);
-        DownloadManager.init(this);
-        RateController.init(this);
-        LayoutManager.init(this);
-        NotificationManager.init(this);
-        LiveViewManager.init(this);
+
+
+
+
 
         //activePendingMessages();
 
@@ -121,20 +102,14 @@ public class MyApp extends Application {
     @SuppressLint("CommitPrefEdits")
     private void loadDefaultPreferenceValues() {
         // Load the default values
-        PreferenceManager.setDefaultValues(this,R.xml.settings, false);
+        PreferenceManager.setDefaultValues(this,R.xml.pref_general, false);
 
     }
     public static MyApp getApplication() {
         return mApp;
     }
 
-    public PduLoaderManager getPduLoaderManager() {
-        return mPduLoaderManager;
-    }
 
-    public ThumbnailManager getThumbnailManager() {
-        return mThumbnailManager;
-    }
     public TelephonyManager getTelephonyManager() {
         if (mTelephonyManager == null) {
             mTelephonyManager = (TelephonyManager) getApplicationContext()

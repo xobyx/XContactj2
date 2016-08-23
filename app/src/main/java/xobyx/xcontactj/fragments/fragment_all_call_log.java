@@ -300,7 +300,7 @@ public class fragment_all_call_log extends Fragment {
                 hide.setVisibility(objList.size() == 0 ? View.VISIBLE : View.GONE);
             }
         };
-        this.q.execute(new String[]{""});
+        this.q.execute(new String[]{});
     }
 
 
