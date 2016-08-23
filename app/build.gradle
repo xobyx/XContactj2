@@ -60,8 +60,7 @@ dependencies {
     // compile 'com.github.lzyzsd:circleprogress:1.1.0'
     //  compile 'com.klinkerapps:android-chips:1.0.0'
     //compile 'me.leolin:ShortcutBadger:1.1.1'
-    compile 'com.android.support:support-v13:22.2.0'
-    compile 'com.github.lzyzsd:circleprogress:1.1.0'
+
 }
 
 
