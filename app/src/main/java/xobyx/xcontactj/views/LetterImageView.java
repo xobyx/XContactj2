@@ -36,6 +36,11 @@ public class LetterImageView extends ImageView {
     private float textSize=0;
     private boolean isLetter;
     private float m=1;
+    private boolean anm;
+    private float red=0;
+    private Paint sx;
+    private float Xc;
+    private float Xy;
 
     public LetterImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -56,6 +61,7 @@ public class LetterImageView extends ImageView {
 
 
         mBackgroundPaint.setColor(ME.nColors[u]);
+
         invalidate();
 
     }
@@ -77,10 +83,15 @@ public class LetterImageView extends ImageView {
             mBackgroundPaint.setColor(getResources().getColor(R.color.transparent));
         }
 
+        sx=new Paint(Paint.ANTI_ALIAS_FLAG);
+        sx.setStyle(Paint.Style.FILL);
+        sx.setColor(0x67FFFFFF);
+
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 m = (float) animation.getAnimatedValue();
+                red=(float)((m-1f)/0.5f)*(getHeight()/2);
                 invalidate();
             }
         });
@@ -91,9 +102,14 @@ public class LetterImageView extends ImageView {
         return mLetter;
     }
 
+    Rect x= new Rect();
     public void setLetter(char letter) {
         isLetter=true;
+        if(letter== '\u0647'){letter='\uFEEB';}
         mTextPaint.measureText(String.valueOf(letter));
+
+        mTextPaint.getTextBounds(String.valueOf(letter),0,1,x);
+       // mTextPaint.setElegantTextHeight(true);
         mLetter = letter;
         invalidate();
     }
@@ -118,11 +134,13 @@ public class LetterImageView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.scale(m,m,canvas.getWidth()/2f,canvas.getHeight()/2f);
         super.onDraw(canvas);
 
 
         //long v= 0x1c2a344b6bL;
-        canvas.scale(m,m,canvas.getWidth()/2f,canvas.getHeight()/2f);
+
 
         if (getDrawable() == null) {
 
@@ -136,20 +154,28 @@ public class LetterImageView extends ImageView {
             } else {
                 canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mBackgroundPaint);
             }
-            ME.DrawNetworkLogo(getContext(), canvas, mNet);
+
 
             // Measure a text
 
             mTextPaint.getTextBounds(String.valueOf(mLetter), 0, 1, textBounds);
             float textWidth = mTextPaint.measureText(String.valueOf(mLetter));
-            float textHeight = textBounds.height();
+            float textHeight = textBounds.height()/2f;
             // Draw the text
             canvas.drawText(String.valueOf(mLetter), canvas.getWidth() / 2f - textWidth / 2f,
                     canvas.getHeight() / 2f + textHeight / 2f, mTextPaint);
 
+            canvas.restore();
+            ME.DrawNetworkLogo(getContext(), canvas, mNet);
+
         } else
 
             ME.DrawNetworkLogo(getContext(), canvas, mNet);
+
+
+            canvas.drawCircle(Xc,Xy,red,sx);
+
+
     }
 
 
@@ -164,6 +190,8 @@ public class LetterImageView extends ImageView {
         if(event.getAction()==event.ACTION_DOWN) {
            /* if(isLetter) {*/
                 animator.setFloatValues(1f, 1.5f,1f);
+            Xc=event.getX();Xy=event.getY();
+
 
 
                 animator.start();

@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -68,7 +69,8 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         AppAnimations.Rotate3dAnimation df = new AppAnimations.Rotate3dAnimation(180, 0, 0, 0, 20, false);
         df.setDuration(500);
-        view.startAnimation(df);
+
+        view.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.support.v7.appcompat.R.anim.abc_slide_in_bottom));
 
         mRel = (TableLayout) view.findViewById(R.id.dialer_numbers);
         ImageView dial = (ImageView) view.findViewById(R.id.dill_call);

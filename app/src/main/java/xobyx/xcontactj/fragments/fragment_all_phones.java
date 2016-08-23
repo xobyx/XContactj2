@@ -14,21 +14,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.ContactSpecificsActivity;
+import xobyx.xcontactj.activities.MainActivity;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ContactLoader;
 import xobyx.xcontactj.until.SettingHelp;
 import xobyx.xcontactj.until.XPickDialog;
-import xobyx.xcontactj.views.AZSideBar;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -36,12 +34,13 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  * Created by xobyx on 1/23/2016.
  * For xobyx.xcontactj.fragments/XContactj
  */
-public class fragment_all_phones extends NetFragment implements AZSideBar.IOnItemTouch {
+public class fragment_all_phones extends NetFragment {
     private char mLastChar;
     public static ArrayList<Contact> mList;
-    private boolean mfinishAdapter;
-    private AZSideBar xz;
-    private Hashtable<String, Integer> lableIndex;
+
+
+
+    private AsyncTask m;
 
     @Override
     public void onAttach(Activity activity) {
@@ -89,17 +88,16 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
     @Override
     public void onViewCreated(View var1, @Nullable Bundle var2) {
         super.onViewCreated(var1, var2);
-        Me = (AbsListView) var1.findViewById(android.R.id.list);
-        Me.setOnItemClickListener(this);
-        xz = (AZSideBar) var1.findViewById(R.id.dtest);
-        xz.setOnItemTouchListener(this);
-        Me.setOnScrollListener(xz);
+
+       // xz = (AZSideBar) var1.findViewById(R.id.dtest);
+       // xz.setOnItemTouchListener(this);
+       // Me.setOnScrollListener(xz);
 
 
         if (getDefaultSharedPreferences(this.getActivity()).getBoolean(getString(R.string.key_enable_list_anim), false))
-            Me.setLayoutAnimation(getGridLayoutAnim());
+            mlist.setLayoutAnimation(getGridLayoutAnim());
         else
-            Me.setLayoutAnimation(null);
+            mlist.setLayoutAnimation(null);
 
 
 
@@ -136,13 +134,17 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
 
 
 
-        if(Me!=null)
+
+        if(mlist !=null)
         {
-            Me.setAdapter(mAdapter);
+            setupPinndHeader(true);
+
+            mlist.setAdapter(mAdapter);
+            mLoading.hide();
         }
 
 
-        final AsyncTask execute = new AsyncTask() {
+    /*    m=new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
                 lableIndex = new Hashtable<String, Integer>();
@@ -156,7 +158,7 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
 
                     String tn = b.Name.substring(0, 1);
                     if (!tn.equals(oldl)) {
-                        lableIndex.put(tn, t);
+                        lableIndex.put(tn, i);
                         oldl = tn;
 
                         xz.CharsIndex.add(tn);
@@ -178,13 +180,10 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
 
 
         };
-        execute.execute();
+        m.execute(new String[]{});*/
     }
 
-    @Override
-    public void onTouchOut() {
 
-    }
 
 
     @Override
@@ -196,7 +195,7 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
                 Intent p = new Intent(this.getActivity(), ContactSpecificsActivity.class);
 
                 p.putExtra("pos", mList.indexOf(d));
-                p.putExtra("net", net);
+                p.putExtra("net", MainActivity.WN_ID);
                 p.putExtra("all",true);
                 startActivity(p);
             }
@@ -222,11 +221,7 @@ public class fragment_all_phones extends NetFragment implements AZSideBar.IOnIte
         }
 
     }
-    @Override
-    public void onTouchedItem(String var1) {
-        int z = lableIndex.get(var1);
-        Me.scrollBy(0,z*100);
-    }
+
 
     public static Fragment cv() {
         return new fragment_all_phones();

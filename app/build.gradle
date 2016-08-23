@@ -10,11 +10,16 @@ android {
             storePassword '13011221'
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'InvalidPackage'
+    }
     compileSdkVersion 21
-    buildToolsVersion "20.0.0"
+    buildToolsVersion "21.1.2"
     def Properties versionProps = new Properties()
     def versionPropsFile = file('version.properties')
-    if(versionPropsFile.exists())
+    if (versionPropsFile.exists())
         versionProps.load(new FileInputStream(versionPropsFile))
     def code = (versionProps['VERSION_CODE'] ?: "0").toInteger() + 1
     versionProps['VERSION_CODE'] = code.toString()
@@ -25,15 +30,18 @@ android {
         targetSdkVersion 21
         versionCode code
         versionName "1.1"
+        multiDexEnabled true
         signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'xcontactj-proguard.pro'
             signingConfig signingConfigs.config
-
-            versionNameSuffix '-('+code+')-beta-aptoide'
+            versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
+        }
+        debug {
+            proguardFile 'C:/Users/xobyx/AndroidStudioProjects/XContactj2/app/xcontactj-proguard.pro'
         }
     }
     productFlavors {
@@ -41,11 +49,22 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    //compile 'frankiesardo:icepick:3.2.0'
+    //provided 'frankiesardo:icepick-processor:3.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.google.android.gms:play-services-analytics:8.1.0'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
+    // compile 'com.github.lzyzsd:circleprogress:1.1.0'
+    //  compile 'com.klinkerapps:android-chips:1.0.0'
+    //compile 'me.leolin:ShortcutBadger:1.1.1'
+    compile 'com.android.support:support-v13:22.2.0'
+    compile 'com.github.lzyzsd:circleprogress:1.1.0'
 }
+
+
+
+
 

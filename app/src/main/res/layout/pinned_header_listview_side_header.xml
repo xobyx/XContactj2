@@ -2,16 +2,17 @@
 
 
 <xobyx.xcontactj.views.FontTextView
-    app:font="as.ttf"
+    app:font="BP.ttf"
     android:id="@+id/header_text"
 
-    android:layout_width="50dp"
+    android:layout_width="25dp"
     android:layout_height="50dp"
     android:background="@null"
     android:gravity="center_vertical|center_horizontal"
     android:text="أ"
-    android:textColor="#000"
-    android:textSize="20sp"
+    android:textStyle="bold"
+    android:textColor="#838383"
+    android:textSize="22sp"
     tools:ignore="HardcodedText"
 
     xmlns:android="http://schemas.android.com/apk/res/android"

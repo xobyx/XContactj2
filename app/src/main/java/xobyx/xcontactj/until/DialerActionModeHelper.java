@@ -3,9 +3,10 @@ package xobyx.xcontactj.until;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import xobyx.xcontactj.fragments.DialerFragment;
  * Created by xobyx on 8/6/2015.
  * For xobyx.xcontactj.until/XContactj
  */
-public class DialerActionModeHelper implements ActionMode.Callback {
+public class DialerActionModeHelper  {
 
 
     private final Vibrator vibrator;
@@ -45,7 +46,7 @@ public class DialerActionModeHelper implements ActionMode.Callback {
         public void afterTextChanged(Editable s) {
 
 
-            int net = ME.getNet(mContext, s.toString());
+            int net = ME.getNetForNumber(s.toString());
 
             if (net < 3) {
                 img.setImageResource(ME.NetDrawables[net][0]);
@@ -74,7 +75,7 @@ public class DialerActionModeHelper implements ActionMode.Callback {
 
 
         setNumber(dataString, false);
-        mContext.startActionMode(this);
+        ((AppCompatActivity) mContext).startSupportActionMode(callback);
     }
 
     public void finish() {
@@ -112,38 +113,40 @@ public class DialerActionModeHelper implements ActionMode.Callback {
 
     }
 
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        final DialerFragment fragment = DialerFragment.newInstance(MainActivity.WN_ID);
-        mContext.getSupportFragmentManager().beginTransaction().replace(R.id.di_ground, fragment, "Dialer").commit();
-        mode.setCustomView(LayoutInflater.from(mContext).inflate(R.layout.cot_action_mode, null));
-        number = (TextView) mode.getCustomView().findViewById(R.id.cot_ac_textView);
-        img = (ImageView) mode.getCustomView().findViewById(R.id.cot_ac_netImage);
-        img.setImageDrawable(null);
-        number.addTextChangedListener(mTextWatcher);
+    ActionMode.Callback callback=new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            final DialerFragment fragment = DialerFragment.newInstance(MainActivity.WN_ID);
+            mContext.getSupportFragmentManager().beginTransaction().replace(R.id.di_ground, fragment, "Dialer").commit();
+            mode.setCustomView(LayoutInflater.from(mContext).inflate(R.layout.cot_action_mode, null));
+            number = (TextView) mode.getCustomView().findViewById(R.id.cot_ac_textView);
+            img = (ImageView) mode.getCustomView().findViewById(R.id.cot_ac_netImage);
+            img.setImageDrawable(null);
+            number.addTextChangedListener(mTextWatcher);
 
 
-        return true;
-    }
+            return true;
+        }
 
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
 
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
-    }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
 
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        mNumberChangeListener.onNumberChange("");
-        final FragmentManager fm = mContext.getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag("Dialer")).commit();
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mNumberChangeListener.onNumberChange("");
+            final FragmentManager fm = mContext.getSupportFragmentManager();
+            fm.beginTransaction().setCustomAnimations(android.support.design.R.anim.abc_slide_in_top,android.support.design.R.anim.abc_slide_out_bottom).remove(fm.findFragmentByTag("Dialer")).commit();
 
-    }
-
+        }
+    };
     public String getNumber() {
         return String.valueOf(number.getText());
     }

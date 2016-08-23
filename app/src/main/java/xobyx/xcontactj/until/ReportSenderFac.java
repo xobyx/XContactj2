@@ -15,6 +15,7 @@ public class ReportSenderFac implements ReportSenderFactory {
     @NonNull
     @Override
     public ReportSender create(Context context, ACRAConfiguration acraConfiguration) {
-        return new D_save_error(acraConfiguration);
+        return new CustomReportSender(acraConfiguration);
+
     }
 }

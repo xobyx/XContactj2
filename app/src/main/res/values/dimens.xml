@@ -12,6 +12,23 @@
     <dimen name="action_bar_title_text_size">20.0dip</dimen>
     <dimen name="action_bar_subtitle_text_size">14.0dip</dimen>
 
+
+    <dimen name="title_padding">16dp</dimen>
+    <dimen name="avatar_width_height">64dip</dimen>
+    <dimen name="message_item_avatar_on_right_text_indent">50dip</dimen>
+    <dimen name="message_item_text_padding_left_right">12dip</dimen>
+    <dimen name="message_item_text_padding_top">5dip</dimen>
+    <dimen name="mms_inline_attachment_size">224dip</dimen>
+    <dimen name="ab_height">48dp</dimen>
+    <dimen name="shadow_width">8dp</dimen>
+
+    <dimen name="color_swatch_large">64dp</dimen>
+    <dimen name="color_swatch_small">48dp</dimen>
+    <dimen name="color_swatch_margins_large">8dp</dimen>
+    <dimen name="color_swatch_margins_small">4dp</dimen>
+
+    <dimen name="slideshow_padding_top">0dp</dimen>
+
     <dimen name="activity_vertical_margin">10dp</dimen>
     <dimen name="detail_backdrop_height">256dp</dimen>
     <dimen name="card_margin">16dp</dimen>

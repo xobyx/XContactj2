@@ -71,4 +71,5 @@ public class AppAnimations {
             matrix.postTranslate(centerX, centerY);
         }
     }
+
 }

@@ -82,6 +82,7 @@
     <string name="fortest_1">dd55a</string>
     <string name="no_email_sender">no email sender</string>
     <string name="title_activity_all_main">AllMainActivity</string>
-    <string name="r">120967154539</string>
+    <string name="gcm_defaultSenderId">120967154539</string>
+    <string name="use_custom_pin">Use custom PIN(sudani default 0000)</string>
 
 </resources>

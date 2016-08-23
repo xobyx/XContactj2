@@ -14,8 +14,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import xobyx.xcontactj.activities.MainActivity;
-
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN;
 
@@ -84,7 +82,10 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
                 }
 
 
+
                 int phoneColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                int time_connected=mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.TIMES_CONTACTED);
+                int last_time_connected= mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.LAST_TIME_CONTACTED);
                 int pphoneColumnIndex = mCursor.getColumnIndex("data4");
                 //ContactsContract.co
                 int LableColumnIndex = mCursor.getColumnIndex("phonebook_label");
@@ -126,7 +127,7 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
                         mList.add(b);
 
                     }
-                    Contact.PhoneClass a = new Contact.PhoneClass();
+                    Contact.Phones a = new Contact.Phones();
                     a.Fnumber = mCursor.getString(pphoneColumnIndex);
                     a.IsPrimyer = Boolean.valueOf(mCursor.getString(IsPrimaryColumnIndex));
 
@@ -135,8 +136,10 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
                     String bn = mCursor.getString(CoustomType);
                     a.Type = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getContext().getResources(), m, bn).toString();
                     a.ID = mCursor.getString(idclo);
+                    a.TimeConnected=mCursor.getInt(time_connected);
+                    a.LastTimeConnected=mCursor.getInt(last_time_connected);
                     a.Account = mCursor.getString(account);
-                    a.nNet = MainActivity.Network.values()[mNet];
+                    a.nNet = Network.values()[mNet];
                     if (b != null) {
                         a.User = b.Name;
                         if(!b.Phone.contains(a))

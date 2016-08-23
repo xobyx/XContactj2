@@ -5,20 +5,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.activities.MainActivity;
 import xobyx.xcontactj.adapters.PhoneAdapter;
 import xobyx.xcontactj.until.Contact;
+import xobyx.xcontactj.until.ME;
+import xobyx.xcontactj.until.widget_manger;
 
 import static xobyx.xcontactj.until.ME.$;
 
@@ -28,15 +28,17 @@ public class NumSpecFragment extends Fragment  {
     private static final String ARG_NET = "net";
     private static final java.lang.String ARG_POS = "pos";
     private static final String ARG_ALL = "all";
-    public List<Contact.PhoneClass> other;
+    public List<Contact.Phones> other;
     private int mNet;
     private int mPos;
-    private NumbSpecAdapter ba;
+    private boolean all;
+    //private NumbSpecAdapter ba;
     private TabLayout pageIndicator;
-    private boolean mOther;
+   // private boolean mOther;
     private Contact contact;
     private widget_manger widgetManger;
-    private boolean mAll;
+    private PhoneAdapter adapter;
+    private ArrayList<Contact.Phones> mall;
 
     {
         onDestroyOptionsMenu();
@@ -63,23 +65,91 @@ public class NumSpecFragment extends Fragment  {
         super.onViewCreated(var1, var2);
       //  final ViewPager vb = (ViewPager) var1.findViewById(R.id.d_viewpager);
        // ba = new NumbSpecAdapter(getChildFragmentManager(), 1);
-       // pageIndicator = (android.support.design.widget.TabLayout) var1.findViewById(R.id.d_tabindector);
+        pageIndicator = (android.support.design.widget.TabLayout) var1.findViewById(R.id.other_net);
         //vb.setAdapter(ba);
 
        // ((ListView) var1.findViewById(R.id.example_lv_list)).setAdapter( new PhoneAdapter(this.getActivity(), contact.Phone).SetF(widgetManger));
+       if(all) {
+           pageIndicator.setVisibility(View.GONE);
 
-        // pageIndicator.setupWithViewPager(vb);
-       // ME.getOtherAsync(mNet, mPos, new ME.IAsyncFinish() {
-        //    @Override
-        //    public void LoadFinnish(List<ME.Contact.PhoneClass> data ) {
-          //      if (data != null && data.size() != 0) {
-            //        ba.AddOtherPage();
-              //      pageIndicator.addTab(pageIndicator.newTab().setText("Other"));
-                //    other = data;
-               // }
-            //}
-        ///});
+          /* AsyncTask m=new AsyncTask() {
+               public ArrayList<Contact.Phones> inw;
+               public ArrayList<Contact.Phones> onw;
 
+               @Override
+               protected Object doInBackground(Object[] params) {
+                    inw=new ArrayList<>();
+                    onw=new ArrayList<>();
+                   for (Contact.Phones phones : contact.Phone) {
+                       if(phones.nNet.getValue()==mNet)
+                           inw.add(phones);
+                       else
+                           onw.add(phones);
+                   }
+
+                   return null;
+               }
+
+               @Override
+               protected void onPostExecute(Object o) {
+                   if(inw.size()!=0){
+                       pageIndicator.addTab(pageIndicator.newTab().setText("in Your Network"));
+                       mall=inw;
+
+                   }
+                   if(onw.size()!=0)
+                   {
+                       pageIndicator.addTab(pageIndicator.newTab().setText("Other"));
+                       other=onw;
+                   }
+
+
+               }
+           };
+           m.execute();
+
+*/
+       }
+        else {
+           pageIndicator.addTab(pageIndicator.newTab().setText(ME.NET_N[mNet]));
+           ME.getOtherAsync(mNet, mPos, new ME.IAsyncFinish() {
+               @Override
+               public void LoadFinnish(List<Contact.Phones> data) {
+                   if (data != null && data.size() != 0) {
+
+                       pageIndicator.addTab(pageIndicator.newTab().setText("Other"));
+                       other = data;
+                   }
+               }
+           });
+           pageIndicator.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+               @Override
+               public void onTabSelected(TabLayout.Tab tab) {
+                  if(tab.getPosition()==0)
+                  {
+
+                     // if(all);
+                         // adapter.setList(mall);
+                   //   else
+
+                      adapter.setList(contact.Phone);
+                  }
+                   else
+                      adapter.setList(other);
+               }
+
+               @Override
+               public void onTabUnselected(TabLayout.Tab tab) {
+
+               }
+
+               @Override
+               public void onTabReselected(TabLayout.Tab tab) {
+
+               }
+           });
+
+       }
 
     }
 
@@ -90,12 +160,13 @@ public class NumSpecFragment extends Fragment  {
 
             this.mNet = this.getArguments().getInt(ARG_NET);
             this.mPos = this.getArguments().getInt(ARG_POS);
-            mAll=this.getArguments().getBoolean(ARG_ALL);
+            this.all= this.getArguments().getBoolean("all");
+            boolean mAll = this.getArguments().getBoolean(ARG_ALL);
 
 
 
 
-                contact =!mAll? (Contact) $[mNet].get(mPos):fragment_all_phones.mList.get(mPos);
+                contact =!mAll ? (Contact) $[mNet].get(mPos):fragment_all_phones.mList.get(mPos);
                 widgetManger =new widget_manger(this.getActivity(),contact);
 
         }
@@ -117,7 +188,12 @@ public class NumSpecFragment extends Fragment  {
 
     private void setupRecyclerView(RecyclerView rv) {
         rv.setLayoutManager(new LinearLayoutManager(rv.getContext()));
-        rv.setAdapter(new PhoneAdapter(rv.getContext(),contact.Phone).SetF(widgetManger));
+        if(!all)
+        adapter = new PhoneAdapter(rv.getContext(), contact.Phone);
+        else
+        adapter= new PhoneAdapter(rv.getContext(),contact.Phone,true);
+
+        rv.setAdapter(adapter.SetF(widgetManger));
 
     }
 
@@ -127,6 +203,7 @@ public class NumSpecFragment extends Fragment  {
 
     }
 
+/*
 
     public class NumbSpecAdapter extends FragmentPagerAdapter {
 
@@ -159,5 +236,6 @@ public class NumSpecFragment extends Fragment  {
         }
     }
 
+*/
 
 }

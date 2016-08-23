@@ -25,4 +25,23 @@
     <style name="ListViewStyle" parent="@android:style/Widget.Material.Light.ListView">
         <item name="android:overScrollMode">always</item>
     </style>
+
+    <style name="mtn" parent="Base.Theme.NoAction">
+        <item name="colorPrimary">#FFf8C810</item>
+        <item name="colorPrimaryDark">#efbe08</item>
+        <item name="colorAccent">#ff2878a8</item>
+        <item name="d1">@drawable/ic_share_n_mt</item>
+        <item name="d2">@drawable/ic_trash_n_mt</item>
+        <item name="d3">@drawable/ic_info_n_mt</item>
+        <item name="d4">@drawable/ic_edit_n_mt</item>
+        <item name="d5">@drawable/ic_revert_n_mt</item>
+        <item name="d6">@drawable/ic_more_n_mt</item>
+        <item name="send_sms">@drawable/sendsms_mt</item>
+        <item name="make_call">@drawable/dialer_mt</item>
+        <item name="expand">@drawable/more_mt</item>
+        <item name="history">@drawable/history_mt</item>
+        <item name="messges">@drawable/messges_mt</item>
+        <item name="p_net_text_color">#a2FfFFFF</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    </style>
 </resources>

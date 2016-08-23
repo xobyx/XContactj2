@@ -133,8 +133,8 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
 
         List<String> mk = new ArrayList<>();
         mk.add("All");
-        for (Contact.PhoneClass phoneClass : contact.Phone) {
-            mk.add(phoneClass.getNumber());
+        for (Contact.Phones phones : contact.Phone) {
+            mk.add(phones.getNumber());
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, android.R.id.text1, mk);
         a.setAdapter(arrayAdapter);
@@ -145,8 +145,8 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
                 String x = (String) parent.getAdapter().getItem(position);
                 mSendtoNumber.clear();
                 if (x.equals("All")) {
-                    for (Contact.PhoneClass phoneClass : contact.Phone) {
-                        mSendtoNumber.add(phoneClass.getNumber());
+                    for (Contact.Phones phones : contact.Phone) {
+                        mSendtoNumber.add(phones.getNumber());
                     }
                 } else {
 
@@ -271,14 +271,14 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         String m="";
         //new String[]{"%" + contact.Phone.get(0).Fnumber.substring(4)}
         String[] h=new String[contact.Phone.size()];
-        ArrayList<Contact.PhoneClass> phone = contact.Phone;
+        ArrayList<Contact.Phones> phone = contact.Phone;
         for (int i = 0; i < phone.size(); i++) {
-            Contact.PhoneClass phoneClass = phone.get(i);
+            Contact.Phones phones = phone.get(i);
 
             m += " address LIKE ? ";
             if (i!=phone.size()-1)
                 m += "OR";
-            h[i]="%" + phoneClass.Fnumber.substring(4);
+            h[i]="%" + phones.Fnumber.substring(4);
         }
         Cursor d = getActivity().getContentResolver().query(_uri, new String[]{Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE, Telephony.Sms.TYPE, Telephony.Sms.DATE, Telephony.Sms.STATUS}, m, h, "date ASC");
         if (d != null) {
@@ -316,9 +316,11 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (text.getText().length() != 0) {
+    public void onPause() {
+        super.onPause();
+///FIXME:always crash
+        if(contact==null||contact.Phone.size()==0)return;
+        if (contact.Phone.size()!=0&&text!=null&&text.getText().length() != 0) {
             getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(contact.Phone.get(0).Fnumber, text.getText().toString()).commit();
 
         } else

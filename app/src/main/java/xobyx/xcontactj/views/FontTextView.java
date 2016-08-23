@@ -45,7 +45,7 @@ public class FontTextView extends TextView {
         super(context, attrs, defStyleAttr);
         if (!this.isInEditMode()) {
             if (mTypefaces == null) {
-                mTypefaces = new HashMap<String, Typeface>();
+                mTypefaces = new HashMap<>();
             }
 
             final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.FontTextView);

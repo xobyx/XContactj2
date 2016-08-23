@@ -9,8 +9,6 @@ import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
-import xobyx.xcontactj.activities.MainActivity;
-
 public class MDatabase {
 
     private final SQLiteDatabase me;
@@ -59,7 +57,7 @@ public class MDatabase {
         if (!me.inTransaction()) {
             l = me.insert(DatabaseH.CONTACT_TABLE, null, r);
         } else l = sd;
-        for (Contact.PhoneClass u : a.Phone) {
+        for (Contact.Phones u : a.Phone) {
             ContentValues rs = new ContentValues();
 
             rs.put(DatabaseH.N_CONTACT_ID_COL, sd);
@@ -91,8 +89,8 @@ public class MDatabase {
             x.Net = c.getInt(c.getColumnIndex(DatabaseH.NETWORK_COL));
             Cursor m = me.rawQuery("SELECT* FROM " + DatabaseH.NUMBER_TABLE + "WHERE " + DatabaseH.N_CONTACT_ID_COL + " =? AND " + DatabaseH.N_NET_COL + " =?", new String[]{String.valueOf(id), String.valueOf(net)});
             while (m != null && m.moveToNext()) {
-                Contact.PhoneClass d = new Contact.PhoneClass();
-                d.nNet = MainActivity.Network.values()[net];
+                Contact.Phones d = new Contact.Phones();
+                d.nNet = Network.values()[net];
                 d.Fnumber = m.getString(m.getColumnIndex(DatabaseH.N_FNUMBER_COL));
                 d.ID = m.getString(m.getColumnIndex(DatabaseH.N_N_ID_COL));
                 d.IsPrimyer = m.getInt(m.getColumnIndex(DatabaseH.N_IS_PRIM_COL)) == 1;

@@ -3,6 +3,7 @@ package xobyx.xcontactj.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +20,12 @@ import android.widget.Toast;
 import com.android.internal.telephony.ITelephony;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.gcm.RegistrationIntentService;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
+import xobyx.xcontactj.enums.QKPreference;
 import xobyx.xcontactj.fragments.DialerFragment;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.fragments.NetFragmentPick;
+import xobyx.xcontactj.gcm.RegistrationIntentService;
 import xobyx.xcontactj.until.DialerActionModeHelper;
 import xobyx.xcontactj.until.DialerActionModeHelper.NumberChangeListener;
 import xobyx.xcontactj.until.MDatabase;
@@ -33,7 +35,7 @@ import xobyx.xcontactj.views.HeaderTabs;
 import xobyx.xcontactj.views.xViewPager;
 
 import static xobyx.xcontactj.until.ME.NET_N;
-
+///TODO: @{@link Se}
 
 public class MainActivity extends AppCompatActivity implements DialerFragment.DialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
 
@@ -52,49 +54,43 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
      * pick mode local
      */
     public boolean PML;
-
-
+    public FloatingActionButton mCall;
     SectionsPagerAdapter mSectionsPagerAdapter;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     HeaderTabs mheader;
-    xViewPager mViewPager;
 
     /* Dialer Fragment handler */
-
-    public DialerActionModeHelper.NumberChangeListener NumberChangeListener=new NumberChangeListener() {
+    xViewPager mViewPager;
+    public DialerActionModeHelper.NumberChangeListener NumberChangeListener = new NumberChangeListener() {
         @Override
         public void onNumberChange(String v) {
 
-            mViewPager.setCurrentItem(ME.getNet(MainActivity.this,v));
+            mViewPager.setCurrentItem(ME.getNetForNumber(v));
             onQueryTextChange(v);
         }
     };
-
-
-
-    public FloatingActionButton mCall;
     private DialerActionModeHelper DialerHelper;
     private boolean mdialer_stat;
-    private PhoneStateListener lis=new PhoneStateListener(){
+    private PhoneStateListener lis = new PhoneStateListener() {
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
-            super.onCallStateChanged(state, incomingNumber);
-            int net = ME.getNet(MainActivity.this, incomingNumber);
+            if (state == TelephonyManager.CALL_STATE_IDLE) return;
+
+            int net = ME.getNetForNumber(incomingNumber);
             String s = NET_N[net];
-            Toast.makeText(MainActivity.this,s,Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onServiceStateChanged(ServiceState serviceState) {
             super.onServiceStateChanged(serviceState);
             int i = serviceState.getState();
-            if(i==ServiceState.STATE_EMERGENCY_ONLY||i==ServiceState.STATE_OUT_OF_SERVICE)
-            {
-                WN_ID=3;
-                WN_NAME="out of service";
+            if (i == ServiceState.STATE_EMERGENCY_ONLY || i == ServiceState.STATE_OUT_OF_SERVICE) {
+                WN_ID = 3;
+                WN_NAME = "out of service";
             }
         }
     };
@@ -108,7 +104,9 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
         Intent mInt = getIntent();
 
-        setContentView(R.layout.activity_main);
+        // ME.SetInternetSettingFor(0,this);
+
+        setContentView(R.layout.activity_main_1);
         final ITelephony telephonyService = ME.getTelephonyService(this);
 
         ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
@@ -119,9 +117,8 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         WN_ID = ME.getCurrentNetwork(this);
 
         mCall = (FloatingActionButton) findViewById(R.id.main_call);
-        if(WN_ID!=3)
-        {
-            WN_NAME= NET_N[WN_ID];
+        if (WN_ID != 3) {
+            WN_NAME = NET_N[WN_ID];
             mCall.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -129,22 +126,24 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
                     StartDialer("");
                 }
             });
-        }
-        else
-        {
+        } else {
             mCall.setVisibility(View.INVISIBLE);
         }
 
-        if(mInt.getAction().equals(Intent.ACTION_DIAL))
-        {
+        if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
             StartDialer(mInt.getDataString());
 
+        } else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
+            PM = true;
         }
-        else if (mInt.getAction().equals(Intent.ACTION_PICK)){ PM = true;}
-        if (mInt.hasExtra("local")) {PML = true;}
+        if (mInt.hasExtra("local")) {
+            PML = true;
+        }
 
 
         DB = new MDatabase(getBaseContext());
+
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
 
         // Set up the action bar.
 
@@ -154,8 +153,9 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         mheader = (HeaderTabs) findViewById(R.id.mhrader);
 
 
-
         mViewPager = (xViewPager) findViewById(R.id.pager);
+
+        //mViewPager.addOnPageChangeListener(mheader);
         mViewPager.setMoveEnabled(!PML);
         if (PML) {
             getSupportActionBar().setTitle("Pick Contact:");
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             if (!mdialer_stat) {
 
 
-                DialerHelper=new DialerActionModeHelper(this);
+                DialerHelper = new DialerActionModeHelper(this);
                 DialerHelper.StartDialerActionMode(dataString);
 
             }
@@ -225,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     public void finish() {
         super.finish();
     }
-
 
 
     @Override
@@ -310,9 +309,6 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     }
 
 
-
-
-
     @Override
     public void onVisibilityChange(boolean IsOpen) {
         mdialer_stat = IsOpen;
@@ -336,24 +332,6 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     @Override
     public boolean getDialerState() {
         return mdialer_stat;
-    }
-
-    public enum Network {
-        Zain(0),
-        Sudani(1),
-        Mtn(2);
-       final private int value;
-
-        Network(int a) {
-            value = a;
-
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-
     }
 
     /**

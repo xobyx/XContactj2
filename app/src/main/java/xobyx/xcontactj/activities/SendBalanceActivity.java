@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.internal.widget.ThemeUtils;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -20,7 +21,6 @@ import android.text.style.CharacterStyle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -32,15 +32,13 @@ import java.util.regex.Pattern;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.until.ME;
 
-import static xobyx.xcontactj.until.ME.Mnet;
-
 public class SendBalanceActivity extends Activity implements View.OnClickListener {
 
     String LookUP;
     CharacterStyle r = new CharacterStyle() {
         @Override
         public void updateDrawState(TextPaint tp) {
-            tp.setColor(ThemeUtils.getThemeAttrColor(SendBalanceActivity.this,R.attr.colorPrimary));
+            tp.setColor(ThemeUtils.getThemeAttrColor(SendBalanceActivity.this, R.attr.colorPrimary));
         }
     };
     private int WORK_NETWORK = -1;
@@ -49,7 +47,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     private String _number = "";
     private TextView _tLabelName;
 
-    private CheckBox _tCheck;
+    private AppCompatCheckBox _tCheck;
     private String _name = "";
     // TextView _test;
     TextWatcher nChange = new TextWatcher() {
@@ -71,16 +69,13 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
 
             boolean t = false;
             if (!s.toString().isEmpty() && s.toString().length() > 9) {
-                for (String s1 : net()) {
-                    if (t = s.toString().startsWith(s1))
-                        break;
-                }
-                if (!t) {
+
+                if (ME.getNetForNumber(s.toString()) != MainActivity.WN_ID) {
 
                     send_to.setError(getString(R.string.number_not_match_net));
                 } else {
                     Cursor ser = getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, s.toString()), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
-                    if(ser!=null) {
+                    if (ser != null) {
                         if (!ser.moveToFirst()) {
                             setNameTitle(getString(R.string.not_in_contact));
                         } else {
@@ -114,7 +109,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         amount.setHint("Amount");
         send_to = (TextInputLayout) findViewById(R.id.sendb_sendtolayout);
         send_to.setHint("Send to");
-         pin = (TextInputLayout) findViewById(R.id.sendb_pinlayout);
+        pin = (TextInputLayout) findViewById(R.id.sendb_pinlayout);
         pin.setHint("Pin");
         WORK_NETWORK = MainActivity.WN_ID;
 
@@ -123,8 +118,8 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
             finish();
 
         } else {
-           // if (getActionBar() != null)
-           //     getActionBar().setDisplayOptions(ActionBar.DISPLAY_USE_LOGO | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+            // if (getActionBar() != null)
+            //     getActionBar().setDisplayOptions(ActionBar.DISPLAY_USE_LOGO | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
             SetupLayout();
 
 
@@ -166,12 +161,6 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         }
     }
 
-    private String[] net() {
-        if (mNet == null) {
-            mNet = getResources().getStringArray(Mnet[WORK_NETWORK]);
-        }
-        return mNet;
-    }
 
     @Override
     public void finish() {
@@ -189,7 +178,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     private void SetupLayout() {
         _tLabelName = (TextView) findViewById(R.id.textView1);
 
-        _tCheck = (CheckBox) findViewById(R.id.trb_ser_use_chaek);
+        _tCheck = (AppCompatCheckBox) findViewById(R.id.trb_ser_use_chaek);
 
 
     }
@@ -213,11 +202,11 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                         LookUP = cur.getString(cur.getColumnIndex("lookup"));
                         _name = cur.getString(cur.getColumnIndex("display_name"));
                         String dx = cur.getString(cur.getColumnIndex("Number"));
-                        for (String s : net())
-                            if (dx.startsWith(s)) {
-                                n[i++] = dx;
-                                break;
-                            }
+
+                        if (ME.getNetForNumber(dx) == WORK_NETWORK) {
+                            n[i++] = dx;
+
+                        }
 
                     }
                     cur.close();
@@ -289,7 +278,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                 startActivityForResult(y, 0);
                 break;
             case R.id.trb_ok:
-                if(CheckInput()) {
+                if (CheckInput()) {
                     new AlertDialog.Builder(this).setMessage(String.format("Are you sure want transfer %s SB to %s with Number %s ", amount.getEditText().getText(), _name, String.valueOf(send_to.getEditText().getText()))).setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -315,18 +304,17 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     private boolean CheckInput() {
         final String s = amount.getEditText().getText().toString();
         if (s.isEmpty()) {
-            amount.setError( "Invalid Balance value");
+            amount.setError("Invalid Balance value");
             return false;
         }
-        if(ME.getNet(this,send_to.getEditText().getText().toString())==MainActivity.WN_ID)
-        {
+        if (ME.getNetForNumber(send_to.getEditText().getText().toString()) == MainActivity.WN_ID) {
             send_to.setError("different network..");
             return false;
         }
 
         int g = Integer.parseInt(s);
         if (g <= 0 || g > 500) {
-            amount.setError(  "Balance must be greater than zero and less than five hundred");
+            amount.setError("Balance must be greater than zero and less than five hundred");
             return false;
         }
         final String s1 = send_to.getEditText().getText().toString();

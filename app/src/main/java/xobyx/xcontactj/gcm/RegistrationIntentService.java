@@ -26,14 +26,27 @@ import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
-import java.io.IOException;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import xobyx.xcontactj.BuildConfig;
 import xobyx.xcontactj.R;
 
 public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global","all"};
+    private boolean m;
 
     public RegistrationIntentService() {
         super(TAG);
@@ -43,6 +56,7 @@ public class RegistrationIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+
         try {
             // [START register_for_gcm]
             // Initially this call goes out to the network to retrieve the token, subsequent calls
@@ -51,13 +65,18 @@ public class RegistrationIntentService extends IntentService {
             // See https://developers.google.com/cloud-messaging/android/start for details on this file.
             // [START get_token]
             InstanceID instanceID = InstanceID.getInstance(this);
-            String token = instanceID.getToken(getString(R.string.r),
+            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
 
             // TODO: Implement this method to send any registration to your app's servers.
-            sendRegistrationToServer(token);
+            if(BuildConfig.DEBUG)
+            m=sendRegistrationToServer(token);
+
+            getSharedPreferences("RegistrationToServer",0).edit().putBoolean("send",m).putString("token",token).commit();
+
+
 
             // Subscribe to topic channels
             subscribeTopics(token);
@@ -86,8 +105,31 @@ public class RegistrationIntentService extends IntentService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
+    private boolean sendRegistrationToServer(String token) {
+        StringBuilder builder = new StringBuilder();
+        HttpClient client = new DefaultHttpClient();
+        HttpPost mpost=new HttpPost("http://x-xobyx.rhcloud.com/addgcm.php");
+        List<NameValuePair> m=new ArrayList<>();
+        m.add(new BasicNameValuePair("token", token));
+        try {
+            mpost.setEntity(new UrlEncodedFormEntity(m));
+            HttpResponse execute = client.execute(mpost);
+
+            if(execute.getStatusLine().getStatusCode()== 200)
+            {
+             return true;
+            }
+
+
+        }
+        catch (ClientProtocolException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+           // e.printStackTrace();
+        }
+        return false;
     }
 
     /**

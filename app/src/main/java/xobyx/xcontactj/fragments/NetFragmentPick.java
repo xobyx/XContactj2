@@ -116,9 +116,9 @@ public class NetFragmentPick extends NetFragment {
        // mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
 
 
-        if(Me!=null)
+        if(mlist !=null)
         {
-            Me.setAdapter(mAdapter);
+            mlist.setAdapter(mAdapter);
         }
 
 

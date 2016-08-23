@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import xobyx.xcontactj.fragments.CallHistoryFragment;
+import xobyx.xcontactj.fragments.MessageListFragment;
 import xobyx.xcontactj.fragments.NumSpecFragment;
-import xobyx.xcontactj.fragments.SmsFragment;
 
 /**
  * Created by xobyx on 8/5/2015.
@@ -19,12 +19,14 @@ public class ContactSpecFragmentAdapter extends FragmentStatePagerAdapter {
     private final int mNet;
     private final boolean all;
     private final Parcelable mlast;
+    private final long MessageThread;
 
-    public ContactSpecFragmentAdapter(FragmentManager fm, int Pos, int Net, Parcelable lmessage, boolean all) {
+    public ContactSpecFragmentAdapter(FragmentManager fm, int Pos, int Net, Parcelable lmessage, boolean all, long messageThread) {
         super(fm);
         mPos = Pos;
         mlast=lmessage;
         mNet = Net;
+        MessageThread=messageThread;
         this.all = all;
     }
 
@@ -46,7 +48,9 @@ public class ContactSpecFragmentAdapter extends FragmentStatePagerAdapter {
             case 3:
                 break;
             case 2:
-                b = SmsFragment.newInstance(mPos, mNet, mlast,all);
+              //  b = SmsFragment.newInstance(mPos, mNet, mlast,all);
+
+                b= MessageListFragment.getInstance(MessageThread,0,"",true);
 
 
                 break;

@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.until.Contact.PhoneClass;
+import xobyx.xcontactj.until.Contact.Phones;
 
 /**
  * Created by xobyx on 12/6/2014.
@@ -30,7 +30,7 @@ public class XPickDialog {
     LIST_TYPE mType;
     private List<String> list_s;
     private Context mContext;
-    private List<PhoneClass> list;
+    private List<Phones> list;
     private OnFinish finish;
     private DialogInterface.OnCancelListener onCancel;
     private AlertDialog mDialog;
@@ -43,7 +43,7 @@ public class XPickDialog {
         return j;
     }
 
-    public XPickDialog setListPhoneList(List<PhoneClass> j) {
+    public XPickDialog setListPhoneList(List<Phones> j) {
 
         this.list = j;
         this.mType = LIST_TYPE.PHONE_CLASS;
@@ -72,7 +72,7 @@ public class XPickDialog {
         return this;
     }
 
-    public XPickDialog GetDialog(List<PhoneClass> listx, final OnMultiFinish finish, DialogInterface.OnCancelListener f) {
+    public XPickDialog GetDialog(List<Phones> listx, final OnMultiFinish finish, DialogInterface.OnCancelListener f) {
 
         list = listx;
         onMultiFinish = finish;
@@ -83,7 +83,7 @@ public class XPickDialog {
         return this;
     }
 
-    public XPickDialog GetDialog(List<PhoneClass> mlist, final OnFinish finishs, DialogInterface.OnCancelListener f) {
+    public XPickDialog GetDialog(List<Phones> mlist, final OnFinish finishs, DialogInterface.OnCancelListener f) {
         mType=LIST_TYPE.PHONE_CLASS;
 
 
@@ -218,7 +218,7 @@ public class XPickDialog {
 
             View view = super.getView(position, convertView, parent);
             if (mType == LIST_TYPE.PHONE_NUMBER)
-                ((Checkable) view.findViewById(android.R.id.text1)).setChecked(((PhoneClass) lis.get(position)).IsPrimyer);
+                ((Checkable) view.findViewById(android.R.id.text1)).setChecked(((Phones) lis.get(position)).IsPrimyer);
 
             return view;
         }
@@ -230,7 +230,7 @@ public class XPickDialog {
 
         @Override
         public String getItem(int position) {
-            if (mType == LIST_TYPE.PHONE_CLASS) return ((PhoneClass) lis.get(position)).Fnumber;
+            if (mType == LIST_TYPE.PHONE_CLASS) return ((Phones) lis.get(position)).Fnumber;
             return (String) lis.get(position);
         }
 

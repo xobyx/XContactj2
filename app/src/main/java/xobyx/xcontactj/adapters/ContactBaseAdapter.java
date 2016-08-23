@@ -126,7 +126,7 @@ public class ContactBaseAdapter extends BaseAdapter implements Filterable {
         ib.DrawImageString(t.Name, hold.Img, mClip, t.Net);
         if (t.Phone.size() != 0)
             //   holder.Number.setText(t.Phone.get(0).Number);
-            mTexth.setPrefixText(hold.Number, t.Phone.get(t.Nnamber).getNumber(), x);
+            mTexth.setPrefixText(hold.Number, t.Phone.get(t.mNumberCount).getNumber(), x);
         if (t.PhotoThumbUri == null) {
             //hold.Img.setImageDrawable(null);
             hold.Img.setImageDrawable(null);
@@ -165,14 +165,14 @@ public class ContactBaseAdapter extends BaseAdapter implements Filterable {
                             y.add(contact);
 
                         } else {
-                            List<Contact.PhoneClass> phone = contact.Phone;
+                            List<Contact.Phones> phone = contact.Phone;
                             for (int i = 0; i < phone.size(); i++) {
 
-                                final Contact.PhoneClass p = phone.get(i);
-                                contact.Nnamber = 0;
+                                final Contact.Phones p = phone.get(i);
+                                contact.mNumberCount = 0;
                                 if (p.getCleanNumber().contains(x)) {
                                     y.add(contact);
-                                    contact.Nnamber = i;
+                                    contact.mNumberCount = i;
                                     break;
                                 }
 

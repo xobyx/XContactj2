@@ -3,12 +3,12 @@
     package="xobyx.xcontactj"
     android:installLocation="auto" >
 
-    <uses-permission android:name="android.permission.READ_PROFILE." />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
@@ -22,16 +22,21 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <permission android:name="xobyx.xcontactj.permission.C2D_MESSAGE"
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <permission
+        android:name="xobyx.xcontactj.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="xobyx.xcontactj.permission.C2D_MESSAGE" />
 
     <application
         android:name=".MyApp"
         android:allowBackup="true"
         android:allowClearUserData="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/Theme.NoAction" >
         <activity
             android:name=".activities.MainActivity"
@@ -130,46 +135,250 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".activities.AllContactGoogle"
-            android:label="@string/title_activity_main_activity2"
-            android:theme="@android:style/Theme.Holo.Light" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-    <receiver
-        android:name="com.google.android.gms.gcm.GcmReceiver"
-        android:exported="true"
-        android:permission="com.google.android.c2dm.permission.SEND" >
-        <intent-filter>
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            <category android:name="xobyx.xcontactj" />
-        </intent-filter>
-    </receiver>
-    <service
-        android:name=".gcm.MyGcmListenerService"
-        android:exported="false" >
-        <intent-filter>
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-        </intent-filter>
-    </service>
-    <service
-        android:name=".gcm.MyInstanceIDListenerService"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="com.google.android.gms.iid.InstanceID" />
-        </intent-filter>
-    </service>
+                <category android:name="xobyx.xcontactj" />
+            </intent-filter>
+        </receiver>
 
-<service android:name=".gcm.RegistrationIntentService" android:exported="false"/>
+        <service
+            android:name=".gcm.MyGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.MyInstanceIDListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.popup.QKComposeActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/AppThemeLightDialog"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.MainActivity"
+            android:icon="@mipmap/ic_launcher_teal"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:logo="@color/transparent"
+            android:windowSoftInputMode="stateUnchanged|adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SENDTO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+                <data android:scheme="mms" />
+                <data android:scheme="mmsto" />
+                <data android:scheme="sms_body" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:theme="@style/AppThemeLight" />
+
+        <!-- Popup activity -->
+        <activity
+            android:name=".ui.popup.QKReplyActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/AppThemeLightDialog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.mms.SlideshowActivity" />
+
+        <receiver
+            android:name=".receiver.WearableIntentReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.receiver.WearableIntentReceiver.REPLY" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Broadcast receiver for SMS -->
+        <receiver
+            android:name=".receiver.SmsReceiver"
+            android:enabled="@bool/hasKitKat"
+            android:permission="android.permission.BROADCAST_SMS" >
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_DELIVER" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receiver.IconColorReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_CHANGED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.action.PENDING_PACKAGE_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Legacy broadcast receiver for SMS -->
+        <receiver
+            android:name=".receiver.SmsReceiverLegacy"
+            android:enabled="@bool/preKitKat" >
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Broadcast receiver for MMS -->
+        <receiver
+            android:name=".receiver.PushReceiver"
+            android:permission="android.permission.BROADCAST_WAP_PUSH" >
+            <intent-filter>
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+                <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
+
+                <data android:mimeType="application/vnd.wap.mms-message" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".mmssms.SentReceiver" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.SMS_SENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.DeliveredReceiver" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.SMS_DELIVERED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.MessageFailedReceiver" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.NOTIFY_SMS_FAILURE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.MarkReadReceiver" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.MARK_READ" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.MarkSeenReceiver" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.MARK_SEEN" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ui.widget.WidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.intent.action.ACTION_NOTIFY_DATASET_CHANGED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+        <receiver android:name=".receiver.NightModeAutoReceiver" />
+
+        <service
+            android:name=".receiver.UnreadBadgeService"
+            android:exported="false" />
+        <service android:name=".service.ShouldIAnswerService" >
+            <intent-filter>
+                <action android:name="xobyx.xcontactj.ShouldIAnswerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Service that delivers messages from the phone "quick response" -->
+        <service
+            android:name=".service.HeadlessSmsSendService"
+            android:exported="true"
+            android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE" >
+            <intent-filter>
+                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="sms" />
+                <data android:scheme="smsto" />
+                <data android:scheme="mms" />
+                <data android:scheme="mmsto" />
+            </intent-filter>
+        </service>
+        <service android:name="com.android.mms.transaction.TransactionService" />
+        <service android:name=".service.NotificationService" />
+        <service android:name=".service.MarkReadService" />
+        <service android:name=".service.MarkSeenService" />
+        <service android:name=".service.DeleteUnreadMessageService" />
+        <service android:name=".service.CopyUnreadMessageTextService" />
+        <service
+            android:name=".ui.widget.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0" />
+
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="632dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="598dp" />
     </application>
+
 </manifest>

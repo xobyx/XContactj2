@@ -26,37 +26,55 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+
 
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" android:orientation="horizontal">
-        <xobyx.xcontactj.views.FontTextView
-            app:font="bein.ttf"
-            android:text="أبي ماجد"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        </LinearLayout>
+
         </android.support.v7.widget.Toolbar>
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-
+        app:backgroundTint="@color/button_material_light"
+        android:background="?attr/colorPrimary"
         android:layout_height="50dp">
 
     </android.support.design.widget.TabLayout>
-
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/all_view_pagger"/>
 
 
+    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+        app:borderWidth="0dp"
+
+        app:rippleColor= "#e0e0e0"
+
+
+        android:src="@android:drawable/ic_menu_call"/>
+
+
+    <FrameLayout
+        android:id="@+id/di_ground"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 
 
-
+</FrameLayout>
 </LinearLayout>

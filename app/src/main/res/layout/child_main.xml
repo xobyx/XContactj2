@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<xobyx.xcontactj.views.ZA xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +11,7 @@
 <!--just a background view for the header, so that it won't interfere with the headers changes and row-clicking-->
 
     <FrameLayout
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent">
 
         <include layout="@layout/pinned_header_listview_side_header"/>
@@ -38,20 +38,22 @@
         android:id="@+id/ptextname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
 
-        app:font="bein.ttf"
-        android:gravity="center_vertical"
+
+        android:textColor="@color/background"
+
+        app:font="RP.ttf"
+        android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
         android:paddingStart="10dp"
         android:paddingRight="5dp"
         android:paddingEnd="5dp"
         android:singleLine="true"
-        android:text="friend name"
-        android:textSize="15sp"
+        android:text="أبي ماجد"
+        android:textSize="18sp"
         tools:ignore="HardcodedText,NewApi"/>
     <xobyx.xcontactj.views.FontTextView
-        app:font="as.ttf"
+        app:font="RP.ttf"
         android:id="@+id/numberc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,4 +69,4 @@
 </LinearLayout>
 
 
-</LinearLayout>
+</xobyx.xcontactj.views.ZA>

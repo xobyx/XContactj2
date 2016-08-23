@@ -6,9 +6,10 @@
 android:id="@+id/to_anm"
     android:orientation="horizontal"
     android:weightSum="1"
+android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp"
     android:layout_margin="5dp"
-    android:background="@android:color/background_light"
-    android:padding="0dp">
+    android:background="#a7f5f5f5">
 
 
     <LinearLayout
@@ -30,8 +31,10 @@ android:id="@+id/to_anm"
 
             android:weightSum="1.5">
 
-            <TextView
+            <xobyx.xcontactj.views.FontTextView
                 android:id="@+id/d_type"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:font="RP.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -39,11 +42,14 @@ android:id="@+id/to_anm"
                 android:layout_weight="0.3"
                 android:text="Lable"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?attr/colorPrimaryDark" />
+                android:textColor="@color/background" />
 
-            <TextView
+            <xobyx.xcontactj.views.FontTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:font="HP.ttf"
+                android:textColor="@color/background"
                 android:id="@+id/d_number"
                 android:layout_width="0dp"
+                android:textSize="22sp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
@@ -51,9 +57,7 @@ android:id="@+id/to_anm"
                 android:gravity="center_horizontal"
                 android:singleLine="true"
                 android:text="+24991301 kkkkk 9kkkk91999221"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                android:textStyle="normal"
-                android:typeface="normal" />
+               />
 
             <ImageView
                 android:id="@+id/d_netimge"
@@ -69,7 +73,7 @@ android:id="@+id/to_anm"
         <FrameLayout
             android:id="@+id/num_child_cont"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp">
 
             <LinearLayout
                 android:id="@+id/num_front"
@@ -88,6 +92,7 @@ android:id="@+id/to_anm"
                     android:id="@+id/d_call"
                     android:layout_width="98dp"
                     android:layout_height="32dp"
+                    android:tint="?attr/colorAccent"
                     android:layout_weight="1"
                     android:background="@drawable/selector_base"
                     android:contentDescription="@string/make_call"
@@ -97,6 +102,7 @@ android:id="@+id/to_anm"
                 <ImageButton
                     android:id="@+id/d_sms"
                     android:layout_width="98dp"
+                    android:tint="?attr/colorAccent"
                     android:layout_height="32dp"
                     android:layout_weight="1"
                     android:background="@drawable/selector_base"
@@ -126,9 +132,9 @@ android:id="@+id/to_anm"
         <View
             android:id="@+id/call_log_network"
             android:layout_width="fill_parent"
-            android:layout_height="2dp"
+            android:layout_height="0.8dp"
 
-            android:background="?attr/colorAccent" />
+            android:background="?attr/colorPrimary" />
     </LinearLayout>
 
     <ImageButton

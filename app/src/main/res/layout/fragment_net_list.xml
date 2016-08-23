@@ -17,4 +17,10 @@
         android:text="No Contacts For this Network.."
         android:textSize="25dp"
         android:visibility="gone" />
+
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:id="@+id/mloading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 </FrameLayout>

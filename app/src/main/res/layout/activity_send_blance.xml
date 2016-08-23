@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
+
     android:orientation="vertical"
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
@@ -32,16 +33,13 @@
             android:layout_height="wrap_content"
 
             android:inputType="phone" />
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/trb_pik_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_base"
-            android:shadowColor="#000000ff"
-            android:shadowDy="1"
-            android:shadowRadius="1"
+
             android:text="@string/xobyx.contacts"
-            android:textColor="#3E3E3E" />
+             />
 
 
     </android.support.design.widget.TextInputLayout>
@@ -75,19 +73,20 @@
             android:inputType="numberPassword"/>
 
 
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/trb_ser_use_chaek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Use cutom PIN(sudani default 0000)" />
+            android:text="@string/use_custom_pin" />
     </android.support.design.widget.TextInputLayout>
 
 
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/trb_ok"
-        style="@style/ButtonStyle"
+
+
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"

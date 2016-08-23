@@ -44,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
 
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin" >
                 <LinearLayout
@@ -55,9 +56,9 @@ app:tabIndicatorHeight="6dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                      />
-<TextView
+<xobyx.xcontactj.ui.view.QKTextView
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:text="dsdssd" android:id="@android:id/title" />
+    android:layout_height="match_parent" app:type="toolbar" android:id="@+id/toolbar_title" />
                 </LinearLayout>
                 </android.support.v7.widget.Toolbar>
 
@@ -88,9 +89,10 @@ app:tabIndicatorHeight="6dp"
 
         app:layout_anchorGravity="bottom|center_horizontal|end"
         app:fabSize="mini"
+        app:borderWidth="0dp"
 
 
-        android:src="@drawable/ic_discuss"
+        android:src="@drawable/abc_ic_clear_mtrl_alpha"
 
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"/>

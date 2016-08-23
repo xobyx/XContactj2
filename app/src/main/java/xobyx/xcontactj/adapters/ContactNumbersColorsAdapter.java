@@ -25,7 +25,7 @@ public class ContactNumbersColorsAdapter extends ContactNumberAdapter {
         final View m = super.getNumberView(i, convertView, viewGroup);
         final ImageView view = (ImageView) m.findViewById(R.id.num_child_image);
         view.setVisibility(View.VISIBLE);
-        view.setImageResource(ME.NetDrawables[((Contact.PhoneClass) getItem(i)).nNet.getValue()][0]);
+        view.setImageResource(ME.NetDrawables[((Contact.Phones) getItem(i)).nNet.getValue()][0]);
         // ((ViewGroup) m).addView(mInflater.inflate(R.layout.child_contact_detils,null),new LinearLayout.LayoutParams(-2,-2));
         return m;
     }

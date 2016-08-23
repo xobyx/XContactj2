@@ -208,7 +208,7 @@ public class fragment_all_call_log extends Fragment {
                     logObj.setNumber("No Number");
                 } else {
                     logObj.setNumber(var1.getString(number));
-                    final int net = ME.getNet(getActivity(), logObj.getNumber());
+                    final int net = ME.getNetForNumber(logObj.getNumber());
                     if(net!=3) {
                         logObj.setNetworkColor(ME.nColors[net]);
                         logObj.setNetDrawable(ME.NetDrawables[net][0]);

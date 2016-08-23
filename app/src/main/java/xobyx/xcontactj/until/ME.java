@@ -9,10 +9,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.android.internal.telephony.ITelephony;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,34 +32,46 @@ import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 
 public class ME {
 
-    public final static ArrayList<Contact> SudaniList = new ArrayList<Contact>();
-    public final static ArrayList<Contact> ZainiList = new ArrayList<Contact>();
-    public final static ArrayList<Contact> MtnList = new ArrayList<Contact>();
+    public final static ArrayList<Contact> SudaniList = new ArrayList<>();
+    public final static ArrayList<Contact> ZainiList = new ArrayList<>();
+    public final static ArrayList<Contact> MtnList = new ArrayList<>();
     public final static ArrayList[] $ =
             {
                     ZainiList, SudaniList, MtnList
 
 
             };
-    static public final int nColors[] = {
-    0xFFC10278,
-    0xff02a7dd,
-    0xFFFFCA08,
-    0xFFA093CA,
-    };
 
-    static public int getNet(Context mContext, String h) {
+
+    static public final int nColors[] = {
+            0xFFC10278,
+            0xff02a7dd,
+            0xFFFFCA08,
+            0xFF512DA8,
+    };
+    static public final int nColors2[] = {
+            0xFF5FB5BA,
+            0xff70b050,
+            0xff2878a8,
+            0xFFFF4081,
+    };
+    private static final String SUDANI_MNC = "63407";
+    private static final String ZAIN_MNC = "63401";
+    private static final String MTN_MNC = "63407";
+
+    static com.google.i18n.phonenumbers.PhoneNumberUtil a= PhoneNumberUtil.getInstance();
+
+    static public int getNetForNumber(String h) {
+
 
         int net = 3;
         if (h.length() > 2) {
-            int[] mnet = ME.Mnet;
-            for (int i1 = 0; i1 < mnet.length; i1++) {
-                int i = mnet[i1];
-                for (String s1 : mContext.getResources().getStringArray(i)) {
+
+            for (int i = 0; i < Mnet.length; i++) {
+
+                for (String s1 : Mnet[i]) {
                     if (h.startsWith(s1)) {
-                        net = i1;
-                        i1 = mnet.length;//break
-                        break;
+                       return i;
                     }
                 }
             }
@@ -65,7 +79,25 @@ public class ME {
         return net;
     }
 
-    public final static int Mnet[] = {R.array.zain_net, R.array.Sudani_net, R.array.mtn_net};
+    static final String[] Sudani_net = {
+            "01",
+            "+2491"
+    };
+    static final String[] zain_net = {
+            "091",
+            "+24991",
+            "+24990",
+            "090",
+            "096",
+            "+24996"
+    };
+    static final String[] mtn_net = {
+            "092",
+            "+24992",
+            "099",
+            "+24999"
+    };
+    public final static String[][] Mnet = {zain_net, Sudani_net, mtn_net};
     /**
      * A map of sample (base) items, by ID.
      */
@@ -83,9 +115,13 @@ public class ME {
                             R.drawable.imtn1,
                             R.drawable.imtnd
                     }
+                    , {
+                    R.drawable.ic_action_unknown,
+                    R.drawable.ic_action_unknown
+            }
             };
     public static final Uri _uri;
-    final static String[] ZAIN_NUM = {"+24991%", "+24990%"};
+    final static String[] ZAIN_NUM = {"+24991%", "+24990%","+24996%"};
     final static String[] SUDANI_NUM = {"+2491%"};
     final static String[] MTN_NUM = {"+24992%", "+24996%", "+24999%"};
     public final static String getDatabaseArg[][] = {
@@ -98,7 +134,7 @@ public class ME {
 
     };
     final static String[] UAE_NUM = {"+971%"};
-    final static String zain_s = "data4 LIKE ? OR data4 LIKE ? ";
+    final static String zain_s = "data4 LIKE ? OR data4 LIKE ? OR data4 LIKE ? ";
     final static String sudani_s = "data4 LIKE ? ";
     final static String mtn_s = "data4 LIKE ? OR data4 LIKE ? OR data4 LIKE ? ";
     public final static String DatabaseSelector[] = {
@@ -109,7 +145,7 @@ public class ME {
 
             mtn_s
     };
-    public  final static String NET_N[]={"Zain","Sudani","MTN","Unknown"};
+    public final static String NET_N[] = {"Zain", "Sudani", "MTN", "Unknown"};
     final static String sortBy = ContactsContract.CommonDataKinds.Contactables.LOOKUP_KEY;
     private static final String TAG = ME.class.getSimpleName();
     private static final String CLASS_TAG = "ME_Help_class";
@@ -148,7 +184,8 @@ public class ME {
     }
 
 
-    public static String[] NetNames={"Zain","Sudani","Mtn","Unknown"};
+    public static String[] NetNames = {"Zain", "Sudani", "Mtn", "Unknown"};
+
     public static void setSuperPrimary(Context var0, long var1) {
         if (var1 == -1L) {
             Log.e(TAG, "Invalid arguments for setSuperPrimary request");
@@ -161,55 +198,79 @@ public class ME {
     }
 
 
+
+
+    public static void  SetInternetSettingFor(int i,Context mh)
+    {
+        Uri m = Uri.parse("content://telephony/carriers");
+
+        //mh.grantUriPermission(mh.getPackageName(),m, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+
+
+        ContentValues b =new ContentValues();
+        b.put(Telephony.Carriers.NAME,"XContactj_"+NET_N[i]);
+        b.put(Telephony.Carriers.APN,i==1?"sudaninet":i==0?"internet":"internet1");
+        b.put(Telephony.Carriers.MCC,"634");
+        b.put(Telephony.Carriers.MNC,"07");
+        b.put(Telephony.Carriers.NUMERIC,"63407");
+        Uri insert = mh.getContentResolver().insert(m, b);
+
+
+    }
     /**
      * return Current Network {@code ArrayList} for the specified object.
      *
      * @param a Context
-     *            the object to search for.
-     * @return {@code 0} if {@link xobyx.xcontactj.activities.MainActivity.Network} is zain
-     *         {@code 1} if {@code Network} is sudani ,  {@code 2} if {@code Network} is Mtn
-     *          {@code 3} if Not found..
+     *          the object to search for.
+     * @return {@code 0} if {@link Network} is zain
+     * {@code 1} if {@code Network} is sudani ,  {@code 2} if {@code Network} is Mtn
+     * {@code 3} if Not found..
      */
     public static int getCurrentNetwork(Context a) {
 
 
         TelephonyManager d = (TelephonyManager) a.getSystemService(Context.TELEPHONY_SERVICE);
 
-        String net = d.getNetworkOperatorName();
-        String networkOperator = d.getNetworkOperator();
 
-        if(net!=null&&!net.isEmpty()) {
-            if (net.matches("[Ss]udani") || net.startsWith("[Oo]ne")) {
+        String net = d.getNetworkOperator();
+
+
+        if (net != null && !net.isEmpty()) {
+            if (net.equals(SUDANI_MNC)) {
                 return 1;
 
-            } else if (net.matches("[Zz]ain SDN") || net.startsWith("[Mm]obitel"))
+            } else if (net.equals(ZAIN_MNC))
 
             {
                 return 0;
-            } else if (net.matches("[Mm]tn") || net.startsWith("[Aa]raeba"))
+            } else if (net.equals(MTN_MNC))
 
             {
                 return 2;
             }
         }
-      //  Toast.makeText(a, "No Network founded..", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(a, "No Network founded..", Toast.LENGTH_SHORT).show();
         return 3;
 
     }
 
-    public static void setTheme(Context m,int net)
-    {
+    public static void setTheme(Context m, int net) {
         m.setTheme(net_styles[net]);
     }
-    static final int[] net_styles={R.style.zain,R.style.sudani,R.style.mtn,R.style.Base_Theme_AppCompat};
+
+    static final int[] net_styles = {R.style.zain, R.style.sudani, R.style.mtn, R.style.Base_Theme_AppCompat};
+
 
 
     public static void DrawNetworkLogo(Context m, Canvas canvas, int net) {
         final Drawable drawable = m.getResources().getDrawable(ME.NetDrawables[net][0]);
-       // Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
-       // Canvas canvas2 = new Canvas(bitmap);
-         drawable.setBounds(canvas.getWidth()-20, canvas.getHeight()-20, canvas.getWidth(), canvas.getHeight());
-       // drawable.draw(canvas2);
+        // Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
+        // Canvas canvas2 = new Canvas(bitmap);
+        drawable.setBounds(canvas.getWidth() - 20, canvas.getHeight() - 20, canvas.getWidth(), canvas.getHeight());
+
+
+        // drawable.draw(canvas2);
 
         drawable.draw(canvas);
     }
@@ -226,11 +287,11 @@ public class ME {
             ITelephony telephonyService = (ITelephony) m.invoke(telephonyManager);*/
 
             //ITelephony phone = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
-           // telephonyService.
+            // telephonyService.
 
             TelephonyManager m = (TelephonyManager) con.getSystemService(con.TELEPHONY_SERVICE);
 
-            Class c =m.getClass();
+            Class c = m.getClass();
             //M1:
             //Method getITelephony = c.getDeclaredMethod("getITelephony", m.getClass());
 
@@ -266,7 +327,7 @@ public class ME {
     }
 
     public static ITelephony getTelephonyService(Context b) {
-        if(telephonyService==null)
+        if (telephonyService == null)
             createITelephonyImp(b);
 
         return telephonyService;
@@ -281,17 +342,17 @@ public class ME {
 
     }
 
-    public static class Ad extends AsyncTask<Integer, Integer, List<Contact.PhoneClass>> {
+    public static class Ad extends AsyncTask<Integer, Integer, List<Contact.Phones>> {
         public int mNet;
         public int mPos;
         private AfterFinish AfterFinish;
 
         @Override
-        protected List<Contact.PhoneClass> doInBackground(Integer... params) {
+        protected List<Contact.Phones> doInBackground(Integer... params) {
             mNet = params[0];
             mPos = params[1];
             final String key = ((Contact) $[mNet].get(mPos)).Lookup;
-            final List<Contact.PhoneClass> temp = new ArrayList<Contact.PhoneClass>();
+            final List<Contact.Phones> temp = new ArrayList<Contact.Phones>();
             if (mNet != 1)
 
                 for (Contact var14 : SudaniList)
@@ -328,8 +389,8 @@ public class ME {
         }
 
         @Override
-        protected void onPostExecute(List<Contact.PhoneClass> phoneClasses) {
-            super.onPostExecute(phoneClasses);
+        protected void onPostExecute(List<Contact.Phones> phones) {
+            super.onPostExecute(phones);
             AfterFinish.finish();
         }
 
@@ -349,7 +410,7 @@ public class ME {
             protected Object doInBackground(Object[] params) {
                 m = handler;
                 final String key = ((Contact) $[mNet].get(mPos)).Lookup;
-                List<Contact.PhoneClass> temp = new ArrayList<>();
+                List<Contact.Phones> temp = new ArrayList<>();
                 if (mNet != 1) {
 
 
@@ -395,7 +456,7 @@ public class ME {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                handler.LoadFinnish((List<Contact.PhoneClass>) o);
+                handler.LoadFinnish((List<Contact.Phones>) o);
             }
         };
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -404,7 +465,7 @@ public class ME {
     }
 
     public interface IAsyncFinish {
-        void LoadFinnish(List<Contact.PhoneClass> r);
+        void LoadFinnish(List<Contact.Phones> r);
     }
 
 }

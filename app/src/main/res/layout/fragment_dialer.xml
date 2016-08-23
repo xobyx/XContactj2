@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="#cb000000"
+    android:background="?attr/colorPrimary"
     android:gravity="bottom"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 
@@ -396,22 +397,31 @@
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/selector_d_colorf"
-        android:divider="#ff6dc5dd"
+
         android:gravity="center_horizontal"
-        android:showDividers="middle">
+        >
 
         <ImageView
+
+
+
+            android:tint="?attr/colorPrimary"
             android:id="@+id/dill_collsop"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_column="0"
             android:layout_weight="1"
-            android:background="@drawable/selector_d_colorf"
+            android:background="@drawable/selector_base"
             android:src="@drawable/dialer_selected" />
 
         <ImageView
+
+
+
+            android:tint="?attr/colorPrimary"
             android:id="@+id/dell_backspace"
             android:layout_width="0dp"
+
             android:layout_height="40dp"
             android:layout_above="@+id/dialer_numbers"
             android:layout_alignEnd="@+id/dialer_numbers"
@@ -420,11 +430,15 @@
             android:layout_gravity="center_horizontal"
             android:layout_row="0"
             android:layout_weight="1"
-            android:background="@drawable/selector_d_colorf"
+            android:background="@drawable/selector_base"
             android:src="@drawable/ndelet" />
 
         <ImageView
             android:id="@+id/dill_call"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+            android:tint="?attr/colorPrimary"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_alignLeft="@+id/dialer_numbers"
@@ -435,7 +449,7 @@
             android:layout_span="0"
             android:layout_weight="1"
             android:adjustViewBounds="false"
-            android:background="@drawable/selector_d_colorf"
+            android:background="@drawable/selector_base"
             android:src="@drawable/dialer"
             android:clickable="true" />
 

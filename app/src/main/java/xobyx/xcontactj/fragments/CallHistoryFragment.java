@@ -145,14 +145,14 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
         }
         String[] h=new String[con.Phone.size()];
         String m="";
-        ArrayList<Contact.PhoneClass> phone = con.Phone;
+        ArrayList<Contact.Phones> phone = con.Phone;
         for (int i = 0; i < phone.size(); i++) {
-            Contact.PhoneClass phoneClass = phone.get(i);
+            Contact.Phones phones = phone.get(i);
 
             m += " "+number+" LIKE ? ";
             if (i!=phone.size()-1)
                 m += "OR";
-            h[i]="%" + phoneClass.Fnumber.substring(4);
+            h[i]="%" + phones.Fnumber.substring(4);
         }
 
         //String ass[] = new String[ME.getDatabaseArg[mNet].length + 1];

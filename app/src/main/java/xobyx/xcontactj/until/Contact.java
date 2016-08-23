@@ -1,15 +1,13 @@
 package xobyx.xcontactj.until;
 
-import android.annotation.TargetApi;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
+
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import xobyx.xcontactj.activities.MainActivity;
 
 /**
  * Created by xobyx on 2/20/2016.
@@ -18,13 +16,13 @@ import xobyx.xcontactj.activities.MainActivity;
 public class Contact implements Comparable<Contact> {
     public String Lookup;
     public String Name;
-    public ArrayList<PhoneClass> Phone = new ArrayList<>(5);//max 5 Number
+    public ArrayList<Phones> Phone = new ArrayList<>();//max 5 Number
     public int Net;
     public String Lable;
     public Uri PhotoUri;
     public Uri LookupUri;
     public Uri PhotoThumbUri;
-    public int Nnamber = 0;
+    public int mNumberCount = 0;
     Other otherAccounts = new Other();
 
     public Contact() {
@@ -35,7 +33,7 @@ public class Contact implements Comparable<Contact> {
         return Phone.size() > 1;
     }
 
-    public char Lable_char() {
+    public char fChar() {
         return this.Name.charAt(0);
     }
 
@@ -51,11 +49,11 @@ public class Contact implements Comparable<Contact> {
      * @throws ClassCastException if {@code another} cannot be converted into something
      *                            comparable to {@code this} instance.
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+
     @Override
     public int compareTo(@NonNull Contact another) {
 
-        return Character.compare(this.Lable_char(), another.Lable_char());
+         return this.fChar()- another.fChar();
     }
 
     interface OtherAccount {
@@ -93,17 +91,19 @@ public class Contact implements Comparable<Contact> {
 
     }
 
-    static public class PhoneClass implements Comparable<PhoneClass> {
+    static public class Phones implements Comparable<Phones> {
         public String Fnumber;
         public boolean IsPrimyer;
         public boolean isFavorite = false;
-        public MainActivity.Network nNet;
+        public Network nNet;
         public String ID;
         public String Type;
         //dep
         public String User;
         public String Account;
         private String Number;
+        public int TimeConnected;
+        public int LastTimeConnected;
 
 
         @Override
@@ -128,7 +128,7 @@ public class Contact implements Comparable<Contact> {
          *                            comparable to {@code this} instance.
          */
         @Override
-        public int compareTo(@NonNull PhoneClass another) {
+        public int compareTo(@NonNull Phones another) {
             return this.IsPrimyer ? 1 : -1;
         }
 
@@ -142,12 +142,15 @@ public class Contact implements Comparable<Contact> {
 
 
         }
-
+        static PhoneNumberUtil instance = PhoneNumberUtil.getInstance();
         @Override
         public boolean equals(Object o) {
 
-            final PhoneClass m = (PhoneClass) o;
-            return m.Fnumber != null && m.Fnumber.equals(this.Fnumber);
+
+
+            final Phones m = (Phones) o;
+
+            return m.Fnumber != null &&instance.isNumberMatch(m.Fnumber,this.Fnumber)!= PhoneNumberUtil.MatchType.NO_MATCH ;
         }
 
         @Override

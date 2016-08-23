@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,17 +9,23 @@
     android:paddingRight="9dp"
     android:paddingBottom="5dp">
 
-    <TextView
+    <xobyx.xcontactj.views.FontTextView
+
+        app:font="HP.ttf"
+        android:textColor="@color/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/calls_number_text"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
+    <xobyx.xcontactj.views.FontTextView
+        app:font="HP.ttf"
+        android:textColor="@color/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -29,7 +35,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
+    <xobyx.xcontactj.views.FontTextView
+        app:font="RP.ttf"
+        android:textColor="@color/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"

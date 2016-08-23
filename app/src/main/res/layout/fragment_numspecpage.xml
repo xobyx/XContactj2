@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-    android:orientation="vertical"
-    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:text="Phone Numbers :"
-        android:paddingTop="10dp"
-        android:textColor="?attr/colorAccent"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content" />
-<android.support.v7.widget.RecyclerView
-
-    android:id="@+id/example_lv_list"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:listSelector="#00000000"
-    android:fitsSystemWindows="true"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:orientation="vertical">
+
+    <xobyx.xcontactj.views.FontTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:font="BP.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="Phone Numbers :"
+        android:textColor="?attr/colorAccent" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/other_net"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:tabGravity="center"
+        app:tabTextColor="#b3ffffff"
+        app:tabSelectedTextColor="#fdfdfd"
+
+android:background="?attr/colorAccent"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
+    <android.support.v7.widget.RecyclerView
+
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/example_lv_list"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:listSelector="#00000000" />
 
 
 </LinearLayout>

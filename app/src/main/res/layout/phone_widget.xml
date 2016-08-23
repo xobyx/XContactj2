@@ -7,6 +7,8 @@
     android:divider="#00000000"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:t="http://schemas.android.com/tools"
+
     >
     <!--android:divider="#9146050b"
         android:dividerPadding="2dp"-->
@@ -25,9 +27,10 @@
         android:orientation="vertical">
 
         <ImageView
+            android:tint="?attr/colorAccent"
             android:id="@+id/s_share"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -37,14 +40,7 @@
             android:scaleType="centerInside"
             android:src="?attr/d1" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:labelFor="@id/s_share"
-            android:text="Share"
-            android:textSize="10dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -62,8 +58,9 @@
 
         <ImageView
             android:id="@+id/s_delete"
+            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:clickable="false"
             android:longClickable="false"
@@ -73,14 +70,6 @@
             android:scaleType="centerInside"
             android:src="?attr/d2" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/calls_number_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:labelFor="@id/s_delete"
-            android:text="Delete"
-            android:textSize="10dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -90,6 +79,7 @@
         android:layout_weight="1"
         android:background="@drawable/selector_base"
         android:clickable="true"
+
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minHeight="25dp"
@@ -98,8 +88,9 @@
 
         <ImageView
             android:id="@+id/s_moreinfo"
+            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:clickable="false"
             android:longClickable="false"
@@ -109,14 +100,6 @@
             android:scaleType="centerInside"
             android:src="?attr/d3" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:labelFor="@id/s_moreinfo"
-            android:text="Info"
-            android:textSize="10dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -125,6 +108,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/selector_base"
+
         android:clickable="true"
         android:focusable="false"
         android:focusableInTouchMode="false"
@@ -134,26 +118,20 @@
 
         <ImageView
             android:id="@+id/s_edit"
+            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:clickable="false"
             android:longClickable="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
+
             android:scaleType="centerInside"
 
             android:src="?attr/d4"
             android:visibility="visible" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/calls_dur_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:labelFor="@id/s_edit"
-            android:text="Edit"
-            android:textSize="10dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -166,10 +144,12 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minHeight="25dp"
+        android:textColor="@color/background"
         android:minWidth="25dp"
         android:orientation="vertical">
 
         <ImageView
+            android:tint="?attr/colorAccent"
             android:id="@+id/s_blance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,16 +159,10 @@
             android:longClickable="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
+            android:textColor="@color/background"
 
             android:scaleType="centerInside"
             android:src="?attr/d5" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/textView5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Send blance"
-            android:textSize="10dp" />
     </LinearLayout>
 </LinearLayout>

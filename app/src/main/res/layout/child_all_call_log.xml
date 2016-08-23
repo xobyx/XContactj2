@@ -57,18 +57,18 @@
 
             <xobyx.xcontactj.views.FontTextView
                 android:id="@+id/number"
-                app:font="bein.ttf"
+                app:font="HP.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:singleLine="true"
                 android:text="adsdsadsa"
                 android:textColor="@color/background"
-                android:textSize="17dp" />
+                android:textSize="18sp" />
 
             <xobyx.xcontactj.views.FontTextView
                 android:id="@+id/date"
-                app:font="bein.ttf"
+                app:font="RP.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -79,7 +79,7 @@
 
             <xobyx.xcontactj.views.FontTextView
                 android:id="@+id/duration"
-                app:font="bein.ttf"
+                app:font="RP.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

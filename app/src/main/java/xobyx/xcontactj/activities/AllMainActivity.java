@@ -1,31 +1,67 @@
 package xobyx.xcontactj.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.fragments.DialerFragment;
+import xobyx.xcontactj.fragments.MostFragment;
 import xobyx.xcontactj.fragments.fragment_all_call_log;
 import xobyx.xcontactj.fragments.fragment_all_phones;
-import xobyx.xcontactj.fragments.fragment_all_sms;
+import xobyx.xcontactj.ui.ContentFragment;
+import xobyx.xcontactj.ui.base.QKActivity;
+import xobyx.xcontactj.ui.conversationlist.ConversationListFragment;
+import xobyx.xcontactj.ui.view.slidingmenu.SlidingMenu;
 import xobyx.xcontactj.until.DialerActionModeHelper;
+import xobyx.xcontactj.until.SmsHelper;
 
-public class AllMainActivity extends AppCompatActivity implements DialerFragment.DialerHandler {
+public class AllMainActivity extends QKActivity implements DialerFragment.DialerHandler,SlidingMenu.SlidingMenuListener {
 
 
-    private TabLayout.OnTabSelectedListener Tab_Listener=new TabLayout.OnTabSelectedListener() {
+    public final static String EXTRA_THREAD_ID = "thread_id";
+
+    public static long sThreadShowing;
+
+    private static final int THREAD_LIST_QUERY_TOKEN = 1701;
+    private static final int UNREAD_THREADS_QUERY_TOKEN = 1702;
+    public static final int DELETE_CONVERSATION_TOKEN = 1801;
+    public static final int HAVE_LOCKED_MESSAGES_TOKEN = 1802;
+    private static final int DELETE_OBSOLETE_THREADS_TOKEN = 1803;
+
+    public static final String MMS_SETUP_DONT_ASK_AGAIN = "mmsSetupDontAskAgain";
+
+
+    View mRoot;
+     SlidingMenu mSlidingMenu;
+
+    private ConversationListFragment mConversationList;
+    private ContentFragment mContent;
+    private long mWaitingForThreadId = -1;
+
+    private boolean mIsDestroyed = false;
+
+    public interface FabHandler
+    {
+        Drawable getFragmentDrawable();
+        View.OnClickListener onFabClicked();
+
+    }
+    private TabLayout.OnTabSelectedListener Tab_Listener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
 
+            mev.setCurrentItem(tab.getPosition());
         }
 
         @Override
@@ -38,6 +74,7 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
 
         }
     };
+    private ViewPager mev;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +82,50 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
         //  index = (LinearLayout) findViewById(R.id.index);
 
         setContentView(R.layout.activity_marge_contacts);
+
+
+        mRoot=findViewById(R.id.root);
+        mSlidingMenu= (SlidingMenu) findViewById(R.id.sliding_menu);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.all_main_activity);
         setSupportActionBar(toolbar);
+        if(getSupportActionBar()!=null)
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        final ViewPager mev=(ViewPager)findViewById(R.id.all_view_pagger);
+        mev = (ViewPager) findViewById(R.id.all_view_pagger);
 
         mev.setAdapter(new asd(getSupportFragmentManager()));
 
-        tabLayout.setupWithViewPager(mev);
-        //tabLayout.addTab(phone_tab);
+        //tabLayout.setupWithViewPager(mev);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_star_white_24dp));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_person_white_24dp));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_chat_white_24dp));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_access_time_white_24dp));
+        tabLayout.setOnTabSelectedListener(Tab_Listener);
+
+        mev.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                tabLayout.getTabAt(position).select();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        // tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_access_time_white_24dp));
         //tabLayout.addTab(messages_tab);
         //tabLayout.addTab(call_log_tab);
         //tabLayout.setTabsFromPagerAdapter(new asd(getSupportFragmentManager()));
         //getSupportFragmentManager().
-
-
 
 
     }
@@ -95,27 +159,28 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
                 break;
 
 
-
         }
         return true;
     }
 
 
-
     @Override
     public void onBackPressed() {
-    //    if (mShow) {
-      //      final Fragment fragment = getSupportFragmentManager().findFragmentByTag("s");
+        //    if (mShow) {
+        //      final Fragment fragment = getSupportFragmentManager().findFragmentByTag("s");
         //    if (fragment != null) {
-          ////      getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-           ///     mShow = false;
-             //   return;
-          //  }
-       // }
+        ////      getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        ///     mShow = false;
+        //   return;
+        //  }
+        // }
         super.onBackPressed();
     }
 
 
+    public void showMenu() {
+        mSlidingMenu.showMenu();
+    }
     @Override
     public void onVisibilityChange(boolean IsOpen) {
 
@@ -135,14 +200,61 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
     public boolean getDialerState() {
         return false;
     }
+
+    @Override
+    public void onOpen() {
+
+    }
+
+    @Override
+    public void onOpened() {
+
+    }
+
+    @Override
+    public void onClose() {
+
+    }
+
+    @Override
+    public void onClosed() {
+
+    }
+
+    @Override
+    public void onChanging(float percentOpen) {
+
+    }
+
+    public SlidingMenu getSlidingMenu() {
+        return mSlidingMenu;
+    }
+
+    public static Intent createAddContactIntent(String address) {
+        // address must be a single recipient
+        Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+        intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        if (SmsHelper.isEmailAddress(address)) {
+            intent.putExtra(ContactsContract.Intents.Insert.EMAIL, address);
+        } else {
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE, address);
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE,
+                    ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+        return intent;
+    }
+
     class asd extends FragmentPagerAdapter
 
     {
-        final Fragment[] list={fragment_all_phones.cv(),fragment_all_sms.newInstance(),fragment_all_call_log.newInstance()};
-        final private String[] b={"Phone","Messages","Phone Logs"};
+        final Fragment[] list = {MostFragment.newInstance(), fragment_all_phones.cv(), new ConversationListFragment(), fragment_all_call_log.newInstance()};
+        final private String[] b = {"most", "Phone", "Messages", "Phone Logs"};
+
         @Override
         public CharSequence getPageTitle(int position) {
-            return  b[position];
+            return b[position];
         }
 
         public asd(FragmentManager fm) {
@@ -151,22 +263,15 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return list[0];
-                case 1:
-                    return list[1];
-                case 2:
-                    return list[2];
+            if (position < list.length)
+                return list[position];
+            return null;
 
-                default:
-                    return null;
-            }
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
     }
 }

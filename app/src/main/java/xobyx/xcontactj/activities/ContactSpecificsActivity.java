@@ -8,24 +8,26 @@ import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashSet;
+
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.ContactSpecFragmentAdapter;
 import xobyx.xcontactj.fragments.fragment_all_phones;
+import xobyx.xcontactj.mmssms.Utils;
+import xobyx.xcontactj.ui.base.QKActivity;
 import xobyx.xcontactj.until.AppAnimations;
 import xobyx.xcontactj.until.Contact;
-import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.views.LetterImageView;
 
 import static xobyx.xcontactj.until.ME.$;
 
 
-public class ContactSpecificsActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class ContactSpecificsActivity extends QKActivity implements ViewPager.OnPageChangeListener {
 
     private static final String NET = "net";
     private static final String POS = "pos";
@@ -58,16 +60,25 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         final Intent in = getIntent();
         SetPageParameters(in);
-        ME.setTheme(this, mNet);
+
+        Contact a =!all? (Contact) $[mNet].get(mPos) : fragment_all_phones.mList.get(mPos);
+
+       // if(!all)
+       // ME.setTheme(this, mNet);
         super.onCreate(savedInstanceState);
 
 
-
-        ContactSpecFragmentAdapter fragAd = new ContactSpecFragmentAdapter(getSupportFragmentManager(), mPos, mNet, lmessage,all);
+        HashSet<String> j=new HashSet<>();
+        for (Contact.Phones phones : a.Phone) {
+            j.add(phones.Fnumber);
+        }
+        long messageThread = Utils.getThreadId(this, j);
+        ContactSpecFragmentAdapter fragAd = new ContactSpecFragmentAdapter(getSupportFragmentManager(), mPos, mNet, lmessage,all,messageThread);
         setContentView(R.layout.activity_contact_detiles);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(getSupportActionBar()!=null)
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         pager = (ViewPager) this.findViewById(R.id.pager);
 
@@ -82,7 +93,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        Contact a =!all? (Contact) $[mNet].get(mPos) : fragment_all_phones.mList.get(mPos);
+        //Contact a =!all? (Contact) $[mNet].get(mPos) : fragment_all_phones.mList.get(mPos);
         //tabHost.setBackgroundColor(getResources().getColor(ME.nColors[a.Net]));
 
 
@@ -99,7 +110,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         } else {
             final LetterImageView view = (LetterImageView) findViewById(R.id.d_image);
-            view.setCustomColor(a.Net);
+            view.setCustomColor(!all?a.Net:3);
 
             view.setLetter(a.Name.charAt(0));
         }
@@ -132,7 +143,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
         if(in.hasExtra("all"))
             all=true;
         mPos = in.getIntExtra(POS, 0);
-        mNet = all ? ME.getCurrentNetwork(this) : in.getIntExtra(NET, 0);
+        mNet = all ? MainActivity.WN_ID : in.getIntExtra(NET, 0);
         mSection = in.getIntExtra(SEC, 0);
         lmessage = in.hasExtra("message") ? in.getParcelableExtra("message") : null;
 

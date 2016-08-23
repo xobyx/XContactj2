@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,10 +57,11 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     static int list_mode = 0;
     static boolean mShowNumber = false;
-    public AbsListView Me;
+    public AbsListView mlist;
     int net;
     ContactsAdapter mAdapter;
     protected DialerFragment.DialerHandler iDialer;
+    public ContentLoadingProgressBar mLoading;
 
     /**
      * Returns TouchedItem new instance of this fragment for the given section
@@ -96,14 +98,16 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onViewCreated(View var1, @Nullable Bundle var2) {
 
-        Me = (AbsListView) var1.findViewById(android.R.id.list);
-        Me.setOnItemClickListener(this);
+        mlist = (AbsListView) var1.findViewById(android.R.id.list);
+        mlist.setOnItemClickListener(this);
+        mLoading=(ContentLoadingProgressBar)var1.findViewById(R.id.mloading);
+        mLoading.show();
 
 
         if (getDefaultSharedPreferences(this.getActivity()).getBoolean(getString(R.string.key_enable_list_anim), false))
-            Me.setLayoutAnimation(getGridLayoutAnim());
+            mlist.setLayoutAnimation(getGridLayoutAnim());
         else
-            Me.setLayoutAnimation(null);
+            mlist.setLayoutAnimation(null);
 
 
 
@@ -153,6 +157,7 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
                 p.putExtra("pos", ME.$[net].indexOf(d));
                 p.putExtra("net", net);
                 startActivity(p);
+                getActivity().overridePendingTransition(android.support.design.R.anim.abc_slide_in_top,android.support.design.R.anim.abc_slide_out_bottom);
             }
             else
             {
@@ -231,22 +236,21 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
         }
 
 
+
+
       //  mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
 
 
-        if(Me!=null)
+        if(mlist !=null)
         {
 
            // int pinnedHeaderBackgroundColor=getResources().getColor(getResIdFromAttribute(this,android.R.attr.colorBackground));
-            mAdapter.setPinnedHeaderBackgroundColor(getResources().getColor(R.color.holo_white));
-            mAdapter.setPinnedHeaderTextColor(getResources().getColor(R.color.holo_black));
-            ((PinnedHeaderListView) Me).setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.pinned_header_listview_side_header, Me, false));
-            ((PinnedHeaderListView) Me).setDivider(null);
-            Me.setAdapter(mAdapter);
+            setupPinndHeader(false);
+            mlist.setAdapter(mAdapter);
+            mLoading.hide();
 
-            Me.setFastScrollEnabled(true);
-            Me.setOnScrollListener(mAdapter);
-            ((PinnedHeaderListView) Me).setEnableHeaderTransparencyChanges(false);
+
+
            // Me.setAdapter(mAdapter);
 
         }
@@ -256,6 +260,16 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
          //mAdapter.notifyDataSetChanged();
 
 
+    }
+
+    protected void setupPinndHeader(boolean all) {
+        mAdapter.setPinnedHeaderBackgroundColor(getResources().getColor(R.color.holo_white));
+        mAdapter.setPinnedHeaderTextColor(!all?ME.nColors2[net]:ME.nColors2[3]);//getResources().getColor(R.color.holo_black));
+        ((PinnedHeaderListView) mlist).setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.pinned_header_listview_side_header, mlist, false));
+        ((PinnedHeaderListView) mlist).setDivider(null);
+        mlist.setFastScrollEnabled(true);
+        mlist.setOnScrollListener(mAdapter);
+        ((PinnedHeaderListView) mlist).setEnableHeaderTransparencyChanges(true);
     }
 
     @Override
@@ -342,7 +356,7 @@ if(this.getArguments()!=null&&this.getArguments().containsKey(ARG_SECTION_NUMBER
             ib.DrawImageString(contact.Name, holder.Img, mClip, contact.Net);
             if (contact.Phone.size() != 0)
                 //   holder.Number.setText(t.Phone.get(0).Number);
-                mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.Nnamber).getNumber(), x);
+                mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), x);
             if (contact.PhotoThumbUri == null) {
                 //hold.Img.setImageDrawable(null);
                 holder.Img.setImageDrawable(null);

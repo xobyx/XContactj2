@@ -11,13 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import xobyx.xcontactj.R;
 
@@ -30,7 +30,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     View old;
     Runnable itemSelector;
     private xViewPager mViewPager;
-    private ViewPager.OnPageChangeListener mListener;
+
     private Animation mItemAnmiton;
     private boolean mIsDown;
     private int yLast;
@@ -49,14 +49,25 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     }
 
     private Rect tmpRect=new Rect();
+    private int selected;
+    private int lastPOs;
+    private int toPos;
+    private float mmm;
+    private boolean scrollStarted;
+    private boolean checkDirection;
+    private static final float thresholdOffset = 0.5f;
+    private static final int thresholdOffsetPixels = 1;
+
 
     @Override
 
     protected void dispatchDraw(Canvas canvas) {
 
-        int save = canvas.save();
 
-        Rect newRect = canvas.getClipBounds();
+
+       // int save = canvas.save();
+
+       // Rect newRect = canvas.getClipBounds();
       //  super.dispatchDraw(canvas);
        // drawChild()
        //
@@ -66,7 +77,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
         //canvas.drawPath(SizeAnimation, HeaderTabs.mj);
 
-        getDrawingRect(tmpRect);
+     //   getDrawingRect(tmpRect);
 
      //   SizeAnimation.reset();
         //newRect.inset(0, -getHeight() * 5);  //make the rect larger
@@ -101,7 +112,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
         //canvas.restoreToCount(save);
         //canvas.restore();
-        canvas.restoreToCount(save);
+       // canvas.restoreToCount(save);
     }
 
 
@@ -115,11 +126,12 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
             view.setScaleType(ImageView.ScaleType.FIT_XY);
 
             view.setClickable(true);
+
           //  addView(view, i, new LayoutParams(0, 50-1, 1));
-            addView(view, i, new LayoutParams(0, LayoutParams.MATCH_PARENT));
+        //    addView(view, i, new LayoutParams(0, LayoutParams.MATCH_PARENT));
+            addViewInLayout(view, -1, new LayoutParams(0, LayoutParams.MATCH_PARENT), false);
         }
 
-        setClipChildren(false);
 
        // this.setWeightSum(3);
 
@@ -128,47 +140,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     Rect a = new Rect();
     @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent Motion) {
-        int action = Motion.getAction();
-        float MotionX = Motion.getX();
-//(int) ((width)-(Motion.getX()))/18
 
-        int width = this.getWidth() - (this.getPaddingLeft() + this.getPaddingRight());
-        int height = this.getHeight();
-        //loc size
-        int i1 = (int) (width - (Motion.getX()) - 1);
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                this.mIsDown = true;
-
-                getChildAt(0).getDrawingRect(a);
-
-                if (a.contains((int) MotionX, (int) Motion.getY())) {
-                    Toast.makeText(getContext(), "Zain", Toast.LENGTH_SHORT).show();
-                }
-                getChildAt(1).getDrawingRect(a);
-                if (a.contains((int) MotionX, (int) Motion.getY())) {
-                    Toast.makeText(getContext(), "Sudani", Toast.LENGTH_SHORT).show();
-                }
-                getChildAt(2).getDrawingRect(a);
-                if (a.contains((int) MotionX, (int) Motion.getY())) {
-                    Toast.makeText(getContext(), "Mtn", Toast.LENGTH_SHORT).show();
-                }
-                mIsDown = true;
-                mx = MotionX;
-                my=Motion.getY();
-
-
-                break;
-            case MotionEvent.ACTION_UP:
-                mIsDown = false;
-                break;
-
-            default:
-               // return false;
-                break;
-        }
-        invalidate();
         return super.dispatchTouchEvent(Motion);
     }
 
@@ -184,21 +156,75 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
             for (int i = 0; i < 3; i++) {
 
                 ((ImageView) this.getChildAt(i)).setImageResource(adapter.getDrawbleResourse(i));
+
+
+
             }
         }
     }
 
-
+    /**
+     * This method will be invoked when the current page is scrolled, either as part
+     * of a programmatically initiated smooth scroll or a user initiated touch scroll.
+     *
+     * @param position Position index of the first page currently being displayed.
+     *                 Page position+1 will be visible if positionOffset is nonzero.
+     * @param positionOffset Value from [0, 1) indicating the offset from the page at position.
+     * @param positionOffsetPixels Value in pixels indicating the offset from position.
+     */
+    float pakl;
     @Override
-    public void onPageScrolled(int i, float v, int i2) {
-        if (mListener != null)
-            mListener.onPageScrolled(i, v, i2);
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+
+        Log.d("ViewPager","--------------------");
+        Log.d("ViewPager","position : "+position);
+        Log.d("ViewPager","positionOffset : "+position);
+        Log.d("ViewPager","positionOffsetPixels : "+positionOffsetPixels);
+        Log.d("ViewPager","---------------------");
+
+
+       /* if (checkDirection) {
+            if (thresholdOffset > positionOffset && positionOffsetPixels > thresholdOffsetPixels) {
+                toPos=selected+1>2?2:selected+1;
+                Toast.makeText(getContext(),"to : "+toPos,Toast.LENGTH_SHORT).show();
+                mmm = (0.4f * ((float) positionOffsetPixels / (float) getWidth()));
+            } else {
+                toPos=selected-1<0?0:selected-1;
+                // toPos = lastPOs - 1;
+                Toast.makeText(getContext(),"to : "+toPos,Toast.LENGTH_SHORT).show();
+
+                mmm = (0.4f * (((float)getWidth()-(float) positionOffsetPixels) / (float) getWidth()));
+            }
+            if(toPos!=selected) {
+                g[toPos] += mmm;  ////0.2+mmm  ///0.1,0.2,0.3,0.4
+                g[selected] -=mmm;
+
+            }
+            checkDirection = false;
+        }
+
+        requestLayout();*/
+
+
+
+
+
+        Log.d("ViewPager","mmm : "+mmm);
+
+
+
+
+
+
+
+
     }
 
     @Override
     public void onPageSelected(int i) {
        /* switch (i) {
-            case 0:
+     a       case 0:
                 actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_ba_za));
                 break;
             case 1:
@@ -210,6 +236,11 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
         }*/
 
+        selected=i;
+
+        setGrav(selected);
+
+//        requestLayout();
         final View at = getChildAt(i);
         Runnable n = new Runnable() {
             @Override
@@ -221,9 +252,13 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
 
         ///base Listener
-        if (mListener != null)
-            mListener.onPageSelected(i);
 
+
+    }
+
+    private void setGrav(int selected) {
+        for(int i=0;i<getChildCount();i++)
+            g[i]=i==selected?0.7f:0.15f;
     }
 
 
@@ -231,21 +266,30 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         if (!at.equals(old)) {
             at.setSelected(true);
 
+
             // setBackgroundResource(nColors[i]);
 
             if (old != null) {
 
                 old.setSelected(false);
 
+
             }
             old = at;
         }
+        requestLayout();
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
-        if (mListener != null)
-            mListener.onPageScrollStateChanged(i);
+
+        if (!scrollStarted && i == ViewPager.SCROLL_STATE_DRAGGING) {
+            scrollStarted = true;
+            checkDirection = true;
+        } else {
+            scrollStarted = false;
+        }
+
     }
 
     Animation itemAnim() {
@@ -260,6 +304,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         if (itemSelector != null) {
             removeCallbacks(itemSelector);
         }
+
         itemSelector = new Runnable() {
             @Override
             public void run() {
@@ -292,24 +337,43 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         if (itemSelector != null) {
             removeCallbacks(itemSelector);
         }
+
+
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         w=getWidth();
-        m.reset();
-/// |-------|---------|---------|
-//  0       f         2f       3f
-//    0+f/2    f+2f/2    2f+3f/2
-//       (i*f)+((i+1)*f
         int f= (int) (w/3f);
-        for (int i=0;i<getChildCount();i++) {
-            getChildAt(i).layout(i * f, 0, ((i + 1) * f), getHeight());
-            float mk=((i*f)+((i+1)*f))/2f;
-            m.addCircle(mk, getHeight() / 2f, getHeight()/2.1f, Path.Direction.CW);
-            m.close();
+
+/// |---|---|----|----|----|----|
+//  0f      1f         2f       3f
+//    0+f/2    f+2f/2    2F+3f/2
+//       (i*f)+((i+1)*f
+
+
+
+        float gtotal=1f;
+        float max= 0.6f;
+        float min= 0.2f;
+        int fromleft=0;
+
+        for(int i=0;i<getChildCount();i++)
+        {
+
+            View view = getChildAt(i);
+            view.layout(fromleft,0,(int)(fromleft+getWidth()*g[i]),getHeight());
+            fromleft+=getWidth()*g[i];
+
 
         }
+
+
+
+
+
+
+
     }
 
     public void setViewPager(xViewPager viewPager) {
@@ -318,9 +382,32 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         mViewPager.addOnPageChangeListener(this);
     }
 
-    public void setOnPageChangeListener(ViewPager.OnPageChangeListener onPageChangeListener) {
-        this.mListener = onPageChangeListener;
+    float[] g={0,0,0};
+void m()
+{
+
+    float gtotal=1f;
+    float max= 0.6f;
+    float min= 0.2f;
+    int fromleft=0;
+
+    for(int i=0;i<getChildCount();i++)
+    {
+
+        View view = getChildAt(i);
+        view.layout(fromleft,0,(int)(fromleft+getWidth()*g[i]),getHeight());
+        fromleft+=getWidth()*g[i];
+
+
     }
+
+
+
+
+
+
+
+}
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -335,7 +422,10 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
     public void setActionBar(ActionBar actionBar) {
         this.actionBar = actionBar;
+
     }
+
+
 
     public interface HeaderTabsAdapter {
         int getDrawbleResourse(int index);

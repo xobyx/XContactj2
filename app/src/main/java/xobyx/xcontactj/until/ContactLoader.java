@@ -8,16 +8,11 @@ import android.provider.ContactsContract;
 import android.support.v4.content.AsyncTaskLoader;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import xobyx.xcontactj.activities.MainActivity.Network;
 
 import static android.provider.ContactsContract.CommonDataKinds.Contactables;
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
-import static xobyx.xcontactj.until.ME.Mnet;
 import static xobyx.xcontactj.until.ME.getCurrentNetwork;
 
 /**
@@ -40,7 +35,7 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
 
     @Override
     public List<Contact> loadInBackground() {
-        mCursor = getContext().getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, " has_phone_number = 1", null, ContactsContract.Data.LOOKUP_KEY);
+        mCursor = getContext().getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, "has_phone_number = 1", null, ContactsContract.Data.LOOKUP_KEY);
         if (mCursor != null) {
             mCursor.registerContentObserver(mContentObserver);
             int phoneColumnIndex = mCursor.getColumnIndex(Phone.NUMBER);
@@ -54,6 +49,8 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
             int nameColumnIndex = mCursor.getColumnIndex(Contactables.DISPLAY_NAME);
             int idclo = mCursor.getColumnIndex(Contactables._ID);
             int lookupColumnIndex = mCursor.getColumnIndex(Contactables.LOOKUP_KEY);
+            int time_connected=mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.TIMES_CONTACTED);
+            int last_time_connected= mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.LAST_TIME_CONTACTED);
             int PhotouriColumnIndex = mCursor.getColumnIndex(Contactables.PHOTO_URI);
             int IsPrimaryColumnIndex = mCursor.getColumnIndex(Contactables.IS_PRIMARY);
             int Photothumb = mCursor.getColumnIndex(Contactables.PHOTO_THUMBNAIL_URI);
@@ -86,49 +83,28 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
                     }
                     final String mim = mCursor.getString(ItemType);
                     if (mim.equals(Phone.CONTENT_ITEM_TYPE)) {
-                        Contact.PhoneClass a = new Contact.PhoneClass();
+                        Contact.Phones a = new Contact.Phones();
                         a.Fnumber = mCursor.getString(pphoneColumnIndex);
-                        a.IsPrimyer = mCursor.getInt(IsPrimaryColumnIndex)==1;
+                        a.IsPrimyer = mCursor.getInt(IsPrimaryColumnIndex) == 1;
                         a.setNumber(mCursor.getString(phoneColumnIndex));
                         a.ID = mCursor.getString(idclo);
+                        a.TimeConnected=mCursor.getInt(time_connected);
+                        a.LastTimeConnected = mCursor.getInt(last_time_connected);
 
 
                         if (a.Fnumber != null && !a.Fnumber.isEmpty()) {
-                            for (int i = 0; i < Mnet.length; i++) {
 
-                                String[] stringArray = getContext().getResources().getStringArray(Mnet[i]);
-                                for (String nsn : stringArray) {
-                                    if (a.Fnumber.startsWith(nsn)) {
-                                        a.nNet = Network.values()[i];
-                                        if (b != null) {
-                                            if(!b.Phone.contains(a)) {
-                                                b.Phone.add(a);
 
-                                                Collections.sort(b.Phone, new Comparator<Contact.PhoneClass>() {
-                                                    @Override
-                                                    public int compare(Contact.PhoneClass lhs, Contact.PhoneClass rhs) {
-                                                        if(lhs.nNet!=null&&rhs.nNet!=null)
-                                                        {
-                                                            if ((lhs.nNet.getValue() != currentNetwork && rhs.nNet.getValue() != currentNetwork)) {
-                                                                return 0;
-                                                            } else if (lhs.nNet.getValue() == rhs.nNet.getValue()) {
-                                                                return 0;
-                                                            }
-                                                            return (rhs.nNet.getValue()==currentNetwork)? 1:-1;
-                                                        }
-                                                        return 0;
-                                                    }
-                                                });
+                            a.nNet = Network.values()[ME.getNetForNumber(a.Fnumber)];
+                            if (b != null) {
+                                if (!b.Phone.contains(a)) {
+                                    b.Phone.add(a);
 
-                                            }
-                                        }
-                                        i = Mnet.length;
-                                        break;
 
-                                    }
                                 }
-
                             }
+
+
                         }
 
                     } else {

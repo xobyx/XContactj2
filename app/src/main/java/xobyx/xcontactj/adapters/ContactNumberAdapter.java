@@ -106,14 +106,14 @@ public class ContactNumberAdapter extends ContactBaseAdapter {
             holder.Img = (ImageView) view.findViewById(R.id.num_child_image);
             view.setTag(holder);
         }
-        final Contact.PhoneClass item = (Contact.PhoneClass) getItem(i);
+        final Contact.Phones item = (Contact.Phones) getItem(i);
         Holders2 H = (Holders2) view.getTag();
         // H.Text.setText(item.getNumber());
         mTexth.setPrefixText(H.Text, item.getNumber(), x);
         if (show_net_icon) {
 
             H.Img.setVisibility(View.VISIBLE);
-            H.Img.setImageResource(ME.NetDrawables[((Contact.PhoneClass) getItem(i)).nNet.getValue()][0]);
+            H.Img.setImageResource(ME.NetDrawables[((Contact.Phones) getItem(i)).nNet.getValue()][0]);
         } else {
             H.Img.setVisibility(View.GONE);
         }
