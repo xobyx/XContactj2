@@ -5,15 +5,15 @@ import static xobyx.xcontactj.until.Contact.OtherAccount;
 public abstract class Account implements OtherAccount {
 
 
-    private final String maindata;
-    private final String accountname;
+    private final String main_data;
+    private final String account_name;
     private final String moredata;
     private final String type;
     private final int id;
 
     public Account(String Maindata, String Accountname, String moredata, String type, int id) {
-        maindata = Maindata;
-        accountname = Accountname;
+        main_data = Maindata;
+        account_name = Accountname;
         this.moredata = moredata;
         this.type = type;
         this.id = id;
@@ -27,12 +27,12 @@ public abstract class Account implements OtherAccount {
 
     @Override
     public String getAccountName() {
-        return accountname;
+        return account_name;
     }
 
     @Override
     public String getMainData() {
-        return maindata;
+        return main_data;
     }
 
     @Override

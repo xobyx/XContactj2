@@ -123,14 +123,14 @@ public class ContactBaseAdapter extends BaseAdapter implements Filterable {
         hold.Text.setText(t.Name);
 
         mTexth.setPrefixText(hold.Text, t.Name, x);
-        ib.DrawImageString(t.Name, hold.Img, mClip, t.Net);
+        ib.DrawImageString(t, hold.Img, mClip, t.Net);
         if (t.Phone.size() != 0)
             //   holder.Number.setText(t.Phone.get(0).Number);
             mTexth.setPrefixText(hold.Number, t.Phone.get(t.mNumberCount).getNumber(), x);
         if (t.PhotoThumbUri == null) {
             //hold.Img.setImageDrawable(null);
             hold.Img.setImageDrawable(null);
-            ib.DrawImageString(t.Name, hold.Img, mClip, t.Phone.size()!=0?t.Phone.get(0).nNet.getValue():0);
+            ib.DrawImageString(t, hold.Img, mClip, t.Phone.size()!=0?t.Phone.get(0).nNet.getValue():0);
 
         } else
             ib.GetPhoto(t, hold.Img, mClip,t.Phone.size()!=0?t.Phone.get(0).nNet.getValue():0);

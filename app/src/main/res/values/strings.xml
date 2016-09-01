@@ -84,5 +84,12 @@
     <string name="title_activity_all_main">AllMainActivity</string>
     <string name="gcm_defaultSenderId">120967154539</string>
     <string name="use_custom_pin">Use custom PIN(sudani default 0000)</string>
+    <string name="send_blance">Send</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="set_as_default_number">set as Default Number</string>
+    <string name="select_number">Select a Number:</string>
+    <string name="cancel">Cancel</string>
+    <string name="select">Select</string>
+    <string name="invalid_number">" invalid Number"</string>
 
 </resources>

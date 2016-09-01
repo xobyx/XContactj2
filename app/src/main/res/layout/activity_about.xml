@@ -7,31 +7,17 @@
     android:weightSum="1"
     tools:context="xobyx.xcontactj.activities.AboutActivity">
 <LinearLayout
-    android:layout_weight="0.48"
     android:layout_width="match_parent"
     android:orientation="horizontal"
-    android:layout_height="0dp">
-    <ImageView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:layout_height="0dp"
+    android:layout_weight=".5">
+    <xobyx.xcontactj.views.LetterImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        app:fchar="X"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|top"
-        android:layout_weight="0.48"
-        android:src="@drawable/dialer_za" />
-    <ImageView
+        android:src="@drawable/big_ic" />
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_weight="0.48"
-        android:src="@drawable/dialer_su" />
-    <ImageView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_weight="0.48"
-        android:src="@drawable/dialer_mt" />
 </LinearLayout>
 
     <TextView

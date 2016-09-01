@@ -1,7 +1,6 @@
 package xobyx.xcontactj.fragments;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +22,7 @@ import java.util.List;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.ContactSpecificsActivity;
 import xobyx.xcontactj.activities.MainActivity;
+import xobyx.xcontactj.adapters.ContactsAdapter;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ContactLoader;
 import xobyx.xcontactj.until.SettingHelp;
@@ -42,11 +42,6 @@ public class fragment_all_phones extends NetFragment {
 
     private AsyncTask m;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -61,8 +56,9 @@ public class fragment_all_phones extends NetFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Filter(newText);
+
                 try {
+                    SearchFor(newText);
                   //  mAdapter...getFilter().filter(newText);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -76,9 +72,10 @@ public class fragment_all_phones extends NetFragment {
     public Loader<List<Contact>> onCreateLoader(int id, Bundle args) {
         return new ContactLoader(this.getActivity());
     }
+
     @Override
     public View onCreateView(LayoutInflater var1, @Nullable ViewGroup var2, @Nullable Bundle var3) {
-        this.getLoaderManager().initLoader(net, null, this);
+
        // list_mode = SettingHelp.getListMode(getActivity().getBaseContext());
        // return list_mode == 0 ? var1.inflate(R.layout.fragment_net_list, null) :
          //       var1.inflate(R.layout.fragment_net_grid, null);
@@ -121,11 +118,11 @@ public class fragment_all_phones extends NetFragment {
         if (mShowNumber && list_mode == 0) {
             //mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), mList);
             //((ContactNumberAdapter)mAdapter).setShow_net_icon(true);
-            mAdapter=new ContactsAdapter(getActivity(),mList,SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+            mAdapter=new ContactsAdapter(getActivity(),mList,SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,true);
 
         }
         else
-            mAdapter=new ContactsAdapter(getActivity(),mList,SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+            mAdapter=new ContactsAdapter(getActivity(),mList,SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,true);
 
         // mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), mList, list_mode);
 

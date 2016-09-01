@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -48,7 +47,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
     private ArrayList<Base_CallLog> vcall = new ArrayList<>();
     private int mPos;
     private int mNet;
-    private LinearLayout hide;
+    private View hide;
     private boolean mAll;
 
 
@@ -72,7 +71,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View b = inflater.inflate(R.layout.fragment_call_history, null, false);
-        hide = (LinearLayout) b.findViewById(R.id.call_log_empty_layout);
+        hide =  b.findViewById(R.id.emty_text_image);
         RecyclerView rv = (RecyclerView) b.findViewById(R.id.calls_listView);
         setupRecyclerView(rv);
         return b;
@@ -152,7 +151,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
             m += " "+number+" LIKE ? ";
             if (i!=phone.size()-1)
                 m += "OR";
-            h[i]="%" + phones.Fnumber.substring(4);
+            h[i]="%" + ((phones.Fnumber.length()>5)?phones.Fnumber.substring(4):phones.Fnumber);
         }
 
         //String ass[] = new String[ME.getDatabaseArg[mNet].length + 1];

@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/action_new_contact"
-        android:icon="@drawable/add_w"
+
         app:showAsAction="ifRoom"
         android:title="@string/add_new_contact" />
     <item

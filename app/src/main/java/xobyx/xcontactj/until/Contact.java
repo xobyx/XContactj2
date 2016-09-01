@@ -137,6 +137,7 @@ public class Contact implements Comparable<Contact> {
         }
 
         public void setNumber(String number) {
+           // instance.
             Number = number.replace("-", "").replace(" ", "").replace("+249", "0");
 
 
@@ -150,7 +151,7 @@ public class Contact implements Comparable<Contact> {
 
             final Phones m = (Phones) o;
 
-            return m.Fnumber != null &&instance.isNumberMatch(m.Fnumber,this.Fnumber)!= PhoneNumberUtil.MatchType.NO_MATCH ;
+            return null != m.Fnumber &&instance.isNumberMatch(m.Fnumber,this.Fnumber)!= PhoneNumberUtil.MatchType.NO_MATCH ;
         }
 
         @Override

@@ -28,7 +28,7 @@
                 android:id="@+id/mhrader"
                 android:layout_width="fill_parent"
                 android:layout_height="50.0dip"
-                android:background="@drawable/ab_solid_dark_holo"
+                android:background="#9c27b0"
                 android:orientation="horizontal"
                 app:net1="@drawable/i_zain"
                 app:net2="@drawable/i_sudani"

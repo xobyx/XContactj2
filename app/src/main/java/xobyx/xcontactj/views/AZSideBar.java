@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.fragments.NetFragment;
+import xobyx.xcontactj.adapters.ContactsAdapter;
 import xobyx.xcontactj.until.Contact;
 
 /**
@@ -384,7 +384,7 @@ public class AZSideBar extends View implements AbsListView.OnScrollListener {
         String me();
 
 
-        Class<NetFragment.ContactsAdapter> b();
+        Class<ContactsAdapter> b();
 
         String m();
     }

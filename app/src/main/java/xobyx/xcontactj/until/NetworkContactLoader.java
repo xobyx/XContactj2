@@ -35,6 +35,7 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
 
     public NetworkContactLoader(Context context, int net) {
         super(context);
+
         mNet = net;
         mContentObserver = new ForceLoadContentObserver();
 
@@ -129,13 +130,19 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
                     }
                     Contact.Phones a = new Contact.Phones();
                     a.Fnumber = mCursor.getString(pphoneColumnIndex);
+                    String bh =mCursor.getString(phoneColumnIndex);
+                    if(a.Fnumber==null&&bh!=null)
+                    {
+                        a.Fnumber=bh;
+                    }
                     a.IsPrimyer = Boolean.valueOf(mCursor.getString(IsPrimaryColumnIndex));
 
-                    a.setNumber(mCursor.getString(phoneColumnIndex));
+                    a.setNumber(bh);
                     int m = mCursor.getInt(Type);
                     String bn = mCursor.getString(CoustomType);
                     a.Type = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getContext().getResources(), m, bn).toString();
                     a.ID = mCursor.getString(idclo);
+
                     a.TimeConnected=mCursor.getInt(time_connected);
                     a.LastTimeConnected=mCursor.getInt(last_time_connected);
                     a.Account = mCursor.getString(account);

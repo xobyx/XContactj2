@@ -88,6 +88,7 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
                 AboutActivity.ShowAboutActivity(this);
                 break;
             case R.id.action_search:
+
                 break;
             case R.id.action_settings:
                 Intent i = new Intent(this.getBaseContext(), SettingsActivity.class);

@@ -15,7 +15,7 @@ public class ReportSenderFac implements ReportSenderFactory {
     @NonNull
     @Override
     public ReportSender create(Context context, ACRAConfiguration acraConfiguration) {
-        return new CustomReportSender(acraConfiguration);
+        return new MyEmailReportSender(acraConfiguration);
 
     }
 }

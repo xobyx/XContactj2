@@ -34,8 +34,8 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
     }
 
     @Override
-    public List<Contact> loadInBackground() {
-        mCursor = getContext().getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, "has_phone_number = 1", null, ContactsContract.Data.LOOKUP_KEY);
+    public List<Contact> loadInBackground() {//AND account_type=?
+        mCursor = getContext().getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, "has_phone_number > 0", null, ContactsContract.Data.LOOKUP_KEY);
         if (mCursor != null) {
             mCursor.registerContentObserver(mContentObserver);
             int phoneColumnIndex = mCursor.getColumnIndex(Phone.NUMBER);
@@ -44,87 +44,88 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
             int Type = mCursor.getColumnIndex("data2");
             int CoustomType = mCursor.getColumnIndex("data3");
             int pphoneColumnIndex = mCursor.getColumnIndex("data4");
-
+            int account = mCursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
             // int emailColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Adress.ADDRESS);
             int nameColumnIndex = mCursor.getColumnIndex(Contactables.DISPLAY_NAME);
             int idclo = mCursor.getColumnIndex(Contactables._ID);
             int lookupColumnIndex = mCursor.getColumnIndex(Contactables.LOOKUP_KEY);
-            int time_connected=mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.TIMES_CONTACTED);
-            int last_time_connected= mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.LAST_TIME_CONTACTED);
+            int time_connected = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.TIMES_CONTACTED);
+            int last_time_connected = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.LAST_TIME_CONTACTED);
             int PhotouriColumnIndex = mCursor.getColumnIndex(Contactables.PHOTO_URI);
             int IsPrimaryColumnIndex = mCursor.getColumnIndex(Contactables.IS_PRIMARY);
             int Photothumb = mCursor.getColumnIndex(Contactables.PHOTO_THUMBNAIL_URI);
             currentNetwork = getCurrentNetwork(this.getContext());
             m = new ArrayList<>();
+
+
+            Contact b = null;
+            String key = "";
             while (mCursor.moveToNext()) {
+                String currentLookupKey = mCursor.getString(lookupColumnIndex);
+
+                if (!currentLookupKey.equals(key)) {
+
+                    key = currentLookupKey;
+                    b = new Contact();
+                    b.Lookup = currentLookupKey;
+                    b.LookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, b.Lookup);
+                    if (!mCursor.isNull(PhotouriColumnIndex))
+                        b.PhotoUri = Uri.parse(mCursor.getString(PhotouriColumnIndex));
+                    if (!mCursor.isNull(Photothumb))
+                        b.PhotoThumbUri = Uri.parse(mCursor.getString(Photothumb));
+                    b.Name = mCursor.getString(nameColumnIndex);
+                    b.Lable = String.valueOf(b.Name.charAt(0));
+
+                    m.add(b);
 
 
-                Contact b = null;
-                String key = "";
-                while (mCursor.moveToNext()) {
-                    String currentLookupKey = mCursor.getString(lookupColumnIndex);
-
-                    if (!currentLookupKey.equals(key)) {
-
-                        key = currentLookupKey;
-                        b = new Contact();
-                        b.Lookup = currentLookupKey;
-                        b.LookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, b.Lookup);
-                        if (!mCursor.isNull(PhotouriColumnIndex))
-                            b.PhotoUri = Uri.parse(mCursor.getString(PhotouriColumnIndex));
-                        if (!mCursor.isNull(Photothumb))
-                            b.PhotoThumbUri = Uri.parse(mCursor.getString(Photothumb));
-                        b.Name = mCursor.getString(nameColumnIndex);
-                        b.Lable = String.valueOf(b.Name.charAt(0));
-
-                        m.add(b);
-
-
+                }
+                final String mim = mCursor.getString(ItemType);
+                if (mim.equals(Phone.CONTENT_ITEM_TYPE)) {
+                    Contact.Phones a = new Contact.Phones();
+                    a.Fnumber = mCursor.getString(pphoneColumnIndex);
+                    String bh =mCursor.getString(phoneColumnIndex);
+                    if(a.Fnumber==null&&bh!=null)
+                    {
+                        a.Fnumber=bh;
                     }
-                    final String mim = mCursor.getString(ItemType);
-                    if (mim.equals(Phone.CONTENT_ITEM_TYPE)) {
-                        Contact.Phones a = new Contact.Phones();
-                        a.Fnumber = mCursor.getString(pphoneColumnIndex);
+                    if (a.Fnumber != null && !a.Fnumber.isEmpty()) {
+                        a.setNumber(a.Fnumber);
                         a.IsPrimyer = mCursor.getInt(IsPrimaryColumnIndex) == 1;
-                        a.setNumber(mCursor.getString(phoneColumnIndex));
+                        a.setNumber(bh);
                         a.ID = mCursor.getString(idclo);
-                        a.TimeConnected=mCursor.getInt(time_connected);
+                        a.TimeConnected = mCursor.getInt(time_connected);
                         a.LastTimeConnected = mCursor.getInt(last_time_connected);
 
 
-                        if (a.Fnumber != null && !a.Fnumber.isEmpty()) {
-
-
-                            a.nNet = Network.values()[ME.getNetForNumber(a.Fnumber)];
-                            if (b != null) {
-                                if (!b.Phone.contains(a)) {
+                        a.nNet = Network.values()[ME.getNetForNumber(a.getNumber())];
+                        if (b != null) {
+                            if (!(b.Phone.size() > 2 && b.Phone.get(b.Phone.size() - 1).getNumber() == a.getNumber())) {
+                                a.User = b.Name;
+                                if (!b.Phone.contains(a))
                                     b.Phone.add(a);
-
-
-                                }
                             }
 
-
+                            //}
                         }
 
-                    } else {
-
-
-                        if (mim.equals(Email.CONTENT_ITEM_TYPE))
-                            if (b != null) {
-                                b.otherAccounts.Add(new EmailClass(mCursor.getString(mCursor.getColumnIndex("data1")),
-                                        mim, mCursor.getString(CoustomType),
-                                        mCursor.getString(Type),
-                                        mCursor.getInt(idclo)));
-                            } else if (mim.equals(WHATSAPP_ITEM))
-                                if (b != null) {
-                                    b.otherAccounts.Add(new WhatsappClass(mCursor.getString(mCursor.getColumnIndex("data1")),
-                                            mim, mCursor.getString(CoustomType),
-                                            mCursor.getString(Type),
-                                            mCursor.getInt(idclo)));
-                                }
 
                     }
+
+                } else {
+
+                    if (b != null)
+                        if (mim.equals(Email.CONTENT_ITEM_TYPE)) {
+                            b.otherAccounts.Add(new EmailClass(mCursor.getString(mCursor.getColumnIndex("data1")),
+                                    mim, mCursor.getString(CoustomType),
+                                    mCursor.getString(Type),
+                                    mCursor.getInt(idclo)));
+                        } else if (mim.equals(WHATSAPP_ITEM)) {
+                            b.otherAccounts.Add(new WhatsappClass(mCursor.getString(mCursor.getColumnIndex("data1")),
+                                    mim, mCursor.getString(CoustomType),
+                                    mCursor.getString(Type),
+                                    mCursor.getInt(idclo)));
+                        }
 
                 }
 
@@ -165,7 +166,7 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
 
         // Ensure the loader is stopped
         onStopLoading();
-        //mCursor = null;
+        mCursor = null;
         m = null;
     }
 

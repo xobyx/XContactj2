@@ -41,7 +41,6 @@ android {
             versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
         }
         debug {
-            proguardFile 'C:/Users/xobyx/AndroidStudioProjects/XContactj2/app/xcontactj-proguard.pro'
         }
     }
     productFlavors {
@@ -60,8 +59,10 @@ dependencies {
     // compile 'com.github.lzyzsd:circleprogress:1.1.0'
     //  compile 'com.klinkerapps:android-chips:1.0.0'
     //compile 'me.leolin:ShortcutBadger:1.1.1'
-
+    compile files('libs/libphonenumber-3.5.jar')
 }
+
+
 
 
 

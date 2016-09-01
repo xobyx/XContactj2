@@ -1,23 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Visual Settings">
 
-        <ListPreference
 
-            android:defaultValue="0"
-            android:dialogTitle="Set List Mode"
-            android:entries="@array/list_mode"
-            android:entryValues="@array/list_mode_value"
-            android:key="@string/key_list_mode"
-            android:title="List Mode" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_enable_list_anim"
             android:title="Enable List Animation" />
-        <CheckBoxPreference
-            android:defaultValue="false"
 
-            android:key="@string/key_show_number"
-            android:title="@string/pre_t_show_numbers" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="Select Contact Photo shape."

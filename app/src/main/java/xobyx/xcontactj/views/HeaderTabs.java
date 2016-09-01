@@ -9,9 +9,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +30,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     private xViewPager mViewPager;
 
     private Animation mItemAnmiton;
-    private boolean mIsDown;
-    private int yLast;
-    private ActionBar actionBar;
-    private float mx;
-    private float my;
+
     private int w;
     private android.graphics.Path m=new Path();
     private static final Paint mj;
@@ -133,7 +127,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         }
 
 
-       // this.setWeightSum(3);
+       //this.setWeightSum(3);
 
 
     }
@@ -177,11 +171,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
 
-        Log.d("ViewPager","--------------------");
-        Log.d("ViewPager","position : "+position);
-        Log.d("ViewPager","positionOffset : "+position);
-        Log.d("ViewPager","positionOffsetPixels : "+positionOffsetPixels);
-        Log.d("ViewPager","---------------------");
+
 
 
        /* if (checkDirection) {
@@ -210,7 +200,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
 
 
-        Log.d("ViewPager","mmm : "+mmm);
+
 
 
 
@@ -238,7 +228,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
         selected=i;
 
-        setGrav(selected);
+      //  setGrav(selected);
 
 //        requestLayout();
         final View at = getChildAt(i);
@@ -258,7 +248,8 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
     private void setGrav(int selected) {
         for(int i=0;i<getChildCount();i++)
-            g[i]=i==selected?0.7f:0.15f;
+           // g[i]=i==selected?0.7f:0.15f;
+            g[i]=1;
     }
 
 
@@ -317,7 +308,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
                 }
             }
         };
-        post(itemSelector);
+        postDelayed(itemSelector,200);
 
 
     }
@@ -362,8 +353,8 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         {
 
             View view = getChildAt(i);
-            view.layout(fromleft,0,(int)(fromleft+getWidth()*g[i]),getHeight());
-            fromleft+=getWidth()*g[i];
+            view.layout(fromleft,0,(int)(fromleft+f),getHeight());
+            fromleft+=f;
 
 
         }
@@ -395,8 +386,8 @@ void m()
     {
 
         View view = getChildAt(i);
-        view.layout(fromleft,0,(int)(fromleft+getWidth()*g[i]),getHeight());
-        fromleft+=getWidth()*g[i];
+        view.layout(fromleft,0,(int)(fromleft+getWidth()/3),getHeight());
+        fromleft+=getWidth()/3;
 
 
     }
@@ -420,10 +411,7 @@ void m()
 
     final Paint paint = new Paint();
 
-    public void setActionBar(ActionBar actionBar) {
-        this.actionBar = actionBar;
 
-    }
 
 
 

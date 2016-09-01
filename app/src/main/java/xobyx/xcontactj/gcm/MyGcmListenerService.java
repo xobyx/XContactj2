@@ -46,6 +46,7 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
+        String Title= data.getString("title")!=null?data.getString("title"):"";
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
@@ -67,7 +68,7 @@ public class MyGcmListenerService extends GcmListenerService {
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(message);
+        sendNotification(Title,message);
         // [END_EXCLUDE]
     }
     // [END receive_message]
@@ -77,16 +78,16 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message) {
+    private void sendNotification(String Title,String message) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        @SuppressWarnings("ResourceType") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_discuss)
-                .setContentTitle("GCM Message")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(Title)
                 .setContentText(message)
                 .setAutoCancel(true)
 

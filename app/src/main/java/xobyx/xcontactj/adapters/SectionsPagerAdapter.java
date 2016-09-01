@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.fragments.NetFragment;
-import xobyx.xcontactj.fragments.NetFragmentPick;
 import xobyx.xcontactj.views.HeaderTabs;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter implements HeaderTabs.HeaderTabsAdapter {
@@ -16,23 +15,20 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter implements Header
     final NetFragment s = NetFragment.newInstance(1);
     final NetFragment m = NetFragment.newInstance(2);
     public final NetFragment Fragments[] = {z, s, m};
-    private final boolean mPick;
 
 
-    public SectionsPagerAdapter(FragmentManager fm, int net, boolean pickMode) {
+    public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);
 
-        mPick = pickMode;
     }
 
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return TouchedItem PlaceholderFragment (defined as TouchedItem static inner class below).
-        if (!mPick)
+
             return Fragments[position];
 
-        return NetFragmentPick.newInstance(position);
     }
 
 

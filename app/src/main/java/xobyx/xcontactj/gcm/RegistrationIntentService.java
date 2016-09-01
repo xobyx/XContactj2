@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import xobyx.xcontactj.BuildConfig;
 import xobyx.xcontactj.R;
 
 public class RegistrationIntentService extends IntentService {
@@ -71,10 +70,10 @@ public class RegistrationIntentService extends IntentService {
             Log.i(TAG, "GCM Registration Token: " + token);
 
             // TODO: Implement this method to send any registration to your app's servers.
-            if(BuildConfig.DEBUG)
+
             m=sendRegistrationToServer(token);
 
-            getSharedPreferences("RegistrationToServer",0).edit().putBoolean("send",m).putString("token",token).commit();
+            getSharedPreferences("RegistrationToServer",0).edit().putBoolean("sent_token_to_server",m).putString("token",token).apply();
 
 
 
@@ -90,7 +89,7 @@ public class RegistrationIntentService extends IntentService {
             Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-           // sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+            sharedPreferences.edit().putBoolean("sent_token_to_server", false);
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
        // Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);

@@ -26,7 +26,7 @@ public class widget_manger implements NumberOnClick.NumberOnClickListener {
 
     @Override
     public void onClick(int op, Contact.Phones num) {
-        Uri uri = contact.LookupUri;
+
         Intent i = new Intent();
         switch (op) {
             case R.id.d_call:
@@ -41,13 +41,13 @@ public class widget_manger implements NumberOnClick.NumberOnClickListener {
 
             case R.id.d_share:
                 i.setAction(Intent.ACTION_SEND);
-                i.setType("num/plain");
+                i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, num.User + " :\n " + num.Fnumber + "\nShared using XOBYX contacts");
                 break;
 
             case R.id.d_edit:
                 i.setAction(Intent.ACTION_EDIT);
-                i.setData(uri);
+                i.setData(contact.LookupUri);
                 break;
 
             case R.id.d_delete:
@@ -56,16 +56,21 @@ public class widget_manger implements NumberOnClick.NumberOnClickListener {
 
             case R.id.d_minfo:
                 i.setAction(Intent.ACTION_VIEW);
-                i.setData(uri);
+                i.setData(contact.LookupUri);
                 break;
 
             case R.id.d_sendbla:
                 i.setClass(mcontext, SendBalanceActivity.class);
                 i.putExtra("NAME", num.User);
-                i.putExtra("NUMBER", num.Fnumber);
+                i.putExtra("NUMBER", num.getNumber());
                 break;
 
         }
-        mcontext.startActivity(i);
+        try {
+            mcontext.startActivity(i);
+        }
+        catch(android.content.ActivityNotFoundException v) {
+            Toast.makeText(mcontext, "No Activity found to handle", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -17,7 +17,6 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.util.Locale;
 
-
 import xobyx.xcontactj.until.ReportSenderFac;
 /**
  * Created by xobyx on 8/5/2015.
@@ -26,7 +25,8 @@ import xobyx.xcontactj.until.ReportSenderFac;
 @ReportsCrashes(mailTo = "xobyxm@hotmail.com", mode = ReportingInteractionMode.DIALOG,
         resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
         resDialogText = R.string.crash_dialog_text,
-        reportSenderFactoryClasses = ReportSenderFac.class,
+        reportSenderFactoryClasses = {ReportSenderFac.class},
+
 
         resDialogIcon = R.mipmap.ic_launcher, //optional. default is a warning sign
         resDialogTitle = R.string.crash_dialog_title, // optional. default is your application name
@@ -62,11 +62,11 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-
+        ACRA.init(MyApp.this);
         AsyncTask m=new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                ACRA.init(MyApp.this);
+
                 AnalyticsTrackers.initialize(MyApp.this);
                 tracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
                 tracker.enableAutoActivityTracking(true);

@@ -117,9 +117,10 @@ android:layout_marginBottom="10dp"
                 android:id="@+id/back"
                 android:divider="@null"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:tag="back"
-                android:visibility="invisible">
+                android:visibility="invisible"
+                android:background="#efefef">
 
                 <include
 
@@ -137,7 +138,7 @@ android:layout_marginBottom="10dp"
             android:background="?attr/colorPrimary" />
     </LinearLayout>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/d_more"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -146,7 +147,9 @@ android:layout_marginBottom="10dp"
         android:background="@drawable/selector_base"
         android:contentDescription="@string/make_call"
         android:src="?attr/expand"
+        android:tint="?attr/colorAccent"
 
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:scaleType="center" />
 
 </LinearLayout>

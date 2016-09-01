@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="@integer/abc_config_activityDefaultDur" android:exitFadeDuration="@integer/abc_config_activityShortDur">
-    <item android:drawable="@drawable/com_android_dialer_dial_num_bg_pressed" android:state_pressed="true" />
-    <item android:drawable="@drawable/com_android_dialer_dial_num_bg_normal" />
-</selector>

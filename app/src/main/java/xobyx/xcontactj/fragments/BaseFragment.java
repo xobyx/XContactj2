@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 
 import java.util.List;
 
+import xobyx.xcontactj.adapters.ContactsAdapter;
 import xobyx.xcontactj.until.Contact;
 
 /**
@@ -19,7 +20,7 @@ import xobyx.xcontactj.until.Contact;
 abstract class BaseFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Contact>>
         , AbsListView.OnItemClickListener {
 
-    NetFragment.ContactsAdapter mAdapter;
+    ContactsAdapter mAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

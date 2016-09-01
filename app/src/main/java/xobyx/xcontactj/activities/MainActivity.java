@@ -1,10 +1,13 @@
 package xobyx.xcontactj.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -15,8 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.android.internal.telephony.ITelephony;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     /**
      * pick mode
      */
-    public static boolean PM;
+    public static boolean pick_mode;
     /**
      * worked net
      */
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     /**
      * pick mode local
      */
-    public boolean PML;
+    public boolean pick_mode_local;
     public FloatingActionButton mCall;
     SectionsPagerAdapter mSectionsPagerAdapter;
     /**
@@ -89,9 +90,20 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             if (i == ServiceState.STATE_EMERGENCY_ONLY || i == ServiceState.STATE_OUT_OF_SERVICE) {
                 WN_ID = 3;
                 WN_NAME = "out of service";
+
+                Toast.makeText(MainActivity.this, "No Network,out of service " + NET_N[WN_ID], Toast.LENGTH_SHORT).show();
+            }
+            else {
+                WN_ID = ME.getCurrentNetwork(MainActivity.this);
+                mViewPager.setCurrentItem(WN_ID, false);
+
+                Toast.makeText(MainActivity.this, "Found Network" + NET_N[WN_ID], Toast.LENGTH_SHORT).show();
+
             }
         }
     };
+    private NetFragmentPick netFragmentPick;
+    private int default_network;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -105,9 +117,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         // ME.SetInternetSettingFor(0,this);
 
         setContentView(R.layout.activity_main_1);
-        final ITelephony telephonyService = ME.getTelephonyService(this);
 
-        ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
         final Toolbar viewById = (Toolbar) findViewById(R.id.toolbar);
         viewById.inflateMenu(R.menu.main_activity);
         setSupportActionBar(viewById);
@@ -124,24 +134,21 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
                     StartDialer("");
                 }
             });
-        } else {
-            mCall.setVisibility(View.INVISIBLE);
         }
 
         if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
             StartDialer(mInt.getDataString());
 
-        } else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
-            PM = true;
+        }
+        else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
+            pick_mode = true;
         }
         if (mInt.hasExtra("local")) {
-            PML = true;
+            pick_mode_local = true;
         }
 
 
-        DB = new MDatabase(getBaseContext());
-
-       // PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
+        // PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
 
         // Set up the action bar.
 
@@ -153,44 +160,83 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
         mViewPager = (xViewPager) findViewById(R.id.pager);
 
-        //mViewPager.addOnPageChangeListener(mheader);
-        mViewPager.setMoveEnabled(!PML);
-        if (PML) {
+
+        mViewPager.setMoveEnabled(!pick_mode_local);
+        if (pick_mode_local) {
+
+            ///FIXME: //(for send_balance Activity we will not reach this code if they are no network )
             getSupportActionBar().setTitle("Pick Contact:");
             mheader.setVisibility(View.GONE);
             mCall.setVisibility(View.GONE);
-            getSupportFragmentManager().beginTransaction().replace(R.id.rep_me, NetFragmentPick.newInstance(WN_ID)).commit();
+            netFragmentPick = NetFragmentPick.newInstance(WN_ID);
+            getSupportFragmentManager().beginTransaction().replace(R.id.rep_me, netFragmentPick).commit();
             //No need for Network Header in Pick a Contact mode..
 
 
-        } else {
+        }
+        else {
             //getActionBar().setTitle("Pick Contact:");
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), WN_ID, PM);      //
+            //final ITelephony telephonyService = ME.getTelephonyService(this);
+
+            ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
+            DB = new MDatabase(getBaseContext());
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());      //
 
 
             mViewPager.setAdapter(mSectionsPagerAdapter);
             mheader.setViewPager(mViewPager);
-            mheader.setActionBar(this.getSupportActionBar());
-            getSharedPreferences("Network", MODE_PRIVATE).edit().putString("worked_net", WN_NAME);
+            DialerHelper = new DialerActionModeHelper(this);
 
+            if (WN_ID == 3)
+                if (PreferenceManager.getDefaultSharedPreferences(this).contains("default_Network")) {
+                    default_network = PreferenceManager.getDefaultSharedPreferences(this).getInt("default_Network", -1);
+                }
+                else {
+                    setDefaultNetwork();
+                }
 
-            mViewPager.setCurrentItem(WN_ID);
+            mViewPager.setCurrentItem(WN_ID != 3 ? WN_ID : default_network);
 
 
         }
     }
 
+    private void setDefaultNetwork() {
+        final int[] n = new int[1];
+        AlertDialog.Builder o = new AlertDialog.Builder(this);
+
+        o.setCancelable(false).setMessage("No Network Founded plz Select your default Network..").setTitle("No Network Founded")
+                .setSingleChoiceItems(R.array.net_names, -1, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        n[0] = which;
+
+                    }
+                }).setPositiveButton("Select", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (n[0] != -1) {
+                    PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", which).commit();
+
+                    dialog.dismiss();
+                }
+            }
+        }).show();
+    }
+
     private void StartDialer(String dataString) {
-        if (WN_ID != -1) {
+        if (WN_ID != 3) {
             if (!mdialer_stat) {
 
 
-                DialerHelper = new DialerActionModeHelper(this);
                 DialerHelper.StartDialerActionMode(dataString);
 
             }
-        } else
+        }
+        else
             Toast.makeText(MainActivity.this, "No Network..", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -202,16 +248,22 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     public boolean onQueryTextChange(String newText) {
         // NetFragment item = null;
         /* FIXME:search don't works when change show number... */
-        mViewPager.setMoveEnabled(newText.isEmpty());
-        NetFragment item = mSectionsPagerAdapter.Fragments[mViewPager.getCurrentItem()];
-
+        NetFragment item = null;
+        if (!pick_mode_local) {
+            mViewPager.setMoveEnabled(newText.isEmpty());
+            item = mSectionsPagerAdapter.Fragments[mViewPager.getCurrentItem()];
+        }
+        else {
+            item = netFragmentPick;
+        }
         try {
             if (item != null) {
 
                 item.SearchFor(newText);
             }
 
-        } catch (Exception a) {
+        }
+        catch (Exception a) {
             Toast.makeText(this, a.getMessage(), Toast.LENGTH_LONG).show();
         }
 
@@ -224,6 +276,12 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         super.finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (DB != null)
+            DB.Close();
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -237,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             @Override
             public boolean onClose() {
                 mViewPager.setMoveEnabled(true);
-//clear Query first..
+                //clear Query first..
                 return false;
             }
         });
@@ -301,7 +359,8 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             DialerHelper.finish();
 
 
-        } else
+        }
+        else
             super.onBackPressed();
 
     }

@@ -1,192 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <attr name="backgroundColor" format="color" />
-
-    <declare-styleable name="QKLinearLayout">
-        <attr name="backgroundTint" />
-    </declare-styleable>
-
-
-    <attr name="type">
-        <flag name="primary_bold" value="0" />
-        <flag name="primary" value="1" />
-        <flag name="secondary" value="2" />
-        <flag name="tertiary" value="3" />
-        <flag name="pref_category" value="4" />
-        <flag name="dialog_title" value="5" />
-        <flag name="dialog_message" value="6" />
-        <flag name="dialog_button" value="7" />
-        <flag name="toolbar" value="8" />
-    </attr>
-
-    <declare-styleable name="RobotoTextView">
-        <attr name="typeface" />
-    </declare-styleable>
-
-    <declare-styleable name="QKTextView">
-        <attr name="type" />
-    </declare-styleable>
-
-    <attr name="typeface">
-        <enum name="roboto_thin" value="0" />
-        <enum name="roboto_thin_italic" value="1" />
-        <enum name="roboto_light" value="2" />
-        <enum name="roboto_light_italic" value="3" />
-        <enum name="roboto_regular" value="4" />
-        <enum name="roboto_italic" value="5" />
-        <enum name="roboto_medium" value="6" />
-        <enum name="roboto_medium_italic" value="7" />
-        <enum name="roboto_bold" value="8" />
-        <enum name="roboto_bold_italic" value="9" />
-        <enum name="roboto_black" value="10" />
-        <enum name="roboto_black_italic" value="11" />
-        <enum name="roboto_condensed_light" value="12" />
-        <enum name="roboto_condensed_light_italic" value="13" />
-        <enum name="roboto_condensed_regular" value="14" />
-        <enum name="roboto_condensed_italic" value="15" />
-        <enum name="roboto_condensed_bold" value="16" />
-        <enum name="roboto_condensed_bold_italic" value="17" />
-        <enum name="roboto_slab_thin" value="18" />
-        <enum name="roboto_slab_light" value="19" />
-        <enum name="roboto_slab_regular" value="20" />
-        <enum name="roboto_slab_bold" value="21" />
-        <enum name="lato_thin" value="22" />
-        <enum name="lato_thin_italic" value="23" />
-        <enum name="lato_light" value="24" />
-        <enum name="lato_light_italic" value="25" />
-        <enum name="lato_regular" value="26" />
-        <enum name="lato_italic" value="27" />
-        <enum name="lato_medium" value="28" />
-        <enum name="lato_medium_italic" value="29" />
-        <enum name="lato_bold" value="30" />
-        <enum name="lato_bold_italic" value="31" />
-        <enum name="lato_black" value="32" />
-        <enum name="lato_black_italic" value="33" />
-    </attr>
-
-    <declare-styleable name="AvatarView">
-        <attr name="initialSize" format="dimension" />
-    </declare-styleable>
-
     <attr name="d1" format="reference" />
     <attr name="d2" format="reference" />
     <attr name="d3" format="reference" />
     <attr name="d4" format="reference" />
     <attr name="d5" format="reference" />
     <attr name="d6" format="reference" />
-    <attr name="send_sms" format="reference" />
-    <attr name="make_call" format="reference" />
+    <attr name="send_sms" format="reference"/>
+    <attr name="make_call" format="reference"/>
     <attr name="expand" format="reference"/>
     <attr name="history" format="reference"/>
     <attr name="messges" format="reference"/>
     <attr name="p_net_text_color" format="color"/>
+    <declare-styleable name="AZSideBar">
+        <attr name="shape_background" format="color" />
+        <attr name="selector_color" format="color" />
+        <attr name="text_color" format="color" />
+        <attr name="text_selected_color" format="color" />
+        <attr name="enable_animateion" format="boolean" />
 
-    <declare-styleable name="CircleImageView">
-        <attr name="border_width" format="dimension"/>
-
-        <attr name="border_color" format="color"/>
-        <attr name="border_overlay" format="boolean"/>
 
     </declare-styleable>
+    <declare-styleable name="HeaderTabs">
+        <attr name="net1" format="reference" />
+        <attr name="net2" format="reference" />
+        <attr name="net3" format="reference" />
 
 
-    <declare-styleable name="EdgeTriggerView">
-        <attr name="edgeWidth" format="dimension"/>
-        <attr name="listenEdges">
-            <flag name="left" value="0x01"/>
-            <flag name="right" value="0x02"/>
+    </declare-styleable>
+    <declare-styleable name="FontTextView">
+        <attr name="font" format="string" />
+
+        <attr name="efont" format="enum">
+            <enum name="as.ttf" value="0" />
+            <enum name="Ba.ttf" value="1" />
+            <enum name="bein.ttf" value="2" />
+            <enum name="bset.otf" value="3" />
+            <enum name="kofi.ttf" value="4" />
+            <enum name="mrb33.ttf" value="5" />
+
         </attr>
     </declare-styleable>
+    <declare-styleable name="SlidingUpPanelLayout">
+        <attr name="panelHeight" format="dimension" />
+        <attr name="shadowHeight" format="dimension" />
+        <attr name="paralaxOffset" format="dimension" />
+        <attr name="fadeColor" format="color" />
+        <attr name="flingVelocity" format="integer" />
+        <attr name="dragView" format="reference" />
+        <attr name="overlay" format="boolean" />
+        <attr name="anchorPoint" format="float" />
+    </declare-styleable>
+    <declare-styleable name="LetterImageView">
+        <attr name="randomColor" format="boolean" />
 
-    <declare-styleable name="InterpolatingLayout_Layout">
-        <attr name="layout_narrowParentWidth" format="dimension"/>
-        <attr name="layout_narrowWidth" format="dimension"/>
-        <attr name="layout_narrowMarginLeft" format="dimension"/>
-        <attr name="layout_narrowMarginRight" format="dimension"/>
-        <attr name="layout_narrowPaddingLeft" format="dimension"/>
-        <attr name="layout_narrowPaddingRight" format="dimension"/>
-        <attr name="layout_wideParentWidth" format="dimension"/>
-        <attr name="layout_wideWidth" format="dimension"/>
-        <attr name="layout_wideMarginLeft" format="dimension"/>
-        <attr name="layout_wideMarginRight" format="dimension"/>
-        <attr name="layout_widePaddingLeft" format="dimension"/>
-        <attr name="layout_widePaddingRight" format="dimension"/>
+        <attr name="fchar" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="ProportionalLayout">
-        <attr name="direction" format="string"/>
-        <attr name="ratio" format="float"/>
-    </declare-styleable>
 
-    <declare-styleable name="TransitionAnimationView">
-        <attr name="clipMarginLeft" format="dimension"/>
-        <attr name="clipMarginRight" format="dimension"/>
-        <attr name="clipMarginTop" format="dimension"/>
-        <attr name="clipMarginBottom" format="dimension"/>
-        <attr name="enterAnimation" format="reference"/>
-        <attr name="exitAnimation" format="reference"/>
-        <attr name="animationDuration" format="integer"/>
-    </declare-styleable>
-
-    <declare-styleable name="ContactBrowser">
-        <attr name="contact_browser_list_padding_left" format="dimension"/>
-        <attr name="contact_browser_list_padding_right" format="dimension"/>
-        <attr name="contact_browser_background" format="reference"/>
-    </declare-styleable>
-
-    <declare-styleable name="ContactListItemView">
-        <attr name="list_item_height" format="dimension"/>
-        <attr name="list_section_header_height" format="dimension"/>
-        <attr name="activated_background" format="reference"/>
-        <attr name="section_header_background" format="reference"/>
-        <attr name="list_item_divider" format="reference"/>
-        <attr name="list_item_padding_top" format="dimension"/>
-        <attr name="list_item_padding_right" format="dimension"/>
-        <attr name="list_item_padding_bottom" format="dimension"/>
-        <attr name="list_item_padding_left" format="dimension"/>
-        <attr name="list_item_gap_between_image_and_text" format="dimension"/>
-        <attr name="list_item_gap_between_label_and_data" format="dimension"/>
-        <attr name="list_item_call_button_padding" format="dimension"/>
-        <attr name="list_item_vertical_divider_margin" format="dimension"/>
-        <attr name="list_item_presence_icon_margin" format="dimension"/>
-        <attr name="list_item_presence_icon_size" format="dimension"/>
-        <attr name="list_item_background_color" format="color"></attr>
-        <attr name="list_item_photo_size" format="dimension"/>
-        <attr name="list_item_profile_photo_size" format="dimension"/>
-        <attr name="list_item_prefix_highlight_color" format="color"/>
-        <attr name="list_item_header_text_indent" format="dimension" />
-        <attr name="list_item_header_text_color" format="color" />
-        <attr name="list_item_header_text_size" format="dimension" />
-        <attr name="list_item_header_height" format="dimension" />
-        <attr name="list_item_header_underline_height" format="dimension" />
-        <attr name="list_item_header_underline_color" format="color" />
-        <attr name="list_item_contacts_count_text_color" format="color" />
-        <attr name="list_item_text_indent" format="dimension" />
-        <attr name="list_item_contacts_count_text_size" format="dimension" />
-        <attr name="list_item_data_width_weight" format="integer" />
-        <attr name="list_item_label_width_weight" format="integer"  />
-        <attr name="list_item_name_text_color" format="color"/>
-        <attr name="list_item_name_text_size" format="dimension"/>
-        <attr name="list_item_text_offset_top" format="dimension"/>
-    </declare-styleable>
-
-    <declare-styleable name="CallLog">
-        <attr name="call_log_primary_text_color" format="color" />
-        <attr name="call_log_primary_background_color" format="color" />
-        <attr name="call_log_secondary_text_color" format="color" />
-        <attr name="call_log_secondary_background_color" format="color" />
-        <attr name="call_log_header_color" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="VoicemailStatus">
-        <attr name="call_log_voicemail_status_height" format="dimension" />
-        <attr name="call_log_voicemail_status_background_color" format="color" />
-        <attr name="call_log_voicemail_status_text_color" format="color" />
-        <attr name="call_log_voicemail_status_action_text_color" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="Favorites">
-        <attr name="favorites_padding_bottom" format="dimension" />
-    </declare-styleable>
 </resources>

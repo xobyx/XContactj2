@@ -10,5 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <include layout="@layout/emty_layout" />
+    <include layout="@layout/emty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </FrameLayout>

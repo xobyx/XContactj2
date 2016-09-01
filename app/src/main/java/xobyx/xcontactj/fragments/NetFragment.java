@@ -1,15 +1,12 @@
 package xobyx.xcontactj.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +16,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.ContactSpecificsActivity;
-import xobyx.xcontactj.adapters.TextHighlighter;
-import xobyx.xcontactj.until.AsyncDrawer;
+import xobyx.xcontactj.adapters.ContactsAdapter;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.until.NetworkContactLoader;
@@ -36,8 +30,6 @@ import xobyx.xcontactj.until.XPickDialog;
 import xobyx.xcontactj.until.scale_animation;
 import xobyx.xcontactj.views.LetterImageView;
 import xobyx.xcontactj.views.ListViewH.PinnedHeaderListView;
-import xobyx.xcontactj.views.ListViewH.SearchablePinnedHeaderListViewAdapter;
-import xobyx.xcontactj.views.ListViewH.StringArrayAlphabetIndexer;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static xobyx.xcontactj.until.SettingHelp.getListMode;
@@ -117,7 +109,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
         super.onCreate(var1);
 
         ///// FIXME: 2/27/2016  Add Custom SearchView ...
-        setHasOptionsMenu(false);
+        //setHasOptionsMenu(false);
         if (this.getArguments() != null && this.getArguments().containsKey(ARG_SECTION_NUMBER))
             net = this.getArguments().getInt(ARG_SECTION_NUMBER, 0);
 
@@ -172,11 +164,14 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     }
 
 
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // this.Me.setAdapter(mAdapter);
+
 
 
     }
@@ -195,7 +190,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     }
 
-    public void SearchFor(String Qu) throws Exception {
+    public void SearchFor(String Qu)  {
 
         mAdapter.getFilter().filter(Qu);
 
@@ -206,17 +201,19 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
 
+
         Collections.sort(data);
         ME.$[net].clear();
         ME.$[net].addAll(data);
+
         mShowNumber = SettingHelp.getShowNumb(getActivity().getBaseContext());
-        if (mShowNumber && list_mode == 0) {
+        if (true) {
             //  mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), ME.$[net]);
-            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,false);
         } else {
             // mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), ME.$[net], list_mode);
 
-            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
+            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,false);
 
         }
 
@@ -260,107 +257,10 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
         loader = null;
     }
 
-    public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Contact> {
-        private final TextHighlighter mTexth;
-        private final LayoutInflater mInflater;
-        private final AsyncDrawer ib;
-        private ArrayList<Contact> mContacts;
-        private String x;
-        private boolean mClip;
-        //private final int CONTACT_PHOTO_IMAGE_SIZE;
-        //private final int[] PHOTO_TEXT_BACKGROUND_COLORS;
-
-
-        @Override
-        public CharSequence getSectionTitle(int sectionIndex) {
-            return ((StringArrayAlphabetIndexer.AlphaBetSection) getSections()[sectionIndex]).getName();
-        }
-
-        public ContactsAdapter(Context con, final ArrayList<Contact> contacts, boolean mClisp) {
-            mClip = mClisp;
-            setData(contacts);
-            ib = new AsyncDrawer(con);
-            mTexth = new TextHighlighter(Typeface.BOLD, 0xff02a7dd);
-            mInflater = LayoutInflater.from(con);
-            //    PHOTO_TEXT_BACKGROUND_COLORS=getResources().getIntArray(R.array.contacts_text_background_colors);
-            //  CONTACT_PHOTO_IMAGE_SIZE=getResources().getDimensionPixelSize(
-            //        R.dimen.list_item__contact_imageview_size);
-        }
-
-        public void setData(final ArrayList<Contact> contacts) {
-            this.mContacts = contacts;
-            final String[] generatedContactNames = generateContactNames(contacts);
-            setSectionIndexer(new StringArrayAlphabetIndexer(generatedContactNames, true));
-        }
-
-        private String[] generateContactNames(final List<Contact> contacts) {
-            final ArrayList<String> contactNames = new ArrayList<String>();
-            if (contacts != null)
-                for (final Contact contactEntity : contacts)
-                    contactNames.add(contactEntity.Name);
-            return contactNames.toArray(new String[contactNames.size()]);
-        }
-
-        @Override
-        public View getView(final int position, final View convertView, final ViewGroup parent) {
-            final ViewHolder holder;
-            final View rootView;
-            if (convertView == null) {
-                holder = new ViewHolder();
-                rootView = mInflater.inflate(R.layout.child_main, null);
-                holder.Text = (TextView) rootView.findViewById(R.id.ptextname);
-                holder.Number = (TextView) rootView.findViewById(R.id.numberc);
-                holder.Img = (LetterImageView) rootView.findViewById(R.id.imagec);
-                holder.headerView = (TextView) rootView.findViewById(R.id.header_text);
-                holder.pos = position;
-                rootView.setTag(holder);
-            } else {
-                rootView = convertView;
-                holder = (ViewHolder) rootView.getTag();
-            }
-            final Contact contact = getItem(position);
-            final String displayName = contact.Name;
-
-            holder.Text.setText(contact.Name);
-
-            mTexth.setPrefixText(holder.Text, contact.Name, x);
-            ib.DrawImageString(contact.Name, holder.Img, mClip, contact.Net);
-            if (contact.Phone.size() != 0)
-                //   holder.Number.setText(t.Phone.get(0).Number);
-                mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), x);
-            if (contact.PhotoThumbUri == null) {
-                //hold.Img.setImageDrawable(null);
-                holder.Img.setImageDrawable(null);
-                ib.DrawImageString(contact.Name, holder.Img, mClip, contact.Phone.size() != 0 ? contact.Phone.get(0).nNet.getValue() : 0);
-
-            } else
-                ib.GetPhoto(contact, holder.Img, mClip, contact.Phone.size() != 0 ? contact.Phone.get(0).nNet.getValue() : 0);
-            bindSectionHeader(holder.headerView, null, position);
-            return rootView;
-        }
-
-        @Override
-        public boolean doFilter(final Contact item, final CharSequence constraint) {
-            x = (String) constraint;
-            if (TextUtils.isEmpty(constraint))
-                return true;
-            final String displayName = item.Name;
-            return !TextUtils.isEmpty(displayName) && displayName.toLowerCase(Locale.getDefault())
-                    .contains(constraint.toString().toLowerCase(Locale.getDefault()));
-        }
-
-        @Override
-        public ArrayList<Contact> getOriginalList() {
-            return mContacts;
-        }
-
-
-    }
-
     // /////////////////////////////////////////////////////////////////////////////////////
     // ViewHolder //
     // /////////////
-    private static class ViewHolder {
+    public static class ViewHolder {
         public TextView Text;
         public LetterImageView Img;
 

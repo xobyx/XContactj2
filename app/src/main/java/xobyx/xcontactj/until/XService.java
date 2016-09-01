@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.IInterface;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -15,6 +16,7 @@ import android.os.RemoteException;
 public class XService extends Service {
     public static final int MSG_SET_VALUE = 1;
     public static final int MSG_REGISTER_CLIENT = 0;
+
     Messenger y = new Messenger(new F());
     localBind xbinder = new localBind();
 
@@ -31,7 +33,7 @@ public class XService extends Service {
 
     }
 
-    class F extends Handler {
+    static class F extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -45,6 +47,10 @@ public class XService extends Service {
         }
 
 
+        @Override
+        public IInterface queryLocalInterface(String descriptor) {
+            return super.queryLocalInterface(descriptor);
+        }
     }
 
 }
@@ -111,7 +117,7 @@ class d {
 
     }
 
-    class IncomingHandler extends Handler {
+    static class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {

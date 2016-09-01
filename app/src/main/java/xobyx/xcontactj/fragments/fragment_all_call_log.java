@@ -152,9 +152,8 @@ public class fragment_all_call_log extends Fragment {
 
 
     DialogFragment v=new DialogFragment();
-    public void StartListLog() {
-        objList.clear();
-
+    public ArrayList<Base_CallLog>  StartListLog() {
+        ArrayList<Base_CallLog> temp=new ArrayList<Base_CallLog>();
 
 
         Cursor var1 = getActivity().getContentResolver().query(Uri.parse("content://call_log/calls"), (String[]) null, (String) null, (String[]) null, "date DESC");
@@ -226,7 +225,7 @@ public class fragment_all_call_log extends Fragment {
 
 
                 // logObj.setAll(var6);
-                objList.add(logObj);
+                temp.add(logObj);
 
             }
 
@@ -239,7 +238,7 @@ public class fragment_all_call_log extends Fragment {
         total_out_dur = 0;
         total_miss = 0;
         total_miss_dur = 0;
-        Iterator var2 = objList.iterator();
+        Iterator var2 = temp.iterator();
 
         while (var2.hasNext()) {
             Base_CallLog var3 = (Base_CallLog) var2.next();
@@ -255,7 +254,8 @@ public class fragment_all_call_log extends Fragment {
             }
         }
 
-        Collections.sort(objList, mComp);
+        Collections.sort(temp, mComp);
+        return temp;
 
     }
 
@@ -279,7 +279,7 @@ public class fragment_all_call_log extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mList = ((ListView) view.findViewById(R.id.all_call_log_list));
-        hide = (LinearLayout) view.findViewById(R.id.call_log_empty_layout);
+        hide = (LinearLayout) view.findViewById(R.id.emty_text_image);
         adapter = new all_call_log_adapter(this.getActivity(), objList);
         mList.setAdapter(adapter);
 
@@ -290,12 +290,13 @@ public class fragment_all_call_log extends Fragment {
         this.q = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                StartListLog();
-                return null;
+                return StartListLog();
+
             }
 
             @Override
             protected void onPostExecute(Object o) {
+                objList= (ArrayList<Base_CallLog>) o;
                 adapter.notifyDataSetChanged();
                 hide.setVisibility(objList.size() == 0 ? View.VISIBLE : View.GONE);
             }

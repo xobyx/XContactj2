@@ -110,7 +110,7 @@ public class MDatabase {
         me.delete(DatabaseH.CONTACT_TABLE, "1=1", null);
     }
 
-    void Close() {
+    public void Close() {
 
         this.me.close();
     }

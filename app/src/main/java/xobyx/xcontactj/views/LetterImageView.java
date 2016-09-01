@@ -13,14 +13,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import xobyx.xcontactj.R;
+import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
 
 public class LetterImageView extends ImageView {
@@ -32,24 +36,28 @@ public class LetterImageView extends ImageView {
     private int mTextColor = Color.WHITE;
     private boolean isOval;
     private int mNet;
-    private Rect textBounds=new Rect();
-    private float textSize=0;
+    private Rect textBounds = new Rect();
+    private float textSize = 0;
     private boolean isLetter;
-    private float m=1;
+    private float m = 1;
     private boolean anm;
-    private float red=0;
+    private float circle_red = 0;
     private Paint sx;
     private float Xc;
     private float Xy;
+    private boolean contact_is_set;
+    private int total_numbers;
+    private ArrayList<Contact.Phones> phonelist;
+
 
     public LetterImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.LetterImageView);
         final boolean hasValue = array.hasValue(R.styleable.LetterImageView_randomColor);
         final boolean m = array.hasValue(R.styleable.LetterImageView_fchar);
-        if(m){
+        if (m) {
             final String string = array.getString(R.styleable.LetterImageView_fchar);
-            mLetter=string.charAt(0);
+            mLetter = string != null ? string.charAt(0) : ' ';
         }
         init(array.getBoolean(
                 R.styleable.LetterImageView_randomColor, false));
@@ -73,6 +81,7 @@ public class LetterImageView extends ImageView {
     }
 
     private void init(boolean a) {
+        b = new Handler();
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(mTextColor);
         mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -83,15 +92,15 @@ public class LetterImageView extends ImageView {
             mBackgroundPaint.setColor(getResources().getColor(R.color.transparent));
         }
 
-        sx=new Paint(Paint.ANTI_ALIAS_FLAG);
+        sx = new Paint(Paint.ANTI_ALIAS_FLAG);
         sx.setStyle(Paint.Style.FILL);
-        sx.setColor(0x67FFFFFF);
+        sx.setColor(0x94FFFFFF);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 m = (float) animation.getAnimatedValue();
-                red=(float)((m-1f)/0.5f)*(getHeight()/2);
+                circle_red = (float) ((m - 1f) / 0.5f) * (getHeight() / 2);
                 invalidate();
             }
         });
@@ -102,14 +111,16 @@ public class LetterImageView extends ImageView {
         return mLetter;
     }
 
-    Rect x= new Rect();
-    public void setLetter(char letter) {
-        isLetter=true;
-        if(letter== '\u0647'){letter='\uFEEB';}
-        mTextPaint.measureText(String.valueOf(letter));
+    Rect mCharBound = new Rect();
 
-        mTextPaint.getTextBounds(String.valueOf(letter),0,1,x);
-       // mTextPaint.setElegantTextHeight(true);
+    public void setLetter(char letter) {
+        isLetter = true;
+
+        if (letter == '\u0647') {
+            letter = '\uFEEB';
+        }
+
+        // mTextPaint.setElegantTextHeight(true);
         mLetter = letter;
         invalidate();
     }
@@ -123,7 +134,42 @@ public class LetterImageView extends ImageView {
         invalidate();
     }
 
-    ValueAnimator animator=new ValueAnimator();
+    //////// z,s,m,u
+
+
+    public void setContact(Contact ds) {
+       // WeakReference<Contact> a=new WeakReference<Contact>(ds);
+        phonelist=new ArrayList<Contact.Phones>(ds.Phone);
+        //total_numbers = ds.Phone.size();
+        contact_is_set = true;
+
+
+        invalidate();
+    }
+
+    RectF ovl = new RectF();
+
+    void draw_background(Canvas n) {
+        int i[] = {0, 0, 0, 0};
+        for (Contact.Phones pn : phonelist) {
+            i[pn.nNet.getValue()]++;
+        }
+        float angle;
+        float start_angle = 0;
+        ovl.set(0, 0, n.getWidth(), n.getHeight());
+        for (int i1 = 0; i1 < i.length; i1++) {
+            if (i[i1] > 0) {
+                angle = ((float) i[i1] / (float) phonelist.size()) * 360f;
+                mBackgroundPaint.setColor(ME.nColors[i1]);
+
+                n.drawArc(ovl, start_angle, angle, isOval, mBackgroundPaint);
+                start_angle += angle;
+            }
+        }
+    }
+
+    ValueAnimator animator = new ValueAnimator();
+
     public boolean isOval() {
         return isOval;
     }
@@ -135,7 +181,7 @@ public class LetterImageView extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
-        canvas.scale(m,m,canvas.getWidth()/2f,canvas.getHeight()/2f);
+        canvas.scale(m, m, canvas.getWidth() / 2f, canvas.getHeight() / 2f);
         super.onDraw(canvas);
 
 
@@ -145,35 +191,49 @@ public class LetterImageView extends ImageView {
         if (getDrawable() == null) {
 
             // Set a text font size based on the height of the view
-            if(textSize==0) textSize= canvas.getHeight() - getTextPadding() * 2;
+            if (textSize == 0) textSize = canvas.getHeight() - getTextPadding() * 2;
             mTextPaint.setTextSize(textSize);
-            if (isOval()) {
-                canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f,
-                        mBackgroundPaint);
+            if (!contact_is_set) {
+                if (isOval()) {
+                    canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f,
+                            mBackgroundPaint);
 
+                } else {
+                    canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mBackgroundPaint);
+                }
             } else {
-                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mBackgroundPaint);
-            }
+                int save = canvas.save();
 
+                canvas.rotate(45,canvas.getWidth() / 2f, canvas.getHeight() / 2f);
+                draw_background(canvas);
+
+                canvas.restoreToCount(save);
+            }
 
             // Measure a text
 
-            mTextPaint.getTextBounds(String.valueOf(mLetter), 0, 1, textBounds);
-            float textWidth = mTextPaint.measureText(String.valueOf(mLetter));
-            float textHeight = textBounds.height()/2f;
+            float mTextWidth = mTextPaint.measureText(String.valueOf(mLetter));
+
+            mTextPaint.getTextBounds(String.valueOf(mLetter), 0, 1, mCharBound);
+
+            float textHeight = mCharBound.height();
+
+            if (mLetter >= '\u0623' && mLetter <= '\u064a') {
+                textHeight = mCharBound.height() / 2f;
+            }
             // Draw the text
-            canvas.drawText(String.valueOf(mLetter), canvas.getWidth() / 2f - textWidth / 2f,
+            canvas.drawText(String.valueOf(mLetter), canvas.getWidth() / 2f - mTextWidth / 2f,
                     canvas.getHeight() / 2f + textHeight / 2f, mTextPaint);
 
-            canvas.restore();
+
+        }
+
+        canvas.restore();
+        if (!contact_is_set)
             ME.DrawNetworkLogo(getContext(), canvas, mNet);
 
-        } else
 
-            ME.DrawNetworkLogo(getContext(), canvas, mNet);
-
-
-            canvas.drawCircle(Xc,Xy,red,sx);
+        canvas.drawCircle(Xc, Xy, circle_red, sx);
 
 
     }
@@ -184,17 +244,24 @@ public class LetterImageView extends ImageView {
         return 8 * getResources().getDisplayMetrics().density;
     }
 
+    Handler b;
+    private final Runnable runnable = new Runnable() {
+        public void run() {
+            LetterImageView.this.invalidate();
+        }
+    };
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()==event.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
            /* if(isLetter) {*/
-                animator.setFloatValues(1f, 1.5f,1f);
-            Xc=event.getX();Xy=event.getY();
+            //if(animator.isRunning())animator.cancel();
+            animator.setFloatValues(1f, 1.5f, 1f);
+            Xc = event.getX();
+            Xy = event.getY();
 
 
-
-                animator.start();
+            animator.start();
            /* }
             else {
                 setPivotX(getWidth() / 2f);
@@ -208,8 +275,13 @@ public class LetterImageView extends ImageView {
                 });
                 ViewCompat.setElevation(this, 20);
             }*/
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (animator.isRunning()) {
+                Xc = event.getX();
+                Xy = event.getY();
+            } else
+                animator.start();
         }
-
 
         return super.onTouchEvent(event);
 
@@ -218,7 +290,7 @@ public class LetterImageView extends ImageView {
     @Override
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
-        isLetter=false;
+        isLetter = false;
     }
 
     private int randomColor() {

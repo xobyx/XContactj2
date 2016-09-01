@@ -1,7 +1,6 @@
 package xobyx.xcontactj.activities;
 
 import android.animation.Animator;
-import android.animation.AnimatorInflater;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -11,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import xobyx.xcontactj.R;
@@ -58,15 +56,19 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         final Intent in = getIntent();
         SetPageParameters(in);
+        if(!all)
         ME.setTheme(this, mNet);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_contact_detiles);
 
 
 
         ContactSpecFragmentAdapter fragAd = new ContactSpecFragmentAdapter(getSupportFragmentManager(), mPos, mNet, lmessage,all);
-        setContentView(R.layout.activity_contact_detiles);
+//error when none netWork
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         pager = (ViewPager) this.findViewById(R.id.pager);
@@ -88,36 +90,46 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        if(null!=collapsingToolbar)
         collapsingToolbar.setTitle(a.Name);
+
+        ((TextView) findViewById(R.id.toolbar_title)).setText(a.Name);
         //collapsingToolbar.setContentScrimColor(ME.nColors[mNet]);
 
-
+        final LetterImageView imageView = (LetterImageView) findViewById(R.id.d_image);
         if (a.PhotoUri != null) {
-            ((ImageView) findViewById(R.id.d_image)).setImageURI(a.PhotoUri);
+            imageView.setImageURI(a.PhotoUri);
 
             // ((CircleImageView) findViewById(R.id.profile_image)).setImageURI(a.PhotoThumbUri);
 
         } else {
-            final LetterImageView view = (LetterImageView) findViewById(R.id.d_image);
-            view.setCustomColor(a.Net);
+            imageView.setLetter(a.Name.charAt(0));
+            if(!all) {
+                imageView.setCustomColor(a.Net);
+            }
+            else
+            {
+                imageView.setContact(a);
+            }
 
-            view.setLetter(a.Name.charAt(0));
+
+
         }
         //set startup page//
         pager.addOnPageChangeListener(this);
 
         //Startup Animator..
-        mt1 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.df);
-        mt2 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.i_df);
-        df = new AppAnimations.Rotate3dAnimation(180, 0, 0, 0, 20, false);
-        df.setDuration(800);
+       // mt1 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.df);
+        //mt2 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.i_df);
+        //df = new AppAnimations.Rotate3dAnimation(180, 0, 0, 0, 20, false);
+        //df.setDuration(800);
 
 
         for (int i = 0; i < tabHost.getTabCount(); i++) {
 
             //AttributeSet m;m.getAttributeValue(R.attr.actionBarDivider)
             tabHost.getTabAt(i)
-                    .setIcon(getResources().getDrawable(icons[4][i]));
+                    .setIcon(getResources().getDrawable(icons[i]));
             ;//.setText(text[i]);
 
 
@@ -147,11 +159,9 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     }
 
 
-    final int[][] icons = {{R.drawable.dialer_xh_za, R.drawable.history_za, R.drawable.messges_za}
-            ,{R.drawable.dialer_xh_su, R.drawable.history_su, R.drawable.messges_su}
-            ,{R.drawable.dialer_xh_mt, R.drawable.history_mt, R.drawable.messges_mt},
-            {R.drawable.dialer_w, R.drawable.history_w, R.drawable.messges_w}
-            ,{R.drawable.icalls, R.drawable.icall_log, R.drawable.imessages}
+    final int[] icons =
+
+            {R.drawable.icalls, R.drawable.icall_log, R.drawable.imessages
     };
 
     @Override

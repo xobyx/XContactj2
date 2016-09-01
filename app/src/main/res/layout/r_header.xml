@@ -26,7 +26,8 @@
         android:text="Sudani"
         android:textColor="@color/background"
         android:textSize="20sp"
-        app:font="RP.ttf"/>
+        app:font="RP.ttf"
+        android:layout_gravity="center_vertical" />
 
 
 

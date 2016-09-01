@@ -134,6 +134,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         List<String> mk = new ArrayList<>();
         mk.add("All");
         for (Contact.Phones phones : contact.Phone) {
+
             mk.add(phones.getNumber());
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, android.R.id.text1, mk);
@@ -356,14 +357,16 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
     class SmsAdapter extends BaseRecycleAdapter<SmsHolder,massage> {
 
 
+
         private String mType="All";
 
         public SmsAdapter(Context context, List<massage> s, int layout) {
             super(context, s, layout);
+            //FIXME: Crash
             this.Filter =new FilterBuilder<massage>() {
                 @Override
                 public boolean IsMatch(massage b) {
-                    return b.addres.equals(mType);
+                    return b.addres!=null&&b.addres.equals(mType);
                 }
             };
 
@@ -372,7 +375,12 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         @Override
         public void onBindViewHolder(SmsHolder holder, massage massage) {
 
+
+
+           // holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_right);
+
             holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_right);
+
             switch (massage.state) {
                 case 64://listener
                     holder.smsStute.setText("Field");
@@ -401,9 +409,9 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         DateFormat.getTimeInstance(DateFormat.SHORT);
         holder.smsTime.setText(DateFormat.getTimeInstance().format(massage.date));
 
-        holder.smsHeadBody.setText(massage.body);
+            holder.smsHeadBody.setText(massage.body);
 
-        holder.smsHeadDate.setText(android.text.format.DateFormat.getMediumDateFormat(getActivity()).format(massage.date));
+            holder.smsHeadDate.setText(android.text.format.DateFormat.getMediumDateFormat(getActivity()).format(massage.date));
         }
 
         LinearLayout.LayoutParams x= new LinearLayout.LayoutParams(-2,-1, Gravity.START);

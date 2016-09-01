@@ -67,7 +67,7 @@ public class xViewPager extends ViewPager {
         setMoveEnabled(styledAttributes.getBoolean(
                 R.styleable.xViewPager_lock_move, false));
         styledAttributes.recycle();
-        super.setPageTransformer(false,vb);
+        //super.setPageTransformer(false,vb);
     }
 
 

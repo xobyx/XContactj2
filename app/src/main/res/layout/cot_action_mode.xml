@@ -11,18 +11,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:hint="Phone Number"
+        android:hint="@string/phone_number"
         android:inputType="phone"
         android:singleLine="true"
-        android:textAlignment="center"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Title"
-        android:textColor="#f4eeef"
+
+
+        android:textColor="?attr/colorAccent"
         android:textIsSelectable="true"
         android:textSize="20sp"
         android:gravity="center_horizontal"
         android:textStyle="bold"
         android:layout_marginLeft="10dp"
-        android:textColorHint="#f4eeef" />
+        android:textColorHint="#ca757575" />
 
     <ImageView
         android:id="@+id/cot_ac_netImage"

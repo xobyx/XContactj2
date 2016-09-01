@@ -65,24 +65,28 @@ public class AsyncDrawer {
         as.setTypeface(Typeface.createFromAsset(u.getAssets(), "bein.ttf"));
         mCache = u.getExternalCacheDir().getPath();
         mContentResolver = u.getContentResolver();
-        mRes=u.getResources();
+        mRes = u.getResources();
 
 
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void DrawImageString(String text, LetterImageView d, boolean Oval, int net) {
+    public void DrawImageString(Contact t, LetterImageView d, boolean Oval, int net) {
         if (d.getDrawable() == null) {
             mMode = Oval ? TYPE.DRAWSTRING_OVAL : TYPE.DRAWSTRING;
-            d.setCustomColor(net);
+            if (net != -1) {
+                d.setCustomColor(net);
+            } else d.setContact(t);
             d.setFont(Typeface.createFromAsset(d.getContext().getAssets(), d.getResources().getString(R.string.letter_image_font)));
-            d.setLetter(text.charAt(0));
+            d.setLetter(t.Name.charAt(0));
             d.setOval(mMode == TYPE.DRAWSTRING_OVAL);
         }
     }
 
-    public void GetPhoto(Contact s, LetterImageView d, boolean clip,int net) {
+    public void GetPhoto(Contact s, LetterImageView d, boolean clip, int net) {
         d.setImageBitmap(null);
+
+
         mMode = clip ? TYPE.NORMAL_OVAL : TYPE.NORMAL;
 
         if (mMode == TYPE.NORMAL) {//m.exists()) {
@@ -91,13 +95,12 @@ public class AsyncDrawer {
         } else {
 
 
-            if (null!=ImageCache.INSTANCE.getBitmapFromMemCache(net+ME.getMD5Hex(s.Lookup))) {
+            if (null != ImageCache.INSTANCE.getBitmapFromMemCache(String.valueOf(net) + ME.getMD5Hex(s.Lookup))) {
                 d.setImageBitmap(ImageCache.INSTANCE.getBitmapFromMemCache(net + ME.getMD5Hex(s.Lookup)));//.setImageDrawable(Drawable.createFromPath(m.getPath()));
             } else {
-                d.setCustomColor(net);
-                d.setLetter(s.Name.charAt(0));
-                d.setOval(clip);
-                AsyncDrawTask i = new AsyncDrawTask(d, mMode,net);
+                DrawImageString(s, d, clip, net);
+
+                AsyncDrawTask i = new AsyncDrawTask(d, mMode, net);
 
                 //    d.setImageURI(s.PhotoThumbUri);
                 //  i.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s.Lookup);
@@ -159,14 +162,12 @@ public class AsyncDrawer {
 ///FIXME: java.lang.NullPointerException
                 final Uri uri = lookupContact(mContentResolver, Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, this.look));
                 final InputStream stream = Contacts.openContactPhotoInputStream(mContentResolver, uri);
-                if(stream!=null) {
+                if (stream != null) {
                     final Bitmap a = BitmapFactory.decodeStream(stream).copy(Bitmap.Config.ARGB_8888, true);
                     temp = GetBitmapClippedCircle(a, 3);
 
-                }
-                else
-                {
-                    temp =BitmapFactory.decodeResource(mRes,R.drawable.ic_action_unknown);
+                } else {
+                    temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
                 }
             }
 
@@ -189,12 +190,12 @@ public class AsyncDrawer {
             Paint d2 = new Paint(Paint.ANTI_ALIAS_FLAG);
             d2.setStyle(Paint.Style.STROKE);
             d2.setStrokeWidth(1.3f);
-            d2.setColor(ME.nColors[net]);
+            d2.setColor(net >= 0 ? ME.nColors[net] : 3);
 
             d.setShader(mBitmapShader);
 
             if (mMode != 1) {
-                canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f,d);
+                canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f, d);
                /* final Path path = new Path();
                 path.addCircle(
                         canvas.getWidth() / 2f, canvas.getHeight() / 2f, Math.min(canvas.getWidth(), canvas.getHeight()) / 2f
@@ -215,20 +216,26 @@ public class AsyncDrawer {
 
                 canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, (Math.min(canvas.getWidth(), canvas.getHeight()) / 2f)-2f,d2);
 */
-                canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, (Math.min(canvas.getWidth(), canvas.getHeight()) / 2f)-1f,d2);
+                canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, (Math.min(canvas.getWidth(), canvas.getHeight()) / 2f) - 1f, d2);
             }
             if (mMode != 3)
                 canvas.drawRect(new Rect(inbit.getWidth(), inbit.getHeight(), 0, 0), sPaint);
             return outputBitmap;
         }
 
+        String temp = null;
+
         @SuppressWarnings("ResultOfMethodCallIgnored")
         private void SaveImage(String c, Bitmap s) {
-            synchronized (mLock) {
+            if (!c.equals(temp))
+                synchronized (mLock) {
 
+                    temp = c;
+                    ImageCache.INSTANCE.addBitmapToCache(String.valueOf(net) + c, s);
 
-                ImageCache.INSTANCE.addBitmapToCache(net + c, s);
-
+                }
+            else {
+                ImageCache.INSTANCE.addBitmapToCache(String.valueOf(net) + c, s);
             }
 
 

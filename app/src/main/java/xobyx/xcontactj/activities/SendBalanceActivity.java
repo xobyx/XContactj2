@@ -69,25 +69,27 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
 
             boolean t = false;
             if (!s.toString().isEmpty() && s.toString().length() > 9) {
+                Cursor ser = getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, s.toString()), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+                String mName=getString(R.string.not_in_contact);
+                if (ser != null) {
+                    mName = ser.getString(0);
+                    if (ser.moveToFirst()&&mName!=null) {
+                        setNameTitle(mName);
+                    }
+                    ser.close();
+                }
 
                 if (ME.getNetForNumber(s.toString()) != WORK_NETWORK) {
 
                     send_to.setError(getString(R.string.number_not_match_net));
-                } else {
-                    Cursor ser = getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, s.toString()), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
-                    if (ser != null) {
-                        if (!ser.moveToFirst()) {
-                            setNameTitle(getString(R.string.not_in_contact));
-                        } else {
-                            setNameTitle(ser.getString(0));
+                    setNameTitle(mName);
 
-                        }
-                        ser.close();
-                    }
+                } else {
+
 
                 }
             } else {
-                setNameTitle(" invalid Number");
+                setNameTitle(getString(R.string.invalid_number));
             }
 
         }
@@ -273,7 +275,7 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
                 Intent y = new Intent(this, MainActivity.class);
                 y.putExtra("local", true);
                 ///FIXME:is this right
-                //y.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                y.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 y.setAction(Intent.ACTION_PICK);
                 Toast.makeText(getBaseContext(), "Select a contact", Toast.LENGTH_LONG).show();
                 startActivityForResult(y, 0);

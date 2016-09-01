@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<LinearLayout
+    android:id="@+id/emty_text_image"
     android:orientation="vertical"
-    android:id="@+id/call_log_empty_layout"
-    android:visibility="visible"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    tools:showIn="@layout/fragment_fragment_all_call_log">
-
-    <ImageView
-        android:layout_width="match_parent"
-
-
-        android:layout_height="150dp"
-
-        android:src="@drawable/empty_call" />
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:src="@drawable/empty_call" />
     <!--android:textColor="#c3c3c3"-->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
+<xobyx.xcontactj.views.FontTextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:font="RP.ttf"
+    android:text="You haven't any calls."
+    android:textColor="?attr/colorAccent"
 
-        android:text="You haven't any calls."
-        android:textColor="?attr/colorAccent"
 
-
-        android:gravity="center_horizontal" />
+    android:gravity="center_horizontal|bottom"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
+    
 </LinearLayout>

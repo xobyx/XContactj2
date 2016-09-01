@@ -15,9 +15,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.until.ME;
-
 import xobyx.xcontactj.until.Contact;
+import xobyx.xcontactj.until.ME;
 
 
 ////base and def class ,base class is for showing contacts only without numbers
@@ -105,7 +104,12 @@ public class ContactNumberAdapter extends ContactBaseAdapter {
             holder.Number = (TextView) view.findViewById(R.id.num_child_type);
             holder.Img = (ImageView) view.findViewById(R.id.num_child_image);
             view.setTag(holder);
+
+        //    Ion.with(holder.Img ).animateIn(34);
+
         }
+
+
         final Contact.Phones item = (Contact.Phones) getItem(i);
         Holders2 H = (Holders2) view.getTag();
         // H.Text.setText(item.getNumber());

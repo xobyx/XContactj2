@@ -22,7 +22,7 @@ public class SettingHelp {
 
     public static void setListMode(Context m, int value) {
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(m);
-        pref.edit().putString("List_Mode", String.valueOf(value)).commit();
+        pref.edit().putString("List_Mode", String.valueOf(value)).apply();
 
 
     }
@@ -38,7 +38,7 @@ public class SettingHelp {
     public static void setShowNumb(Context m, boolean value) {
         final String string = m.getResources().getString(R.string.key_show_number);
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(m);
-        pref.edit().putBoolean(string, value).commit();
+        pref.edit().putBoolean(string, value).apply();
 
 
     }
@@ -54,7 +54,7 @@ public class SettingHelp {
     public static void setPhotoMode(Context m, int value) {
         final String string = m.getResources().getString(R.string.key_show_number);
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(m);
-        pref.edit().putString("PHOTO_MODE", String.valueOf(value)).commit();
+        pref.edit().putString("PHOTO_MODE", String.valueOf(value)).apply();
 
     }
 
@@ -73,7 +73,7 @@ public class SettingHelp {
     public static void setBackground(Context m, String value) {
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(m);
-        pref.edit().putString("background", String.valueOf(value)).commit();
+        pref.edit().putString("background", String.valueOf(value)).apply();
 
     }
 }

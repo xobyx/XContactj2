@@ -3,7 +3,6 @@ package xobyx.xcontactj.until;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -75,7 +74,7 @@ public class DialerActionModeHelper  {
 
 
         setNumber(dataString, false);
-        ((AppCompatActivity) mContext).getSupportActionBar().startActionMode(callback);
+        mContext.startSupportActionMode(callback);
     }
 
     public void finish() {
@@ -143,7 +142,7 @@ public class DialerActionModeHelper  {
         public void onDestroyActionMode(ActionMode mode) {
             mNumberChangeListener.onNumberChange("");
             final FragmentManager fm = mContext.getSupportFragmentManager();
-            fm.beginTransaction().setCustomAnimations(android.support.design.R.anim.abc_slide_in_top,android.support.design.R.anim.abc_slide_out_bottom).remove(fm.findFragmentByTag("Dialer")).commit();
+            fm.beginTransaction().setCustomAnimations(R.anim.snackbar_in,R.anim.snackbar_out).remove(fm.findFragmentByTag("Dialer")).commit();
 
         }
     };

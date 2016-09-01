@@ -16,7 +16,6 @@ import android.util.Log;
 import com.android.internal.telephony.ITelephony;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -61,18 +60,20 @@ public class ME {
     private static final String ZAIN_MNC = "63401";
     private static final String MTN_MNC = "63407";
 
-    static com.google.i18n.phonenumbers.PhoneNumberUtil a= PhoneNumberUtil.getInstance();
+    static com.google.i18n.phonenumbers.PhoneNumberUtil a = PhoneNumberUtil.getInstance();
 
     static public int getNetForNumber(String h) {
         String n;
-        Phonenumber.PhoneNumber sd;
+
         try {
-            sd = a.parseAndKeepRawInput(h, "SD");
-            n=a.formatOutOfCountryKeepingAlphaChars(a.parseAndKeepRawInput(h, "SD"),"SD");
+
+
+            n = a.formatOutOfCountryKeepingAlphaChars(a.parse(h, "SD"), "SD");
 
         } catch (NumberParseException e) {
-            e.printStackTrace();
-            return 3;
+            Log.d(TAG, "getNetForNumber: " + h);
+
+            n = h;
         }
         int net = 3;
         if (n.length() > 2) {
@@ -81,7 +82,8 @@ public class ME {
 
                 for (String s1 : Mnet[i]) {
                     if (n.startsWith(s1)) {
-                       return i;
+                        net = i;
+                        break;
                     }
                 }
             }
@@ -131,7 +133,7 @@ public class ME {
             }
             };
     public static final Uri _uri;
-    final static String[] ZAIN_NUM = {"+24991%", "+24990%","+24996%"};
+    final static String[] ZAIN_NUM = {"+24991%", "+24990%", "+24996%"};
     final static String[] SUDANI_NUM = {"+2491%"};
     final static String[] MTN_NUM = {"+24992%", "+24996%", "+24999%"};
     public final static String getDatabaseArg[][] = {
@@ -208,26 +210,23 @@ public class ME {
     }
 
 
-
-
-    public static void  SetInternetSettingFor(int i,Context mh)
-    {
+    public static void SetInternetSettingFor(int i, Context mh) {
         Uri m = Uri.parse("content://telephony/carriers");
 
         //mh.grantUriPermission(mh.getPackageName(),m, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 
-
-        ContentValues b =new ContentValues();
-        b.put(Telephony.Carriers.NAME,"XContactj_"+NET_N[i]);
-        b.put(Telephony.Carriers.APN,i==1?"sudaninet":i==0?"internet":"internet1");
-        b.put(Telephony.Carriers.MCC,"634");
-        b.put(Telephony.Carriers.MNC,"07");
-        b.put(Telephony.Carriers.NUMERIC,"63407");
+        ContentValues b = new ContentValues();
+        b.put(Telephony.Carriers.NAME, "XContactj_" + NET_N[i]);
+        b.put(Telephony.Carriers.APN, i == 1 ? "sudaninet" : i == 0 ? "internet" : "internet1");
+        b.put(Telephony.Carriers.MCC, "634");
+        b.put(Telephony.Carriers.MNC, "07");
+        b.put(Telephony.Carriers.NUMERIC, "63407");
         Uri insert = mh.getContentResolver().insert(m, b);
 
 
     }
+
     /**
      * return Current Network {@code ArrayList} for the specified object.
      *
@@ -266,11 +265,11 @@ public class ME {
     }
 
     public static void setTheme(Context m, int net) {
-        m.setTheme(net_styles[net]);
+        if (net < 3)
+            m.setTheme(net_styles[net]);
     }
 
-    static final int[] net_styles = {R.style.zain, R.style.sudani, R.style.mtn, R.style.Base_Theme_AppCompat};
-
+    static final int[] net_styles = {R.style.zain, R.style.sudani, R.style.mtn};
 
 
     public static void DrawNetworkLogo(Context m, Canvas canvas, int net) {

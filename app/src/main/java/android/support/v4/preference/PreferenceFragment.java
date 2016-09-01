@@ -37,8 +37,6 @@ import android.widget.ListView;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import xobyx.xcontactj.R;
-
 public abstract class PreferenceFragment extends Fragment implements
 		PreferenceManagerCompat.OnPreferenceTreeClickListener {
     
@@ -98,7 +96,7 @@ public abstract class PreferenceFragment extends Fragment implements
     @Override
 	public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup,
 			Bundle paramBundle) {
-		return paramLayoutInflater.inflate(R.layout.preference_list_fragment, paramViewGroup,
+		return paramLayoutInflater.inflate(android.R.layout.list_content, paramViewGroup,
 				false);
 	}
     

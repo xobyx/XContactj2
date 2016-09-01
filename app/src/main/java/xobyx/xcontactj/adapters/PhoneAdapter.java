@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +35,8 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
 
     private static final int TYPE_ITEM = -1;
     private static final int TYPE_HEADER = -2;
+    private  LayoutAnimationController jump_anim;
+    //private  LayoutAnimationController salid_anim;
     private  int worked_net;
     private List<Contact.Phones> list;
     private final LayoutInflater mInflater;
@@ -41,13 +45,14 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
     private View vlast;
     private boolean sectioned;
     private int mnet;
+    private boolean most_connected=false;
 
 
     public PhoneAdapter(Context var1, List<Contact.Phones> var2) {
 
         mInflater = LayoutInflater.from(var1);
         this.list = var2;
-
+        inti_anim(var1);
     }
 
     public PhoneAdapter(Context var1, List<Contact.Phones> var2,boolean section) {
@@ -55,6 +60,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
 
         mInflater = LayoutInflater.from(var1);
         this.list = var2;
+        inti_anim(var1);
         sectioned=section;
         Sort();
         if(sectioned)
@@ -63,16 +69,32 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
         }
     }
 
+    private void inti_anim(Context var1) {
+        jump_anim = new LayoutAnimationController(AnimationUtils.loadAnimation(var1, R.anim.jump));
+        //jump_anim.setInterpolator(new OvershootInterpolator());
+
+        //salid_anim = new LayoutAnimationController(AnimationUtils.loadAnimation(var1, R.anim.abc_slide_in_bottom));
+    }
+    boolean Network_partitiones=true;
     private void Sort() {
         Collections.sort(list, new Comparator<Contact.Phones>() {
             @Override
             public int compare(Contact.Phones lhs, Contact.Phones rhs) {
 
+
                 if (sectioned) {
-                    return lhs.nNet.getValue() == worked_net ? -1 : rhs.nNet.getValue() == worked_net ? 1 : 0;
+                    if(Network_partitiones) {
+                        return lhs.nNet.getValue() == worked_net ? -1 : rhs.nNet.getValue() == worked_net ? 1 : 0;
+                    }
+                    else
+                    {
+
+                        return  lhs.TimeConnected<rhs.TimeConnected?-1:1;
+                    }
                 }
                // return lhs.nNet.getValue() - rhs.nNet.getValue();
-                return 0;
+                return  lhs.TimeConnected<rhs.TimeConnected?-1:1;
+
             }
         });
     }
@@ -89,21 +111,36 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
     }
 
     protected void PreperSection() {
+        if(Network_partitiones) {
+            int m = -1, mm = 0;
+            ArrayList<Contact.Phones> kf = null;
+            for (Contact.Phones phones : list) {
 
-        int m=-1,mm=0;
-        ArrayList<Contact.Phones> kf = null;
-        for (Contact.Phones phones : list) {
-
-            if(m!=phones.nNet.getValue()) {
-              kf = new ArrayList<>();
-                 m=phones.nNet.getValue();
-                integerHashMap.put(mm,m);
-                 mk.put(mm++,kf);
+                if (m != phones.nNet.getValue()) {
+                    kf = new ArrayList<>();
+                    m = phones.nNet.getValue();
+                    integerHashMap.put(mm, m);
+                    mk.put(mm++, kf);
 
 
+                }
+                if (kf != null)
+                    kf.add(phones);
             }
-            if (kf!=null)
-            kf.add(phones);
+        }
+        else if(most_connected){
+            int i=0;
+            while(i<list.size()&&list.get(i).TimeConnected==list.get(0).TimeConnected) {
+
+                i++;
+            }
+            mk.put(0, list.subList(0, i));
+            if(list.size()>i+1)
+            mk.put(1, list.subList(i+1, list.size()-1));
+
+            integerHashMap.put(0, 0);
+            integerHashMap.put(1, 1);
+
         }
     }
 
@@ -248,7 +285,13 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
         throw new Exception("invaild index" );
     }
 
-
+    void toggle_visibility(View g)
+    {
+        if(g.getVisibility()==View.INVISIBLE)
+            g.setVisibility(View.VISIBLE);
+        else
+            g.setVisibility(View.INVISIBLE);
+    }
 
     protected void bindItem(NumHolder numHolder, Contact.Phones item) {
        // numHolder.net_image.setImageResource(ME.NetDrawables[item.nNet.getValue()][0]);
@@ -261,9 +304,17 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
             @Override
             public void onClick(View v) {
 
+                ViewGroup widget_holder = getParentLayout(v);
+                toggle_visibility(widget_holder);
                 if (vlast != null && !v.equals(vlast))
-                    close(vlast);
-                close(v);
+                    (getParentLayout(vlast)).setVisibility(View.INVISIBLE);
+
+
+                vlast=v;
+
+
+                widget_holder.startLayoutAnimation();
+                ((ViewGroup) widget_holder.getChildAt(0)).startLayoutAnimation();
             }
         });
 
@@ -283,10 +334,14 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
     protected void bindHeader(NumHolder numHolder, int item) {
 
 
-
-        numHolder.header.setText(integerHashMap.get(item)==worked_net?"Your Network":ME.NET_N[integerHashMap.get(item)]);
-        numHolder.net_image.setImageResource(ME.NetDrawables[integerHashMap.get(item)][0]);
-
+        if(Network_partitiones) {
+            numHolder.header.setText(integerHashMap.get(item) == worked_net ? "Your Network" : ME.NET_N[integerHashMap.get(item)]);
+            numHolder.net_image.setImageResource(ME.NetDrawables[integerHashMap.get(item)][0]);
+        }
+        else if(most_connected) {
+            numHolder.header.setText(integerHashMap.get(item) == 0 ? "Most Connected" : "Normal");
+            //numHolder.net_image.setImageResource(ME.NetDrawables[integerHashMap.get(item)][0]);
+        }
 
 
     }
@@ -294,7 +349,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
         return var1;
     }
 
-Object k = new Object();
+
 
     @Override
     public int getItemCount() {
@@ -303,26 +358,16 @@ Object k = new Object();
     }
 
 
-    private void close(View last) {
 
-        synchronized (k) {
-            LinearLayout s = (LinearLayout) ((LinearLayout) last.getParent()).findViewById(R.id.front);
-            final View v2 = s.findViewById(R.id.back);
-            final View v1 = s.findViewById(R.id.num_front);
-            if (v2.getVisibility() == View.INVISIBLE) {
-
-                v2.setVisibility(View.VISIBLE);
-                v1.setVisibility(View.INVISIBLE);
-            } else {
-                v1.setVisibility(View.VISIBLE);
-                v2.setVisibility(View.INVISIBLE);
-            }
-            vlast = last;
-        }
+    private ViewGroup getParentLayout(View last) {
+        return (ViewGroup) ((LinearLayout) last.getParent()).findViewById(R.id.front).findViewById(R.id.back);
     }
 
     private PhoneAdapter SetupWidget(final LinearLayout v, final Contact.Phones item) {
         final LinearLayout layout = (LinearLayout) v.getChildAt(0);
+
+        layout.setLayoutAnimation(jump_anim);
+         //v.setLayoutAnimation(salid_anim);
         for (int i = 0; i < layout.getChildCount(); i++) {
             View L = layout.getChildAt(i);
             if (numberOnClickListener != null && L != null) {

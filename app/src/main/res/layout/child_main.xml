@@ -23,7 +23,7 @@
     android:orientation="horizontal"
     android:paddingBottom="6dp"
 
-    android:paddingEnd="6dp"
+    android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="6dp"
     android:layout_weight="1">
