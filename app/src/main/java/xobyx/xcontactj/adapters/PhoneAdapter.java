@@ -56,7 +56,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
     }
 
     public PhoneAdapter(Context var1, List<Contact.Phones> var2,boolean section) {
-        this.worked_net = MainActivity.WN_ID;
+        this.worked_net = MainActivity.wn_id;
 
         mInflater = LayoutInflater.from(var1);
         this.list = var2;
@@ -377,9 +377,9 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
         return this;
     }
 
-    public PhoneAdapter SetF(NumberOnClickListener buttonsOnClick) {
+    public void setNumberClickListener(NumberOnClickListener buttonsOnClick) {
         this.numberOnClickListener = buttonsOnClick;
-        return this;
+
     }
 
 

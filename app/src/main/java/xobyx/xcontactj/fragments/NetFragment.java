@@ -16,6 +16,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import xobyx.xcontactj.until.XPickDialog;
 import xobyx.xcontactj.until.scale_animation;
 import xobyx.xcontactj.views.LetterImageView;
 import xobyx.xcontactj.views.ListViewH.PinnedHeaderListView;
+import xobyx.xcontactj.views.StateView;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static xobyx.xcontactj.until.SettingHelp.getListMode;
@@ -44,14 +46,16 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
      * The fragment argument representing the section Number for this
      * fragment.
      */
+    public ArrayList<Contact> mList;
     protected static final String ARG_SECTION_NUMBER = "section_number";
 
     static int list_mode = 0;
     static boolean mShowNumber = false;
-    public AbsListView mlist;
+    public AbsListView listView;
     int net;
     ContactsAdapter mAdapter;
     protected DialerFragment.DialerHandler iDialer;
+    public StateView mStateView;
     // public ContentLoadingProgressBar mLoading;
 
     /**
@@ -89,16 +93,18 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onViewCreated(View var1, @Nullable Bundle var2) {
 
-        mlist = (AbsListView) var1.findViewById(android.R.id.list);
-        mlist.setOnItemClickListener(this);
+        mStateView = StateView.inject(var1);
+        mStateView.showLoading();
+        listView = (AbsListView) var1.findViewById(android.R.id.list);
+        listView.setOnItemClickListener(this);
         //  mLoading=(ContentLoadingProgressBar)var1.findViewById(R.id.mloading);
         ///  mLoading.show();
 
 
         if (getDefaultSharedPreferences(this.getActivity()).getBoolean(getString(R.string.key_enable_list_anim), false))
-            mlist.setLayoutAnimation(getGridLayoutAnim());
+            listView.setLayoutAnimation(getGridLayoutAnim());
         else
-            mlist.setLayoutAnimation(null);
+            listView.setLayoutAnimation(null);
 
 
     }
@@ -202,30 +208,26 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
 
 
+        if(data.size()!=0)mStateView.showContent();
+        else mStateView.showEmpty();
         Collections.sort(data);
-        ME.$[net].clear();
-        ME.$[net].addAll(data);
+        ME.$[net].clear();ME.$[net].addAll(data);
+        mList=ME.$[net];
+
 
         mShowNumber = SettingHelp.getShowNumb(getActivity().getBaseContext());
-        if (true) {
-            //  mAdapter = new ContactNumberAdapter(getActivity().getBaseContext(), ME.$[net]);
-            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,false);
-        } else {
-            // mAdapter = new ContactBaseAdapter(getActivity().getBaseContext(), ME.$[net], list_mode);
 
-            mAdapter = new ContactsAdapter(getActivity(), ME.$[net], SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0,false);
-
-        }
+        mAdapter = new ContactsAdapter(getActivity(), mList, SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
 
 
         //  mAdapter.mClip = SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0;
 
 
-        if (mlist != null) {
+        if (listView != null) {
 
             // int pinnedHeaderBackgroundColor=getResources().getColor(getResIdFromAttribute(this,android.R.attr.colorBackground));
             setupPinndHeader(false);
-            mlist.setAdapter(mAdapter);
+            listView.setAdapter(mAdapter);
 //           mLoading.hide();
 
 
@@ -242,11 +244,11 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     protected void setupPinndHeader(boolean all) {
         mAdapter.setPinnedHeaderBackgroundColor(getResources().getColor(R.color.holo_white));
         mAdapter.setPinnedHeaderTextColor(!all ? ME.nColors2[net] : ME.nColors2[3]);//getResources().getColor(R.color.holo_black));
-        ((PinnedHeaderListView) mlist).setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.pinned_header_listview_side_header, mlist, false));
-        ((PinnedHeaderListView) mlist).setDivider(null);
-        mlist.setFastScrollEnabled(true);
-        mlist.setOnScrollListener(mAdapter);
-        ((PinnedHeaderListView) mlist).setEnableHeaderTransparencyChanges(true);
+        ((PinnedHeaderListView) listView).setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.pinned_header_listview_side_header, listView, false));
+        ((PinnedHeaderListView) listView).setDivider(null);
+        listView.setFastScrollEnabled(true);
+        listView.setOnScrollListener(mAdapter);
+        ((PinnedHeaderListView) listView).setEnableHeaderTransparencyChanges(true);
     }
 
     @Override
@@ -256,6 +258,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
         // ME.$[net].clear();
         loader = null;
     }
+
 
     // /////////////////////////////////////////////////////////////////////////////////////
     // ViewHolder //

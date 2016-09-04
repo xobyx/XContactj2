@@ -90,7 +90,13 @@ public class Contact implements Comparable<Contact> {
 
 
     }
-
+    public ArrayList<String> getNumbersList(){
+        ArrayList<String> t =new ArrayList<>();
+        for (Phones phones : Phone) {
+            t.add(phones.Fnumber);
+        }
+        return t;
+    }
     static public class Phones implements Comparable<Phones> {
         public String Fnumber;
         public boolean IsPrimyer;

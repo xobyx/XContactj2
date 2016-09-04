@@ -1,6 +1,7 @@
 package xobyx.xcontactj.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -8,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSpinner;
@@ -24,6 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,7 +37,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -45,29 +48,32 @@ import xobyx.xcontactj.activities.ContactSpecificsActivity;
 import xobyx.xcontactj.adapters.BaseRecycleAdapter;
 import xobyx.xcontactj.base.massage;
 import xobyx.xcontactj.until.AsyncLoad;
-import xobyx.xcontactj.until.Contact;
-import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.views.FontTextView;
-
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.KITKAT;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SmsFragment extends Fragment implements AsyncLoad.IRun {
+public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouchListener {
 
+    private static final String ARG_NUMBERS_LIST = "number_list";
+    private ArrayList<String> Numbers;
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        if (view == recyclerView) {
+            ((ContactSpecificsActivity) getActivity()).hideSoftKeyboard(view);
+        }
+        return false;
+    }
 
     private static final String ARG_POS = "pos";
     private static final String ARG_NET = "net";
     private static final String ARG_ALL = "all";
-    private int mPos;
-    private int mNet;
-    private Contact contact;
 
-    private ArrayList<massage> items=new ArrayList<>();
-    private ArrayList<String> mSendtoNumber=new ArrayList<>();
+
+    private ArrayList<massage> items = new ArrayList<>();
+    private ArrayList<String> mSendtoNumber = new ArrayList<>();
     private AdapterView.OnItemLongClickListener ItemLongClick = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -89,23 +95,21 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
     private massage mLastFMessage;
     private RecyclerView recyclerView;
     private AsyncLoad m;
-    private boolean mAll;
 
 
     public SmsFragment() {
         // Required empty public constructor
     }
 
-    public static SmsFragment newInstance(int mPos, int mNet, Parcelable l, boolean all) {
 
+    public static SmsFragment newInstance(ArrayList<String> numbersList, Parcelable l) {
         SmsFragment b = new SmsFragment();
         Bundle s = new Bundle();
-        s.putInt(ARG_POS, mPos);
-        s.putInt(ARG_NET, mNet);
-        s.putBoolean(ARG_ALL, all);
-        s.putParcelable("message",l);
+        s.putParcelable("message", l);
+        s.putStringArrayList(ARG_NUMBERS_LIST, numbersList);
         b.setArguments(s);
         return b;
+
     }
 
     @Override
@@ -114,15 +118,16 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.sms_listview);
+        recyclerView.setOnTouchListener(this);
         install(recyclerView);
         return view;
 
     }
 
     private void install(RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),LinearLayoutManager.VERTICAL,false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
 
-        mAdapter=new SmsAdapter(getActivity(),items,R.layout.smshead);
+        mAdapter = new SmsAdapter(getActivity(), items, R.layout.smshead);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -131,12 +136,10 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         super.onViewCreated(v, var2);
         AppCompatSpinner a = (AppCompatSpinner) v.findViewById(R.id.spinner);
 
+        if (Numbers.size() == 0) return;
         List<String> mk = new ArrayList<>();
         mk.add("All");
-        for (Contact.Phones phones : contact.Phone) {
-
-            mk.add(phones.getNumber());
-        }
+        mk.addAll(Numbers);
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, android.R.id.text1, mk);
         a.setAdapter(arrayAdapter);
         a.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -146,10 +149,11 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
                 String x = (String) parent.getAdapter().getItem(position);
                 mSendtoNumber.clear();
                 if (x.equals("All")) {
-                    for (Contact.Phones phones : contact.Phone) {
-                        mSendtoNumber.add(phones.getNumber());
-                    }
-                } else {
+
+                    mSendtoNumber.addAll(Numbers);
+
+                }
+                else {
 
                     mSendtoNumber.add(x);
                 }
@@ -163,14 +167,14 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
 
 
         // recyclerView.setOnItemLongClickListener(ItemLongClick);
-        if (contact.Phone.size() != 0)
-        {
-            ImageView send = (ImageView) v.findViewById(R.id.sms_send);
+
+        ImageView send = (ImageView) v.findViewById(R.id.sms_send);
         text = (TextView) v.findViewById(R.id.sms_messege_text);
-        final String pend = getActivity()
-                .getSharedPreferences("sms", Context.MODE_APPEND).getString(contact.Phone.get(0).Fnumber, "");
-        if (!pend.equals(""))
-            text.setText(pend);
+
+        final ArrayList<String> pend = getPendingSms();
+        //TODO: SMS
+        //if (!pend.equals(""))
+        //    text.setText(pend);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +191,20 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
                 newMessage(t);
             }
         });
+
     }
+
+    @NonNull
+    protected ArrayList<String> getPendingSms() {
+        ArrayList<String> temp = new ArrayList<>();
+        SharedPreferences preferences = getActivity().getSharedPreferences("sms", Context.MODE_PRIVATE);
+        for (String number : Numbers) {
+
+            String sms = preferences.getString(number, "");
+            if (!sms.isEmpty())
+                temp.add(sms);
+        }
+        return temp;
     }
 
     private void newMessage(final massage i) {
@@ -199,21 +216,22 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
                 if (in == Activity.RESULT_OK) {
                     i.state = Telephony.Sms.STATUS_COMPLETE;
 
-                } else {
+                }
+                else {
 
-                    i.state = Telephony.Sms.STATUS_FAILED;
+                  /*  i.state = Telephony.Sms.STATUS_FAILED;
                     Toast.makeText(context, "Can't Send the Message!", Toast.LENGTH_SHORT).show();
                     final Contact b = contact;
                     Intent u = new Intent(getActivity().getBaseContext().getApplicationContext()
                             , ContactSpecificsActivity.class);
-                    u.putExtra("pos", mPos);
-                    u.putExtra("net", mNet);
+                    //u.putExtra("pos", mPos);
+                    //u.putExtra("net", mNet);
                     u.putExtra("sec", 2);
 
-                    u.putExtra("message",i);
+                    u.putExtra("message", i);
                     final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, u, PendingIntent.FLAG_UPDATE_CURRENT);
                     xobyx.xcontactj.until.xNotification.notify(context, null, 0, "Sending Failed", "Message to " + b.Name + "is not send ,click to resend", pendingIntent);
-
+*/
 
                 }
                 context.unregisterReceiver(this);
@@ -231,18 +249,16 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         }
 
 
-
     }
+
     SmsAdapter mAdapter;
 
     @Override
     public void onResume() {
         super.onResume();
-        m=new AsyncLoad(this);
+        m = new AsyncLoad(this);
         m.execute();
     }
-
-
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -251,35 +267,26 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         super.onActivityCreated(var1);
 
 
-
-
     }
 
-    private static final Uri _uri;
+    private static final Uri _uri = Uri.parse("content://sms/");
 
-    static {
-        if (SDK_INT >= KITKAT) {
-            _uri = Telephony.Sms.CONTENT_URI;
-        } else {
-            _uri = Uri.parse("content://sms/");
-        }
-
-    }
-
+    @SuppressLint("InlinedApi")
     public void Start() {
 
-       // Uri m= Telephony.Threads;
-        String m="";
+        if(Numbers.size()==0)return;
+        // Uri m= Telephony.Threads;
+        String m = "";
         //new String[]{"%" + contact.Phone.get(0).Fnumber.substring(4)}
-        String[] h=new String[contact.Phone.size()];
-        ArrayList<Contact.Phones> phone = contact.Phone;
-        for (int i = 0; i < phone.size(); i++) {
-            Contact.Phones phones = phone.get(i);
+        String[] h = new String[Numbers.size()];
+
+        for (int i = 0; i < Numbers.size(); i++) {
+            String phone = Numbers.get(i);
 
             m += " address LIKE ? ";
-            if (i!=phone.size()-1)
+            if (i != Numbers.size() - 1)
                 m += "OR";
-            h[i]="%" + phones.Fnumber.substring(4);
+            h[i] = "%" + phone;
         }
         Cursor d = getActivity().getContentResolver().query(_uri, new String[]{Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE, Telephony.Sms.TYPE, Telephony.Sms.DATE, Telephony.Sms.STATUS}, m, h, "date ASC");
         if (d != null) {
@@ -319,17 +326,24 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
     @Override
     public void onPause() {
         super.onPause();
-///FIXME:always crash
-        if(contact==null||contact.Phone.size()==0)return;
-        if (contact.Phone.size()!=0&&text!=null&&text.getText().length() != 0) {
-            getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(contact.Phone.get(0).Fnumber, text.getText().toString()).commit();
+        ///FIXME:always crash
+        if (Numbers.size() == 0 || text == null) return;
+        if ( text.getText().length() != 0) {
+            for (String s : mSendtoNumber) {
+                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(s, text.getText().toString()).commit();
 
-        } else
-            getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().remove(contact.Phone.get(0).Fnumber).commit();
+            }
 
+        }
+        else {
+            for (String s : mSendtoNumber) {
+                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().remove(s).commit();
 
-        if(m!=null&&m.getStatus()==AsyncTask.Status.RUNNING)
-        {
+            }
+
+        }
+
+        if (m != null && m.getStatus() == AsyncTask.Status.RUNNING) {
             m.cancel(true);
         }
 
@@ -340,33 +354,30 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         super.onCreate(var1);
         final Bundle arg = getArguments();
         if (arg != null) {
-            mNet = arg.getInt(ARG_NET);
-            mPos = arg.getInt(ARG_POS);
-            mAll= arg.getBoolean(ARG_ALL);
-            if(arg.containsKey("message"))
-            {
-                mLastFMessage=arg.getParcelable("message");
+
+            if (arg.containsKey("message")) {
+                mLastFMessage = arg.getParcelable("message");
             }
+            Numbers = arg.getStringArrayList(ARG_NUMBERS_LIST);
 
 
         }
-        contact = !mAll?(Contact) ME.$[mNet].get(mPos):fragment_all_phones.mList.get(mPos);
+
     }
 
 
-    class SmsAdapter extends BaseRecycleAdapter<SmsHolder,massage> {
+    class SmsAdapter extends BaseRecycleAdapter<SmsHolder, massage> {
 
 
-
-        private String mType="All";
+        private String mType = "All";
 
         public SmsAdapter(Context context, List<massage> s, int layout) {
             super(context, s, layout);
             //FIXME: Crash
-            this.Filter =new FilterBuilder<massage>() {
+            this.Filter = new FilterBuilder<massage>() {
                 @Override
                 public boolean IsMatch(massage b) {
-                    return b.addres!=null&&b.addres.equals(mType);
+                    return b.addres != null && b.addres.equals(mType);
                 }
             };
 
@@ -376,45 +387,45 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
         public void onBindViewHolder(SmsHolder holder, massage massage) {
 
 
-
-           // holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_right);
+            // holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_right);
 
             holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_right);
 
             switch (massage.state) {
-                case 64://listener
-                    holder.smsStute.setText("Field");
+                case Telephony.Sms.STATUS_FAILED://listener
+                    holder.smsStute.setText("Failed");
                     holder.smsStute.setTextColor(Color.RED);
                     break;
-                case 0://C
+                case Telephony.Sms.STATUS_COMPLETE://C
                     holder.smsStute.setText("Send");
                     holder.smsStute.setTextColor(Color.DKGRAY);
                     break;
-                case 32://P
+                case Telephony.Sms.STATUS_PENDING://P
                     holder.smsStute.setText("Pending");
                     holder.smsStute.setTextColor(Color.DKGRAY);
                     break;
-                default:
-                    holder.smsStute.setText("Send");
+                case Telephony.Sms.STATUS_NONE:
+                    holder.smsStute.setText("");
                     holder.smsStute.setTextColor(Color.DKGRAY);
 
             }
 
-        if (Telephony.Sms.MESSAGE_TYPE_INBOX == massage.type) {
+            if (Telephony.Sms.MESSAGE_TYPE_INBOX == massage.type) {
 
-            holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_left);
-            holder.smsBase.setLayoutParams(x);
+                holder.smsBase.setBackgroundResource(R.drawable.com_android_mms_hairline_left);
+                holder.smsBase.setLayoutParams(x);
 
-        }
-        DateFormat.getTimeInstance(DateFormat.SHORT);
-        holder.smsTime.setText(DateFormat.getTimeInstance().format(massage.date));
+            }
+            DateFormat.getTimeInstance(DateFormat.SHORT);
+            holder.smsTime.setText(DateFormat.getTimeInstance().format(massage.date));
 
             holder.smsHeadBody.setText(massage.body);
 
             holder.smsHeadDate.setText(android.text.format.DateFormat.getMediumDateFormat(getActivity()).format(massage.date));
         }
 
-        LinearLayout.LayoutParams x= new LinearLayout.LayoutParams(-2,-1, Gravity.START);
+        LinearLayout.LayoutParams x = new LinearLayout.LayoutParams(-2, -1, Gravity.START);
+
         @Override
         public SmsHolder onCreateViewHolder(View view, int position) {
             return new SmsHolder(view);
@@ -429,28 +440,30 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun {
 
                 if (mType.equals("All")) {
                     RestartFilter();
-                } else {
+                }
+                else {
                     StartFilter();
                 }
             }
         }
     }
-        class SmsHolder extends RecyclerView.ViewHolder {
-            public TextView smsHeadDate;
-            public TextView smsStute;
-            public TextView smsTime;
-            public RelativeLayout smsBase;
-            public FontTextView smsHeadBody;
 
-            public SmsHolder(View itemView) {
-                super(itemView);
-                smsBase= (RelativeLayout) itemView.findViewById(R.id.sms_base);
-                smsHeadBody= (FontTextView) itemView.findViewById(R.id.sms_head_body);
-                smsTime= (TextView) itemView.findViewById(R.id.sms_time);
-                smsStute= (TextView) itemView.findViewById(R.id.sms_stute);
-                smsHeadDate= (TextView) itemView.findViewById(R.id.sms_head_date);
-            }
+    class SmsHolder extends RecyclerView.ViewHolder {
+        public TextView smsHeadDate;
+        public TextView smsStute;
+        public TextView smsTime;
+        public RelativeLayout smsBase;
+        public FontTextView smsHeadBody;
+
+        public SmsHolder(View itemView) {
+            super(itemView);
+            smsBase = (RelativeLayout) itemView.findViewById(R.id.sms_base);
+            smsHeadBody = (FontTextView) itemView.findViewById(R.id.sms_head_body);
+            smsTime = (TextView) itemView.findViewById(R.id.sms_time);
+            smsStute = (TextView) itemView.findViewById(R.id.sms_stute);
+            smsHeadDate = (TextView) itemView.findViewById(R.id.sms_head_date);
         }
     }
+}
 
 

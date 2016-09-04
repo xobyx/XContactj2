@@ -1,20 +1,24 @@
 package xobyx.xcontactj.activities;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.adapters.ContactSpecFragmentAdapter;
-import xobyx.xcontactj.fragments.fragment_all_phones;
+import xobyx.xcontactj.adapters.onCreateFragmentAdapter;
 import xobyx.xcontactj.until.AppAnimations;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
@@ -26,14 +30,14 @@ import static xobyx.xcontactj.until.ME.$;
 public class ContactSpecificsActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     private static final String NET = "net";
-    private static final String POS = "pos";
+    protected static final String POS = "pos";
     private static final String SEC = "sec";
 
     Animator mt1;
     Animator mt2;
     AppAnimations.Rotate3dAnimation df;
 
-    private int mPos;
+    protected int mPos;
     private int mNet;
 
 
@@ -41,33 +45,39 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
 
     //private TabLayout tabHost;
-    private ViewPager pager;
+    protected ViewPager pager;
 
-    private Parcelable lmessage;
+    protected Parcelable lmessage;
     private int mSection;
     private CollapsingToolbarLayout collapsingToolbar;
-    private Toolbar toolbar;
-    private TabLayout tabHost;
+    protected Toolbar toolbar;
+    protected TabLayout tabHost;
     private boolean all;
+    protected Contact mContact;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        final Intent in = getIntent();
-        SetPageParameters(in);
-        if(!all)
-        ME.setTheme(this, mNet);
+
+        SetPageParameters(getIntent());
+
+
+        onApplyCustomTheme();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detiles);
 
+        mContact = getContact();
+        //tabHost.setBackgroundColor(getResources().getColor(ME.nColors[mContact.Net]));
+        if (mContact == null) {
+            Toast.makeText(this, "Contact not found..", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        onCreateFragmentAdapter fragAd = getFragmentAdapter();
 
-
-        ContactSpecFragmentAdapter fragAd = new ContactSpecFragmentAdapter(getSupportFragmentManager(), mPos, mNet, lmessage,all);
-//error when none netWork
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,42 +94,23 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        Contact a =!all? (Contact) $[mNet].get(mPos) : fragment_all_phones.mList.get(mPos);
-        //tabHost.setBackgroundColor(getResources().getColor(ME.nColors[a.Net]));
 
 
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        if(null!=collapsingToolbar)
-        collapsingToolbar.setTitle(a.Name);
+        if (null != collapsingToolbar)
+            collapsingToolbar.setTitle(mContact.Name);
 
-        ((TextView) findViewById(R.id.toolbar_title)).setText(a.Name);
+        ((TextView) findViewById(R.id.toolbar_title)).setText(mContact.Name);
         //collapsingToolbar.setContentScrimColor(ME.nColors[mNet]);
 
         final LetterImageView imageView = (LetterImageView) findViewById(R.id.d_image);
-        if (a.PhotoUri != null) {
-            imageView.setImageURI(a.PhotoUri);
-
-            // ((CircleImageView) findViewById(R.id.profile_image)).setImageURI(a.PhotoThumbUri);
-
-        } else {
-            imageView.setLetter(a.Name.charAt(0));
-            if(!all) {
-                imageView.setCustomColor(a.Net);
-            }
-            else
-            {
-                imageView.setContact(a);
-            }
-
-
-
-        }
+        SetupContactImage(imageView);
         //set startup page//
         pager.addOnPageChangeListener(this);
 
         //Startup Animator..
-       // mt1 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.df);
+        // mt1 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.df);
         //mt2 = AnimatorInflater.loadAnimator(getBaseContext(), R.animator.i_df);
         //df = new AppAnimations.Rotate3dAnimation(180, 0, 0, 0, 20, false);
         //df.setDuration(800);
@@ -138,13 +129,46 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     }
 
 
+
+
+
+
+    @NonNull
+    protected onCreateFragmentAdapter getFragmentAdapter() {
+        return new onCreateFragmentAdapter(getSupportFragmentManager(),mContact, mPos, mNet, lmessage, false);
+    }
+
+    protected void SetupContactImage(LetterImageView imageView) {
+        if (mContact.PhotoUri != null) {
+            imageView.setImageURI(mContact.PhotoUri);
+
+            // ((CircleImageView) findViewById(R.id.profile_image)).setImageURI(mContact.PhotoThumbUri);
+
+        }
+        else {
+            imageView.setLetter(mContact.Name.charAt(0));
+
+            imageView.setCustomColor(mContact.Net);
+
+
+        }
+    }
+
+    protected void onApplyCustomTheme() {
+        ME.setTheme(this, mNet);
+    }
+
+    protected Contact getContact() {
+        return (Contact) $[mNet].get(mPos);
+    }
+
+
     final String[] text = {"Numbers", "Call Logs", "Messages"};
 
-    private void SetPageParameters(Intent in) {
-        if(in.hasExtra("all"))
-            all=true;
+    protected void SetPageParameters(Intent in) {
+
         mPos = in.getIntExtra(POS, 0);
-        mNet = all ? ME.getCurrentNetwork(this) : in.getIntExtra(NET, 0);
+        mNet = in.getIntExtra(NET, 0);
         mSection = in.getIntExtra(SEC, 0);
         lmessage = in.hasExtra("message") ? in.getParcelableExtra("message") : null;
 
@@ -154,7 +178,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-//        name.startAnimation(df);
+        //        name.startAnimation(df);
 
     }
 
@@ -162,7 +186,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     final int[] icons =
 
             {R.drawable.icalls, R.drawable.icall_log, R.drawable.imessages
-    };
+            };
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -192,6 +216,12 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
 

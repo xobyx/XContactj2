@@ -1,6 +1,7 @@
 package xobyx.xcontactj.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -28,9 +29,7 @@ import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.BaseRecycleAdapter;
 import xobyx.xcontactj.base.Base_CallLog;
 import xobyx.xcontactj.until.AsyncLoad;
-import xobyx.xcontactj.until.Contact;
 
-import static xobyx.xcontactj.until.ME.$;
 
 
 /**
@@ -41,31 +40,31 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
     private static final String ARG_NET = "net";
     private static final String ARG_POS = "pos";
-    private static final String ARG_ALL = "all";
+
+    private static final String ARG_NUMBERS_LIST = "numbers_list";
     private int callType;
     private CallHistoryAdapter mAdapter;
     private ArrayList<Base_CallLog> vcall = new ArrayList<>();
-    private int mPos;
-    private int mNet;
+
     private View hide;
-    private boolean mAll;
+
+    private ArrayList<String> mNumbers;
 
 
     public CallHistoryFragment() {
         // Required empty public constructor
     }
 
-    static public CallHistoryFragment newInstance(int pos, int net, boolean all) {
+
+
+    public static CallHistoryFragment newInstance(ArrayList<String> numbersList) {
         CallHistoryFragment p = new CallHistoryFragment();
         Bundle s = new Bundle();
-        s.putInt(ARG_NET, net);
-        s.putInt(ARG_POS, pos);
-        s.putBoolean(ARG_ALL, all);
+        s.putStringArrayList(ARG_NUMBERS_LIST, numbersList);
+
         p.setArguments(s);
         return p;
-
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,7 +89,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
         super.onViewCreated(v, var2);
 
         AppCompatSpinner i = (AppCompatSpinner) v.findViewById(R.id.calls_call_type_selector);
-        i.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.call_history)));
+        i.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.call_history)));
 
         i.setOnItemSelectedListener(this);
 
@@ -101,9 +100,9 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
         super.onCreate(var1);
         Bundle s = getArguments();
         if (s != null) {
-            mNet = s.getInt(ARG_NET);
-            mPos = s.getInt(ARG_POS);
-            mAll=s.getBoolean(ARG_ALL);
+
+            mNumbers=s.getStringArrayList(ARG_NUMBERS_LIST);
+
 
 
 
@@ -134,24 +133,27 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
     }
 
     public void Start() {
-        final Contact con =!mAll? (Contact) $[mNet].get(mPos):fragment_all_phones.mList.get(mPos);
 
+
+        if(mNumbers.size()==0)
+            return;
         String number;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             number = android.provider.CallLog.Calls.CACHED_NORMALIZED_NUMBER;
         } else {
             number = android.provider.CallLog.Calls.NUMBER;
         }
-        String[] h=new String[con.Phone.size()];
+        String[] h=new String[mNumbers.size()];
         String m="";
-        ArrayList<Contact.Phones> phone = con.Phone;
-        for (int i = 0; i < phone.size(); i++) {
-            Contact.Phones phones = phone.get(i);
 
-            m += " "+number+" LIKE ? ";
-            if (i!=phone.size()-1)
+        for (int i = 0; i < mNumbers.size(); i++) {
+
+
+            String numb = mNumbers.get(i);
+            m += " "+ number +" LIKE ? ";
+            if (i!=mNumbers.size()-1)
                 m += "OR";
-            h[i]="%" + ((phones.Fnumber.length()>5)?phones.Fnumber.substring(4):phones.Fnumber);
+            h[i]="%" +  numb;
         }
 
         //String ass[] = new String[ME.getDatabaseArg[mNet].length + 1];
@@ -217,11 +219,19 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }
+
+    @Override
     public void doAfterFinish() {
 
         mAdapter.notifyDataSetChanged();
         hide.setVisibility(vcall.size() == 0 ? View.VISIBLE : View.GONE);
     }
+
+
 
 
     class CallHistoryAdapter extends BaseRecycleAdapter<ViewHolder, Base_CallLog> {

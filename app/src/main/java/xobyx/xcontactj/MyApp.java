@@ -16,8 +16,6 @@ import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import java.util.Locale;
-
-import xobyx.xcontactj.until.ReportSenderFac;
 /**
  * Created by xobyx on 8/5/2015.
  * For xobyx.xcontactj/XContactj
@@ -25,7 +23,7 @@ import xobyx.xcontactj.until.ReportSenderFac;
 @ReportsCrashes(mailTo = "xobyxm@hotmail.com", mode = ReportingInteractionMode.DIALOG,
         resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
         resDialogText = R.string.crash_dialog_text,
-        reportSenderFactoryClasses = {ReportSenderFac.class},
+        reportSenderFactoryClasses = {org.acra.sender.EmailIntentSenderFactory.class},
 
 
         resDialogIcon = R.mipmap.ic_launcher, //optional. default is a warning sign

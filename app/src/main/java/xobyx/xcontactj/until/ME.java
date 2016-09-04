@@ -3,6 +3,7 @@ package xobyx.xcontactj.until;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import xobyx.xcontactj.MyApp;
 import xobyx.xcontactj.R;
 
 import static android.os.Build.VERSION.SDK_INT;
@@ -33,9 +35,10 @@ import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 
 public class ME {
 
-    public final static ArrayList<Contact> SudaniList = new ArrayList<>();
-    public final static ArrayList<Contact> ZainiList = new ArrayList<>();
-    public final static ArrayList<Contact> MtnList = new ArrayList<>();
+    private static ArrayList<Contact> AllList=new ArrayList<>();
+    public static ArrayList<Contact> SudaniList=new ArrayList<>() ;
+    public static ArrayList<Contact> ZainiList =new ArrayList<>() ;
+    public static ArrayList<Contact> MtnList =new ArrayList<>();
     public final static ArrayList[] $ =
             {
                     ZainiList, SudaniList, MtnList
@@ -239,7 +242,7 @@ public class ME {
     public static int getCurrentNetwork(Context a) {
 
 
-        TelephonyManager d = (TelephonyManager) a.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager d = ((MyApp) a.getApplicationContext()).getTelephonyManager();
 
 
         String net = d.getNetworkOperator();
@@ -344,6 +347,112 @@ public class ME {
 
     private static void setTelephonyService(ITelephony telephonyService) {
         ME.telephonyService = telephonyService;
+    }
+
+    public static ArrayList<Contact> getAllList() {
+        return AllList;
+    }
+
+    public static void setAllList(List<Contact> allList) {
+        AllList.clear();
+        AllList.addAll(allList);
+    }
+
+    public static Contact getContactFromUri(Context context, Uri uri) {
+
+
+        String id="";
+        Cursor query = context.getContentResolver().query(uri, new String[]{ContactsContract.Contacts.LOOKUP_KEY}, null, null, "");
+        if(query!=null && query.moveToFirst()) {
+            id = query.getString(0);
+            if(id.isEmpty())return null;
+        }
+        else
+        return null;
+
+
+
+        Contact b = null;
+
+        Cursor mCursor = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, "lookup =?", new String[]{id}, "");
+        if (mCursor != null) {
+
+            int phoneColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+
+            int ItemType = mCursor.getColumnIndex(ContactsContract.Data.MIMETYPE);
+            int Type = mCursor.getColumnIndex("data2");
+            int CoustomType = mCursor.getColumnIndex("data3");
+            int pphoneColumnIndex = mCursor.getColumnIndex("data4");
+            int account = mCursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME);
+            // int emailColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Adress.ADDRESS);
+            int nameColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables.DISPLAY_NAME);
+            int idclo = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables._ID);
+            int lookupColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables.LOOKUP_KEY);
+            int time_connected = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.TIMES_CONTACTED);
+            int last_time_connected = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Callable.LAST_TIME_CONTACTED);
+            int PhotouriColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables.PHOTO_URI);
+            int IsPrimaryColumnIndex = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables.IS_PRIMARY);
+            int Photothumb = mCursor.getColumnIndex(ContactsContract.CommonDataKinds.Contactables.PHOTO_THUMBNAIL_URI);
+
+
+            String key = "";
+            while (mCursor.moveToNext()) {
+                String currentLookupKey = mCursor.getString(lookupColumnIndex);
+
+                if (!currentLookupKey.equals(key)) {
+
+                    key = currentLookupKey;
+                    b = new Contact();
+                    b.Lookup = currentLookupKey;
+                    b.LookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, b.Lookup);
+                    if (!mCursor.isNull(PhotouriColumnIndex))
+                        b.PhotoUri = Uri.parse(mCursor.getString(PhotouriColumnIndex));
+                    if (!mCursor.isNull(Photothumb))
+                        b.PhotoThumbUri = Uri.parse(mCursor.getString(Photothumb));
+                    b.Name = mCursor.getString(nameColumnIndex);
+                    b.Lable = String.valueOf(b.Name.charAt(0));
+
+
+                }
+                final String mim = mCursor.getString(ItemType);
+                if (mim.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
+                    Contact.Phones a = new Contact.Phones();
+                    a.Fnumber = mCursor.getString(pphoneColumnIndex);
+                    String bh = mCursor.getString(phoneColumnIndex);
+                    if (a.Fnumber == null && bh != null) {
+                        a.Fnumber = bh;
+                    }
+                    if (a.Fnumber != null && !a.Fnumber.isEmpty()) {
+                        a.setNumber(a.Fnumber);
+                        a.IsPrimyer = mCursor.getInt(IsPrimaryColumnIndex) == 1;
+                        a.setNumber(bh);
+                        a.ID = mCursor.getString(idclo);
+                        a.TimeConnected = mCursor.getInt(time_connected);
+                        a.LastTimeConnected = mCursor.getInt(last_time_connected);
+
+
+                        a.nNet = Network.values()[getNetForNumber(a.getNumber())];
+                        if (b != null) {
+                            if (!(b.Phone.size() > 2 && b.Phone.get(b.Phone.size() - 1).getNumber().equals(a.getNumber()))) {
+                                a.User = b.Name;
+                                if (!b.Phone.contains(a))
+                                    b.Phone.add(a);
+                            }
+
+                            //}
+                        }
+
+
+                    }
+
+                }
+            }
+
+
+        }
+
+
+        return b;
     }
 
     public interface AfterFinish {

@@ -116,7 +116,7 @@ public class DialerActionModeHelper  {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            final DialerFragment fragment = DialerFragment.newInstance(MainActivity.WN_ID);
+            final DialerFragment fragment = DialerFragment.newInstance(MainActivity.wn_id);
             mContext.getSupportFragmentManager().beginTransaction().replace(R.id.di_ground, fragment, "Dialer").commit();
             mode.setCustomView(LayoutInflater.from(mContext).inflate(R.layout.cot_action_mode, null));
             number = (TextView) mode.getCustomView().findViewById(R.id.cot_ac_textView);

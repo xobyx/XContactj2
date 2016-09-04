@@ -17,10 +17,14 @@ import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import xobyx.xcontactj.MyApp;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
+import xobyx.xcontactj.adapters.SmAdapter;
 import xobyx.xcontactj.fragments.DialerFragment;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.fragments.NetFragmentPick;
@@ -39,7 +43,7 @@ import static xobyx.xcontactj.until.ME.NET_N;
 public class MainActivity extends AppCompatActivity implements DialerFragment.DialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
 
 
-    public static String WN_NAME = null;
+    public static String wn_name = null;
     public static MDatabase DB;
     /**
      * pick mode
@@ -48,38 +52,36 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     /**
      * worked net
      */
-    public static int WN_ID;
+    public static int wn_id;
+    private int default_network;
     /**
      * pick mode local
      */
     public boolean pick_mode_local;
-    public FloatingActionButton mCall;
+    public FloatingActionButton call_button;
     SectionsPagerAdapter mSectionsPagerAdapter;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    HeaderTabs mheader;
-
+    HeaderTabs tabs;
     /* Dialer Fragment handler */
     xViewPager mViewPager;
-    public DialerActionModeHelper.NumberChangeListener NumberChangeListener = new NumberChangeListener() {
+    private DialerActionModeHelper DialerHelper;
+    private boolean dialer_state;
+    private final View.OnClickListener call_handler = new View.OnClickListener() {
         @Override
-        public void onNumberChange(String v) {
-
-            mViewPager.setCurrentItem(ME.getNetForNumber(v));
-            onQueryTextChange(v);
+        public void onClick(View v) {
+            StartDialer("");
         }
     };
-    private DialerActionModeHelper DialerHelper;
-    private boolean mdialer_stat;
-    private PhoneStateListener lis = new PhoneStateListener() {
+    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_IDLE) return;
 
             int net = ME.getNetForNumber(incomingNumber);
-            String s = NET_N[net];
+            String s = getNetworkName(net);
             Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
         }
 
@@ -88,28 +90,36 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             super.onServiceStateChanged(serviceState);
             int i = serviceState.getState();
             if (i == ServiceState.STATE_EMERGENCY_ONLY || i == ServiceState.STATE_OUT_OF_SERVICE) {
-                WN_ID = 3;
-                WN_NAME = "out of service";
+                wn_id = 3;
+                wn_name = "out of service";
 
-                Toast.makeText(MainActivity.this, "No Network,out of service " + NET_N[WN_ID], Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "No Network,out of service " + getNetworkName(), Toast.LENGTH_SHORT).show();
             }
             else {
-                WN_ID = ME.getCurrentNetwork(MainActivity.this);
-                mViewPager.setCurrentItem(WN_ID, false);
+                wn_id = ME.getCurrentNetwork(MainActivity.this);
+                if (wn_id != 3) {
+                    mViewPager.setCurrentItem(wn_id, false);
 
-                Toast.makeText(MainActivity.this, "Found Network" + NET_N[WN_ID], Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(MainActivity.this, "Found Network" + getNetworkName(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
     private NetFragmentPick netFragmentPick;
-    private int default_network;
+    public DialerActionModeHelper.NumberChangeListener NumberChangeListener = new NumberChangeListener() {
+        @Override
+        public void onNumberChange(String v) {
+            mViewPager.setCurrentItem(ME.getNetForNumber(v));
+            onQueryTextChange(v);
+        }
+    };
+
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        startService(new Intent(this, RegistrationIntentService.class));
 
 
         Intent mInt = getIntent();
@@ -122,18 +132,12 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         viewById.inflateMenu(R.menu.main_activity);
         setSupportActionBar(viewById);
 
-        WN_ID = ME.getCurrentNetwork(this);
+        wn_id = ME.getCurrentNetwork(this);
 
-        mCall = (FloatingActionButton) findViewById(R.id.main_call);
-        if (WN_ID != 3) {
-            WN_NAME = NET_N[WN_ID];
-            mCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    StartDialer("");
-                }
-            });
+        call_button = (FloatingActionButton) findViewById(R.id.main_call);
+        if (wn_id != 3) {
+            wn_name = getNetworkName();
+            call_button.setOnClickListener(call_handler);
         }
 
         if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         View vb = findViewById(R.id.rep_me);
 
         vb.setBackgroundColor(SettingHelp.getBackground(getBaseContext()));
-        mheader = (HeaderTabs) findViewById(R.id.mhrader);
+        tabs = (HeaderTabs) findViewById(R.id.mhrader);
 
 
         mViewPager = (xViewPager) findViewById(R.id.pager);
@@ -166,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
             ///FIXME: //(for send_balance Activity we will not reach this code if they are no network )
             getSupportActionBar().setTitle("Pick Contact:");
-            mheader.setVisibility(View.GONE);
-            mCall.setVisibility(View.GONE);
-            netFragmentPick = NetFragmentPick.newInstance(WN_ID);
+            tabs.setVisibility(View.GONE);
+            call_button.setVisibility(View.GONE);
+            netFragmentPick = NetFragmentPick.newInstance(wn_id);
             getSupportFragmentManager().beginTransaction().replace(R.id.rep_me, netFragmentPick).commit();
             //No need for Network Header in Pick a Contact mode..
 
@@ -177,17 +181,17 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         else {
             //getActionBar().setTitle("Pick Contact:");
             //final ITelephony telephonyService = ME.getTelephonyService(this);
-
-            ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).listen(lis, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
+            startService(new Intent(this, RegistrationIntentService.class));
+            ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
             DB = new MDatabase(getBaseContext());
             mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());      //
 
 
             mViewPager.setAdapter(mSectionsPagerAdapter);
-            mheader.setViewPager(mViewPager);
+            tabs.setViewPager(mViewPager);
             DialerHelper = new DialerActionModeHelper(this);
 
-            if (WN_ID == 3)
+            if (wn_id == 3)
                 if (PreferenceManager.getDefaultSharedPreferences(this).contains("default_Network")) {
                     default_network = PreferenceManager.getDefaultSharedPreferences(this).getInt("default_Network", -1);
                 }
@@ -195,23 +199,42 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
                     setDefaultNetwork();
                 }
 
-            mViewPager.setCurrentItem(WN_ID != 3 ? WN_ID : default_network);
+            mViewPager.setCurrentItem(wn_id != 3 ? wn_id : default_network);
 
 
         }
+    }
+
+    private String getNetworkName() {
+        return NET_N[wn_id];
+    }
+
+    private String getNetworkName(int id) {
+        return NET_N[id];
     }
 
     private void setDefaultNetwork() {
         final int[] n = new int[1];
         AlertDialog.Builder o = new AlertDialog.Builder(this);
 
-        o.setCancelable(false).setMessage("No Network Founded plz Select your default Network..").setTitle("No Network Founded")
-                .setSingleChoiceItems(R.array.net_names, -1, new DialogInterface.OnClickListener() {
+        SmAdapter m = new SmAdapter();
+        m.newInstance(MainActivity.this).SetupItems(R.array.net_names).SetupLayout(R.layout.r_header).setInflater(new SmAdapter.inflater() {
+            @Override
+            public void inflate(View n, int pos, Object item) {
+                if (n.getId() == android.R.id.text1) {
+                    ((TextView) n).setText((String) item);
 
+                }
+                else {
+                    ((ImageView) n).setImageResource(ME.NetDrawables[pos][0]);
+                }
+            }
+        });
+        o.setCancelable(false).setMessage("No Network Founded plz Select your default Network..").setTitle("No Network Founded")
+                .setSingleChoiceItems(m.BuildAdapter(), -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         n[0] = which;
-
                     }
                 }).setPositiveButton("Select", new DialogInterface.OnClickListener() {
             @Override
@@ -226,8 +249,8 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     }
 
     private void StartDialer(String dataString) {
-        if (WN_ID != 3) {
-            if (!mdialer_stat) {
+        if (wn_id != 3) {
+            if (!dialer_state) {
 
 
                 DialerHelper.StartDialerActionMode(dataString);
@@ -355,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     @Override
     public void onBackPressed() {
-        if (mdialer_stat) {
+        if (dialer_state) {
             DialerHelper.finish();
 
 
@@ -368,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     @Override
     public void onVisibilityChange(boolean IsOpen) {
-        mdialer_stat = IsOpen;
+        dialer_state = IsOpen;
         if (!IsOpen) mViewPager.setMoveEnabled(true);
         findViewById(R.id.main_call).setVisibility(IsOpen ? View.GONE : View.VISIBLE);
     }
@@ -388,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     @Override
     public boolean getDialerState() {
-        return mdialer_stat;
+        return dialer_state;
     }
 
     /**

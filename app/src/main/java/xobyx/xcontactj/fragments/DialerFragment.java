@@ -108,8 +108,16 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        dialerHandler=((DialerHandler) activity);
+        dialerHandler=((DialerHandler) getActivity());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         dialerHandler.onVisibilityChange(true);
+
+
     }
 
     @Override

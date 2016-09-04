@@ -79,10 +79,12 @@ public class MyGcmListenerService extends GcmListenerService {
      * @param message GCM message received.
      */
     private void sendNotification(String Title,String message) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this.getApplication(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         @SuppressWarnings("ResourceType") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                Intent.FLAG_ACTIVITY_NEW_TASK);
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)

@@ -25,13 +25,13 @@ import xobyx.xcontactj.views.ListViewH.StringArrayAlphabetIndexer;
  * For xobyx.xcontactj.adapters/XContactj2
  */
 public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Contact> {
-    private final TextHighlighter mTexth;
-    private final LayoutInflater mInflater;
-    private final AsyncDrawer ib;
+    protected final TextHighlighter mTexth;
+    protected final LayoutInflater mInflater;
+    protected final AsyncDrawer ib;
     private ArrayList<Contact> mContacts;
-    private String x;
-    private boolean mClip;
-    private final boolean all;
+    protected String search_text;
+    protected boolean mClip;
+
     //private final int CONTACT_PHOTO_IMAGE_SIZE;
     //private final int[] PHOTO_TEXT_BACKGROUND_COLORS;
 
@@ -41,9 +41,9 @@ public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Conta
         return ((StringArrayAlphabetIndexer.AlphaBetSection) getSections()[sectionIndex]).getName();
     }
 
-    public ContactsAdapter(Context con, final ArrayList<Contact> contacts, boolean mClisp,  boolean all) {
+    public ContactsAdapter(Context con, final ArrayList<Contact> contacts, boolean mClisp) {
         mClip = mClisp;
-        this.all = all;
+
         setData(contacts);
         ib = new AsyncDrawer(con);
         mTexth = new TextHighlighter(Typeface.BOLD, 0xff02a7dd);
@@ -85,32 +85,38 @@ public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Conta
             holder = (NetFragment.ViewHolder) rootView.getTag();
         }
         final Contact contact = getItem(position);
-        final String displayName = contact.Name;
 
+
+        setupView(position, holder, contact);
+        bindSectionHeader(holder.headerView, null, position);
+
+        return rootView;
+    }
+//* must call b
+    protected void setupView(int position, NetFragment.ViewHolder holder, Contact contact) {
         holder.Text.setText(contact.Name);
 
-        mTexth.setPrefixText(holder.Text, contact.Name, x);
+        mTexth.setPrefixText(holder.Text, contact.Name, search_text);
         //ib.DrawImageString(contact, holder.Img, mClip, contact.Net);
         if (contact.Phone.size() != 0)
             //   holder.Number.setText(t.Phone.get(0).Number);
-            mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), x);
+            mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), search_text);
 
         holder.Img.setImageDrawable(null);
         if (contact.PhotoThumbUri == null) {
 
 
-            ib.DrawImageString(contact, holder.Img, mClip,all?-1:contact.Net );
+            ib.DrawImageString(contact, holder.Img, mClip,contact.Net );
 
         } else
-            ib.GetPhoto(contact, holder.Img, mClip,all?-1: contact.Net);
+            ib.GetPhoto(contact, holder.Img, mClip,contact.Net);
 
-        bindSectionHeader(holder.headerView, null, position);
-        return rootView;
+
     }
 
     @Override
     public boolean doFilter(final Contact item, final CharSequence constraint) {
-        x = (String) constraint;
+        search_text = (String) constraint;
         if (TextUtils.isEmpty(constraint))
             return true;
         final String displayName = item.Name;

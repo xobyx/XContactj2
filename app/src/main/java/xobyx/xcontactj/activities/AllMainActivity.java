@@ -12,11 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.fragments.DialerFragment;
 import xobyx.xcontactj.fragments.fragment_all_call_log;
-import xobyx.xcontactj.fragments.fragment_all_phones;
+import xobyx.xcontactj.fragments.NetFragmentAll;
 import xobyx.xcontactj.fragments.fragment_all_sms;
+import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.DialerActionModeHelper;
 
 public class AllMainActivity extends AppCompatActivity implements DialerFragment.DialerHandler {
@@ -38,6 +41,7 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
 
         }
     };
+    public ArrayList<Contact> mNumberList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +143,7 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
     class asd extends FragmentPagerAdapter
 
     {
-        final Fragment[] list={fragment_all_phones.cv(),fragment_all_sms.newInstance(),fragment_all_call_log.newInstance()};
+        final Fragment[] list={NetFragmentAll.cv(),fragment_all_sms.newInstance(),fragment_all_call_log.newInstance()};
         final private String[] b={"Phone","Messages","Phone Logs"};
         @Override
         public CharSequence getPageTitle(int position) {

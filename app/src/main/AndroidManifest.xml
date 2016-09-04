@@ -36,6 +36,7 @@
         android:allowClearUserData="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:persistent="true"
 
         android:theme="@style/Theme.NoAction" >
         <activity
@@ -96,6 +97,62 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />-->
         </activity>
+        <activity android:name=".activities.AllContactSpecificsActivity" android:label="Sudan PhoneBook"
+                  android:theme="@style/Theme.NoAction" android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="vnd.android.cursor.item/contact"/>
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                    <category android:name="android.intent.category.BROWSABLE"/>
+                    <data android:mimeType="vnd.android.cursor.dir/calls"/>
+                </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.DIAL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="tel"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity-alias android:icon="@mipmap/ic_launcher"
+                        android:label="@string/app_name_contacts" android:name=".ContactsActivity"
+                        android:targetActivity=".activities.AllContactSpecificsActivity" android:theme="@style/Theme.NoAction">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:host="contacts" android:mimeType="vnd.android.cursor.dir/person"/>
+                <data android:host="contacts" android:mimeType="vnd.android.cursor.dir/people"/>
+                <data android:host="com.android.contacts" android:mimeType="vnd.android.cursor.dir/contact"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".LastAppActivity" android:targetActivity=".activities.AllContactSpecificsActivity"/>
+        <activity-alias android:name=".MessagesActivity" android:targetActivity=".activities.AllContactSpecificsActivity"/>
+        <activity-alias android:icon="@mipmap/ic_launcher" android:label="@string/app_name_details" android:name=".DetailsContactActivity" android:targetActivity=".activities.AllContactSpecificsActivity"
+                        android:theme="@style/Theme.NoAction">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:host="com.android.contacts" android:mimeType="vnd.android.cursor.item/contact"/>
+            </intent-filter>
+        </activity-alias>
         <activity
             android:name="org.acra.dialog.CrashReportDialog"
             android:excludeFromRecents="true"

@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.views.LetterImageView;
@@ -135,14 +136,14 @@ public class AsyncDrawer {
     private class AsyncDrawTask extends AsyncTask<String, Integer, Bitmap> {
 
         final Object mLock = new Object();
-        private final ImageView mImageView;
+        private final WeakReference<ImageView> mImageView;
         private final TYPE mMode;
         private int net;
         private String look;
 
         public AsyncDrawTask(ImageView d, TYPE mode, int net) {
 
-            mImageView = d;
+            mImageView = new WeakReference<ImageView>(d);
             mMode = mode;
 
             this.net = net;
@@ -150,7 +151,7 @@ public class AsyncDrawer {
 
         @Override
         protected void onPostExecute(Bitmap bitmapDrawable) {
-            setImageDrawable(bitmapDrawable, mImageView);
+            setImageDrawable(bitmapDrawable, mImageView.get());
         }
 
         @Override
