@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by xobyx on 2/21/2016.
  * For xobyx.xcontactj.base/XContactj
  */
-public class Base_CallLog {
+public class LogItem {
 
 
     private String mNumber = "";
