@@ -21,16 +21,16 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.base.Base_CallLog;
+import xobyx.xcontactj.base.LogItem;
 
 
 public class all_call_log_adapter extends BaseAdapter {
 
     public String Search = "";
     public String Search_c = "";
-    private ArrayList<Base_CallLog> list;
+    private ArrayList<LogItem> list;
 
-    private ArrayList<Base_CallLog> list1;
+    private ArrayList<LogItem> list1;
     private CallLogFilter logFilter;
     private Context context;
 
@@ -41,7 +41,7 @@ public class all_call_log_adapter extends BaseAdapter {
 
 
 
-    public all_call_log_adapter(Context var1, ArrayList<Base_CallLog> var3) {
+    public all_call_log_adapter(Context var1, ArrayList<LogItem> var3) {
 
         this.context = var1;
         this.list1 = var3;
@@ -91,7 +91,7 @@ public class all_call_log_adapter extends BaseAdapter {
             var4 = (q) var2.getTag();
         }
 
-        final Base_CallLog obj = this.list.get(var1);
+        final LogItem obj = this.list.get(var1);
         if (obj.getName() != null
                 && !obj.getName().isEmpty()) {
             var4.number.setText(obj.getName());
@@ -126,8 +126,8 @@ public class all_call_log_adapter extends BaseAdapter {
             notifyDataSetChanged();
             return;
         }
-        ArrayList<Base_CallLog> u = new ArrayList<>();
-        for (Base_CallLog n : list1) {
+        ArrayList<LogItem> u = new ArrayList<>();
+        for (LogItem n : list1) {
             if (n.getType() == position)
                 u.add(n);
 
@@ -153,7 +153,7 @@ public class all_call_log_adapter extends BaseAdapter {
 
         public void onClick(View var1) {
             try {
-                b.context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, "_ID = " + ((Base_CallLog) b.list.get(this.index)).getID(), (String[]) null);
+                b.context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, "_ID = " + ((LogItem) b.list.get(this.index)).getID(), (String[]) null);
                 //((MenuFragments)e.b(this.b)).a(((fragment_all_call_log.CallLogObj) b.getList().get(this.index)).getDuration_int());
             } catch (Exception var3) {
                 var3.printStackTrace();
@@ -184,9 +184,9 @@ public class all_call_log_adapter extends BaseAdapter {
             Search_c = this.clean(var1.toString());
             FilterResults results = new FilterResults();
             if (Search != null && Search.length() != 0) {
-                ArrayList<Base_CallLog> arrayList = new ArrayList<>();
+                ArrayList<LogItem> arrayList = new ArrayList<>();
 
-                for (Base_CallLog var6 : list1) {
+                for (LogItem var6 : list1) {
                     if (var6.getNumber().toLowerCase(Locale.getDefault()).contains(Search.toLowerCase()) && (type == 0 || var6.getType() == type)) {
                         arrayList.add(var6);
                     } else if (var6.getNumber().toLowerCase(Locale.getDefault()).contains(Search_c.toLowerCase()) && (type == 0 || var6.getType() == type)) {
@@ -225,7 +225,7 @@ public class all_call_log_adapter extends BaseAdapter {
 
             } else {
 
-                list = (ArrayList<Base_CallLog>) results.values;
+                list = (ArrayList<LogItem>) results.values;
                 notifyDataSetChanged();
 
 

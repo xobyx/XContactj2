@@ -18,12 +18,12 @@ package xobyx.xcontactj.gcm;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -72,33 +72,49 @@ public class MyGcmListenerService extends GcmListenerService {
         // [END_EXCLUDE]
     }
     // [END receive_message]
-
+    private static final int NOTIFICATION_ID = 602;
+    private static final int REQUEST_CODE_START_ACTIVITY = 610;
     /**
      * Create and show a simple notification containing the received GCM message.
      *
      * @param message GCM message received.
      */
     private void sendNotification(String Title,String message) {
-        Intent intent = new Intent(this.getApplication(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = null;
+        Intent intent=new Intent(getBaseContext(),MainActivity.class);
+        ComponentName componentName = intent.getComponent();
+        if (componentName != null) {
+            // The stack builder object will contain an artificial back
+            // stack for the started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself) <== This comment must be wrong!
+            stackBuilder.addParentStack(componentName);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(intent);
 
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        @SuppressWarnings("ResourceType") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+            resultPendingIntent = stackBuilder.getPendingIntent(REQUEST_CODE_START_ACTIVITY, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+        } else {
+            resultPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_START_ACTIVITY, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+        }
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(Title)
                 .setContentText(message)
                 .setAutoCancel(true)
 
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setContentIntent(resultPendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+
+
+
+
     }
 }

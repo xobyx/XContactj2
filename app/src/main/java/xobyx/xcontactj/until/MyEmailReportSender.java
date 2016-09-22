@@ -3,9 +3,11 @@ package xobyx.xcontactj.until;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import org.acra.ACRAConstants;
 import org.acra.ReportField;
+import org.acra.collections.ImmutableSet;
 import org.acra.collector.CrashReportData;
 import org.acra.config.ACRAConfiguration;
 import org.acra.sender.ReportSenderException;
@@ -15,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import java.util.Set;
 
 import xobyx.xcontactj.BuildConfig;
 
@@ -74,16 +77,15 @@ public class MyEmailReportSender implements org.acra.sender.ReportSender {
 
         
     }
-    private String buildBody(CrashReportData errorContent) {
-        this.errorContent = errorContent;
-        ReportField[] fields = config.customReportContent();
-        if(fields.length == 0) {
-            fields = ACRAConstants.DEFAULT_REPORT_FIELDS;
+    private String buildBody(@NonNull CrashReportData errorContent) {
+        Set<ReportField> fields = config.getReportFields();
+        if(fields.isEmpty()) {
+            fields = new ImmutableSet<ReportField>(ACRAConstants.DEFAULT_MAIL_REPORT_FIELDS);
         }
 
         final StringBuilder builder = new StringBuilder();
         for (ReportField field : fields) {
-            builder.append(field.toString()).append("=");
+            builder.append(field.toString()).append('=');
             builder.append(errorContent.get(field));
             builder.append('\n');
         }

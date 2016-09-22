@@ -6,28 +6,28 @@ import android.os.AsyncTask;
  * Created by xobyx on 2/24/2016.
  * For xobyx.xcontactj.until/XContactj
  */
-public class AsyncLoad extends AsyncTask {
+public class AsyncLoad<T> extends AsyncTask<Object,Object,T> {
 
-    public AsyncLoad(IRun m)
+    public AsyncLoad(IRun<T> m)
     {
         this.What=m;
     }
 
-    public interface IRun
+    public interface IRun<M>
     {
-        void Start();
+        M Start();
 
-        void doAfterFinish();
+        void doAfterFinish(M result);
     }
-    IRun What;
+    private IRun<T> What;
     @Override
-    protected Object doInBackground(Object[] params) {
-        What.Start();
-        return null;
+    protected T doInBackground(Object[] params) {
+
+        return What.Start();
     }
 
     @Override
-    protected void onPostExecute(Object o) {
-        What.doAfterFinish();
+    protected void onPostExecute(T o) {
+        What.doAfterFinish(o);
     }
 }

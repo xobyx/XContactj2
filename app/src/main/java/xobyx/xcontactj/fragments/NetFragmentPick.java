@@ -6,17 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
-import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
-import java.util.List;
-
-import xobyx.xcontactj.activities.MainActivity;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.until.XPickDialog;
@@ -38,32 +32,9 @@ public class NetFragmentPick extends NetFragment {
         return p;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater var1, @Nullable ViewGroup var2, @Nullable Bundle var3) {
-        return super.onCreateView(var1, var2, var3);
-    }
-
-    @Override
-    public void onViewCreated(View var1, @Nullable Bundle var2) {
-        super.onViewCreated(var1, var2);
-    }
-
-    @Override
-    public void onCreate(Bundle var1) {
-        super.onCreate(var1);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
 
 
-    @Override
-    protected int getListModeForFragment() {
-        //return super.getListModeForFragment();
-    return 0;
-    }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -71,7 +42,7 @@ public class NetFragmentPick extends NetFragment {
 
         final Contact d = ((Contact) ad.getItem(position));
         final Intent f = new Intent();
-        final MainActivity activity = (MainActivity) getActivity();
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
 
         if (d.Phone.size() > 1) {
 
@@ -106,43 +77,7 @@ public class NetFragmentPick extends NetFragment {
         }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
-    @Override
-    public Loader<List<Contact>> onCreateLoader(int id, Bundle args) {
-        return super.onCreateLoader(id, args);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void SearchFor(String Qu) {
-        super.SearchFor(Qu);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
-        super.onLoadFinished(loader, data);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void setupPinndHeader(boolean all) {
-        super.setupPinndHeader(all);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Contact>> loader) {
-        super.onLoaderReset(loader);
-
-    }
 
 
 }

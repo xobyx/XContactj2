@@ -24,7 +24,7 @@ public class AllContactsAdapter extends ContactsAdapter {
         //ib.DrawImageString(contact, holder.Img, mClip, contact.Net);
         if (contact.Phone.size() != 0)
             //   holder.Number.setText(t.Phone.get(0).Number);
-            mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), search_text);
+            mTexth.setPrefixTextNumber(holder.Number, contact.Phone, search_text);
 
         holder.Img.setImageDrawable(null);
         if (contact.PhotoThumbUri == null) {

@@ -18,6 +18,7 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class LetterImageView extends ImageView {
     private boolean contact_is_set;
     private int total_numbers;
     private ArrayList<Contact.Phones> phonelist;
+    private boolean mDrawNetLogo =true;
 
 
     public LetterImageView(Context context, AttributeSet attrs) {
@@ -55,6 +57,7 @@ public class LetterImageView extends ImageView {
         final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.LetterImageView);
         final boolean hasValue = array.hasValue(R.styleable.LetterImageView_randomColor);
         final boolean m = array.hasValue(R.styleable.LetterImageView_fchar);
+        mDrawNetLogo = array.getBoolean(R.styleable.LetterImageView_draw_net_logo,true);
         if (m) {
             final String string = array.getString(R.styleable.LetterImageView_fchar);
             mLetter = string != null ? string.charAt(0) : ' ';
@@ -62,6 +65,12 @@ public class LetterImageView extends ImageView {
         init(array.getBoolean(
                 R.styleable.LetterImageView_randomColor, false));
         array.recycle();
+    }
+
+    public LetterImageView(Context context) {
+        super(context);
+        init(true);
+
     }
 
     public void setCustomColor(int u) {
@@ -96,6 +105,8 @@ public class LetterImageView extends ImageView {
         sx.setStyle(Paint.Style.FILL);
         sx.setColor(0x94FFFFFF);
 
+        animator.setDuration(500);
+        animator.setInterpolator(new OvershootInterpolator(1.2f));
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -138,7 +149,7 @@ public class LetterImageView extends ImageView {
 
 
     public void setContact(Contact ds) {
-       // WeakReference<Contact> a=new WeakReference<Contact>(ds);
+        // WeakReference<Contact> a=new WeakReference<Contact>(ds);
         phonelist=new ArrayList<Contact.Phones>(ds.Phone);
         //total_numbers = ds.Phone.size();
         contact_is_set = true;
@@ -229,7 +240,7 @@ public class LetterImageView extends ImageView {
         }
 
         canvas.restore();
-        if (!contact_is_set)
+        if (!contact_is_set&& mDrawNetLogo)
             ME.DrawNetworkLogo(getContext(), canvas, mNet);
 
 
@@ -253,10 +264,11 @@ public class LetterImageView extends ImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
            /* if(isLetter) {*/
-            //if(animator.isRunning())animator.cancel();
-            animator.setFloatValues(1f, 1.5f, 1f);
+            if(animator.isRunning())animator.cancel();
+            animator.setFloatValues(1f, 2f, 1f);
             Xc = event.getX();
             Xy = event.getY();
 
@@ -277,13 +289,22 @@ public class LetterImageView extends ImageView {
             }*/
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             if (animator.isRunning()) {
+                animator.cancel();
+                animator.setFloatValues(1f, 1.5f, 1f);
                 Xc = event.getX();
                 Xy = event.getY();
-            } else
+
+
                 animator.start();
+            } else if(event.getAction() == MotionEvent.ACTION_UP||event.getAction() == MotionEvent.ACTION_CANCEL) {
+                animator.cancel();
+
+
+            }
+               //{} animator.start();
         }
 
-        return super.onTouchEvent(event);
+        return true;
 
     }
 
@@ -300,5 +321,9 @@ public class LetterImageView extends ImageView {
         Random random = new Random();
         String[] colorsArr = getResources().getStringArray(R.array.colors);
         return Color.parseColor(colorsArr[random.nextInt(colorsArr.length)]);
+    }
+
+    public void setmDrawNetLogo(boolean mDrawNetLogo) {
+        this.mDrawNetLogo = mDrawNetLogo;
     }
 }

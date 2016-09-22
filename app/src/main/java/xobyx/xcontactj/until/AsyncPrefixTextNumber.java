@@ -1,6 +1,7 @@
 package xobyx.xcontactj.until;
 
 import android.os.AsyncTask;
+import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -27,12 +28,25 @@ public class AsyncPrefixTextNumber extends AsyncTask {
     }
 
     @Override
+    protected void onPreExecute() {
+        mText.get().setText("");
+    }
+
+    @Override
     protected Object doInBackground(Object[] params) {
-        return textHighlighter.getSpannableStringBuilder(mContact.Phone, mSearch);
+
+        if (mSearch != null && !mSearch.isEmpty()) {
+
+            return textHighlighter.getSpannableStringBuilder(mContact.Phone, mSearch);
+
+        }
+
+       return null;
     }
 
     @Override
     protected void onPostExecute(Object o) {
-        mText.get().setText((StringBuilder) o);
+        if(o!=null) mText.get().setText((SpannableStringBuilder) o);
+        else mText.get().setText("");
     }
 }

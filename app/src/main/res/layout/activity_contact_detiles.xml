@@ -91,7 +91,7 @@
 
 
         android:clickable="true"
-        android:src="@drawable/abc_ic_clear_mtrl_alpha"
+        android:src="?attr/net_icon"
         app:borderWidth="0dp"
 
 

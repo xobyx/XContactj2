@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:orientation="horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="horizontal">
 
-    <EditText
+    <android.support.v7.widget.AppCompatEditText
         android:id="@+id/cot_ac_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,15 +15,16 @@
         android:hint="@string/phone_number"
         android:inputType="phone"
         android:singleLine="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
 
 
-        android:textColor="?attr/colorAccent"
+
         android:textIsSelectable="true"
         android:textSize="20sp"
         android:gravity="center_horizontal"
-        android:textStyle="bold"
+
         android:layout_marginLeft="10dp"
-        android:textColorHint="#ca757575" />
+        android:textColorHint="#78ffffff" />
 
     <ImageView
         android:id="@+id/cot_ac_netImage"

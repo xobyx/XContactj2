@@ -11,6 +11,7 @@
         
         <item name="colorPrimaryDark">#512DA8</item>
         <item name="colorAccent">#FF4081</item>
+        <item name="net_icon">@null</item>
         <item name="d1">@drawable/ic_share_n</item>
         <item name="d2">@drawable/ic_trash_n</item>
         <item name="d3">@drawable/ic_info_n</item>
@@ -21,16 +22,29 @@
         <item name="make_call">@drawable/dialer_mt</item>
         <item name="expand">@drawable/more</item>
         <item name="history">@drawable/history_w</item>
-        <item name="messges">@drawable/messges_w</item>
+        <item name="actionModeStyle">@style/jt</item>
+        <item name="messages">@drawable/messges_w</item>
+        <item name="actionModeCloseDrawable">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
         <item name="android:windowBackground">@color/background_light</item>
         <item name="p_net_text_color">#ae000000</item>
     </style>
 
+<style name="a" parent="Base.Widget.AppCompat.Spinner"></style>
+<style name="jt" parent="">
 
+
+    <item name="background">?attr/colorPrimary</item>
+    <item name="backgroundSplit">@null</item>
+    <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+   <!-- <item name="actionModeCloseDrawable">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>-->
+
+
+
+</style>
 
    <style name="sudani" parent="Base.Theme.NoAction">
         <item name="colorPrimary">#04A7DD</item>
-
+       <item name="net_icon">@drawable/ic_sudani</item>
         <item name="colorPrimaryDark">#0496c7</item>
         <item name="colorAccent">#70b050</item>
 
@@ -41,7 +55,7 @@
         <item name="colorPrimary">#C10278</item>
         <item name="colorPrimaryDark">#af026d</item>
         <item name="colorAccent">#5FB5BA</item>
-
+        <item name="net_icon">@drawable/ic_zain</item>
         <item name="p_net_text_color">#a2FfFFFF</item>
         
     </style>
@@ -49,7 +63,7 @@
         <item name="colorPrimary">#FFf8C810</item>
         <item name="colorPrimaryDark">#efbe08</item>
         <item name="colorAccent">#ff2878a8</item>
-
+        <item name="net_icon">@drawable/ic_mtn</item>
         <item name="p_net_text_color">#a2FfFFFF</item>
     </style>
 

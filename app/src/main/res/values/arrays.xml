@@ -13,12 +13,24 @@
         <item>white</item>
         <item>gare</item>
     </string-array>
-
+<string-array name="call_types">
+    <item>All</item>
+    <item>Incoming</item>
+    <item>Outgoing</item>
+    <item>Missed</item>
+</string-array>
     <string-array name="color_value">
 
         <item>#ff0074f7</item>
         <item>#fff2f7f0</item>
         <item>#ffdbd7dc</item>
+    </string-array>
+    <string-array name="prem_net_color_tran">
+
+        <item>#b004a7dd</item>
+        <item>#b0f8c810</item>
+        <item>#b0c10278</item>
+        <item>#B05ABA94</item>
     </string-array>
     <string-array name="net_names">
         <item>Zain</item>
@@ -26,22 +38,22 @@
         <item>Mtn</item>
     </string-array>
     <string-array name="colors" translatable="false">
-        <item>#99cc00</item>
-        <item>#33b5e5</item>
-        <item>#0099cc</item>
-        <item>#547bca</item>
-        <item>#aa66cc</item>
-        <item>#9933cc</item>
-        <item>#669900</item>
-        <item>#aeb857</item>
-        <item>#cc0000</item>
-        <item>#df5948</item>
-        <item>#ff4444</item>
-        <item>#ae6b23</item>
-        <item>#ff8800</item>
-        <item>#e5ae4f</item>
-        <item>#ffbb33</item>
-        <item>#cccccc</item>
-        <item>#888888</item>
+        <item>#aeea00</item>
+        <item>#29b6f6</item>
+        <item>#0288d1</item>
+        <item>#5c6bc0</item>
+        <item>#ba68c8</item>
+        <item>#9c27b0</item>
+        <item>#558b2f</item>
+        <item>#9ccc65</item>
+        <item>#d50000</item>
+        <item>#ef5350</item>
+        <item>#f44336</item>
+        <item>#827717</item>
+        <item>#fb8c00</item>
+        <item>#ffb74d</item>
+        <item>#fbc02d</item>
+        <item>#d7ccc8</item>
+        <item>#a1887f</item>
     </string-array>
 </resources>

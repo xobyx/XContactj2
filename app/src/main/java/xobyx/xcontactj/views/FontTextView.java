@@ -30,7 +30,7 @@ public class FontTextView extends TextView {
         }
     }
 
-    private static HashMap<String, Typeface> mTypefaces;
+    public static HashMap<String, Typeface> mTypefaces;
 
 
     public FontTextView(Context context) {
@@ -54,22 +54,27 @@ public class FontTextView extends TextView {
                 final String typefaceAssetPath = array.getString(
                         R.styleable.FontTextView_font);
 
-                if (typefaceAssetPath != null) {
-                    Typeface font;
-
-                    if (mTypefaces.containsKey(typefaceAssetPath)) {
-                        font = mTypefaces.get(typefaceAssetPath);
-                    } else {
-                        AssetManager assets = context.getAssets();
-                        font = Typeface.createFromAsset(assets, typefaceAssetPath);
-                        mTypefaces.put(typefaceAssetPath, font);
-                    }
-
-                    setTypeface(font);
-                }
+                setTypeface(getFont(context, typefaceAssetPath));
                 array.recycle();
             }
         }
+    }
+
+    public static Typeface getFont(Context context, String typefaceAssetPath) {
+        if (typefaceAssetPath != null) {
+            Typeface font;
+
+            if (mTypefaces.containsKey(typefaceAssetPath)) {
+                font = mTypefaces.get(typefaceAssetPath);
+            } else {
+                AssetManager assets = context.getAssets();
+                font = Typeface.createFromAsset(assets, typefaceAssetPath);
+                mTypefaces.put(typefaceAssetPath, font);
+            }
+
+            return font;
+        }
+        return null;
     }
 
 

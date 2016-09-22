@@ -12,14 +12,14 @@
             android:dialogTitle="Select Contact Photo shape."
             android:entries="@array/shaps"
             android:entryValues="@array/shapsvalue"
-            android:key="PHOTO_MODE"
+            android:key="contact_photo_shape"
             android:title="Select Contact Photo shape" />
         <ListPreference
             android:defaultValue="#fff2f7f0"
             android:dialogTitle="Colors"
             android:entries="@array/color_text"
             android:entryValues="@array/color_value"
-            android:key="background"
+            android:key="background_color"
             android:title="Set background color" />
 
         <!-- NOTE: EditTextPreference accepts EditText attributes. -->

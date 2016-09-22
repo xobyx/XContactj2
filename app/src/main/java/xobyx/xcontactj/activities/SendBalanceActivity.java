@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.until.ME;
+import xobyx.xcontactj.views.FontTextView;
 
 public class SendBalanceActivity extends Activity implements View.OnClickListener {
 
@@ -39,6 +40,9 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
         @Override
         public void updateDrawState(TextPaint tp) {
             tp.setColor(ThemeUtils.getThemeAttrColor(SendBalanceActivity.this, R.attr.colorPrimary));
+
+            tp.setTypeface(FontTextView.getFont(SendBalanceActivity.this,"bein.ttf"));
+
         }
     };
     private int WORK_NETWORK = -1;

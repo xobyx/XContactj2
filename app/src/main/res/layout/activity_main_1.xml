@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/rep_me"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rep_me"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -11,56 +11,68 @@
         android:id="@+id/toolbar"
         android:layout_width="fill_parent"
         android:layout_height="50.0dip"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+
         <LinearLayout
             android:id="@+id/repl"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
 
+            android:orientation="vertical">
+            <View
+                android:id="@+id/call_log_network"
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+
+                android:background="?attr/colorPrimary"
+                android:layout_span="3"
+                android:layout_gravity="center_horizontal"/>
             <xobyx.xcontactj.views.HeaderTabs
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/mhrader"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="fill_parent"
                 android:layout_height="50.0dip"
-                android:background="#9c27b0"
+
                 android:orientation="horizontal"
                 app:net1="@drawable/i_zain"
                 app:net2="@drawable/i_sudani"
-                app:net3="@drawable/i_mtn" />
+                app:net3="@drawable/i_mtn"/>
 
             <xobyx.xcontactj.views.xViewPager
-                xmlns:me="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/pager"
+                xmlns:me="http://schemas.android.com/apk/res-auto"
                 android:layout_width="fill_parent"
                 android:layout_height="0.0dip"
                 android:layout_marginLeft="5.0dip"
                 android:layout_marginRight="5.0dip"
                 android:layout_weight="1.0"
-                me:lock_move="true" />
+                me:lock_move="true"/>
         </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/main_call"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right|center"
-            app:borderWidth="0dp"
-            android:layout_margin="16.0dip"
-            android:src="@android:drawable/ic_menu_call"
-            app:fabSize="normal"
-             />
+
+
 
         <FrameLayout
             android:id="@+id/di_ground"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/main_call"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right|center"
+            android:layout_margin="16.0dip"
+            android:src="@drawable/dialer"
+            android:tint="#ffffff"
+            app:borderWidth="0dp"
+            app:fabSize="normal"
+            />
     </FrameLayout>
 </LinearLayout>

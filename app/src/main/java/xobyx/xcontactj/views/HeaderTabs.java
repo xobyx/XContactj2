@@ -2,10 +2,6 @@ package xobyx.xcontactj.views;
 
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -14,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
@@ -28,86 +25,9 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
     View old;
     Runnable itemSelector;
     private xViewPager mViewPager;
-
-    private Animation mItemAnmiton;
-
-    private int w;
-    private android.graphics.Path m=new Path();
-    private static final Paint mj;
-
-    static {
-        mj=new Paint(Paint.ANTI_ALIAS_FLAG);
-        mj.setColor(Color.GREEN);
-        mj.setStyle(Paint.Style.FILL_AND_STROKE);
-
-    }
-
-    private Rect tmpRect=new Rect();
     private int selected;
-    private int lastPOs;
-    private int toPos;
-    private float mmm;
-    private boolean scrollStarted;
-    private boolean checkDirection;
-    private static final float thresholdOffset = 0.5f;
-    private static final int thresholdOffsetPixels = 1;
-
-
-    @Override
-
-    protected void dispatchDraw(Canvas canvas) {
-
-
-
-       // int save = canvas.save();
-
-       // Rect newRect = canvas.getClipBounds();
-      //  super.dispatchDraw(canvas);
-       // drawChild()
-       //
-      // canvas.save();
-       // SizeAnimation.setFillType(Path.FillType.INVERSE_WINDING);
-      //  canvas.save();
-
-        //canvas.drawPath(SizeAnimation, HeaderTabs.mj);
-
-     //   getDrawingRect(tmpRect);
-
-     //   SizeAnimation.reset();
-        //newRect.inset(0, -getHeight() * 5);  //make the rect larger
-
-        //canvas.clipRect(newRect, Region.Op.REPLACE);
-//canvas.clipRect(0, 0, getWidth(), getHeight());
-      //  SizeAnimation.reset();
-      // SizeAnimation.addCircle(getWidth() / 2f, getHeight() * 4f, getHeight() * 4.2f, Path.Direction.CW);
-        //    canvas.clipPath(SizeAnimation);
-
-          //  canvas.drawPath(SizeAnimation, mj);
-
-           // canvas.drawColor(Color.GREEN);
-        ;
-
-
-       // canvas.drawPath(SizeAnimation,mj);
-       // canvas.clipPath(SizeAnimation);
-        //canvas.clipRect(5,10,getWidth()-5,getHeight()-10);
-
-
-        //canvas.drawPath(SizeAnimation,mj);
-      //  canvas.clipPath(SizeAnimation);
-
-
-
-        //canvas.drawPath(SizeAnimation,mj);
-
-
-
-       super.dispatchDraw(canvas);
-
-        //canvas.restoreToCount(save);
-        //canvas.restore();
-       // canvas.restoreToCount(save);
-    }
+    private Animation mItemAnmiton;
+    private AnimationSet n;
 
 
     public HeaderTabs(Context context, AttributeSet attrs) {
@@ -116,8 +36,11 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         for (int i = 0; i < 3; i++) {
             ImageView view = new ImageView(context);
 
+
+
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setOnClickListener(this);
-            view.setScaleType(ImageView.ScaleType.FIT_XY);
+
 
             view.setClickable(true);
 
@@ -149,7 +72,8 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
             final HeaderTabsAdapter adapter = (HeaderTabsAdapter) mViewPager.getAdapter();
             for (int i = 0; i < 3; i++) {
 
-                ((ImageView) this.getChildAt(i)).setImageResource(adapter.getDrawbleResourse(i));
+                ((ImageView) this.getChildAt(i)).setImageResource(adapter.getDrawableRecourse(i));
+                //((ImageView) this.getChildAt(i)).setScaleType(ImageView.ScaleType.FIT_XY);
 
 
 
@@ -213,24 +137,11 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
     @Override
     public void onPageSelected(int i) {
-       /* switch (i) {
-     a       case 0:
-                actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_ba_za));
-                break;
-            case 1:
-                actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_ba_sd));
-                break;
-            case 2:
-                actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_ba_mtn));
-                break;
 
-        }*/
 
         selected=i;
 
-      //  setGrav(selected);
 
-//        requestLayout();
         final View at = getChildAt(i);
         Runnable n = new Runnable() {
             @Override
@@ -241,16 +152,17 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         post(n);
 
 
-        ///base Listener
+
 
 
     }
 
-    private void setGrav(int selected) {
-        for(int i=0;i<getChildCount();i++)
-           // g[i]=i==selected?0.7f:0.15f;
-            g[i]=1;
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
+
+
 
 
     private void anim(View at) {
@@ -258,30 +170,22 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
             at.setSelected(true);
 
 
-            // setBackgroundResource(nColors[i]);
+
+            //at.startAnimation(new ScaleAnimation(1,2,1,2,at.getPivotX(),at.getPivotY()));
 
             if (old != null) {
 
                 old.setSelected(false);
 
 
+
             }
             old = at;
         }
-        requestLayout();
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int i) {
-
-        if (!scrollStarted && i == ViewPager.SCROLL_STATE_DRAGGING) {
-            scrollStarted = true;
-            checkDirection = true;
-        } else {
-            scrollStarted = false;
-        }
 
     }
+
+
 
     Animation itemAnim() {
         if (mItemAnmiton == null)
@@ -308,7 +212,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
                 }
             }
         };
-        postDelayed(itemSelector,200);
+        postDelayed(itemSelector, 200);
 
 
     }
@@ -334,27 +238,26 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        w=getWidth();
-        int f= (int) (w/3f);
+
+        int total_width = getWidth();
+        int width= (int) (total_width /3f);
 
 /// |---|---|----|----|----|----|
 //  0f      1f         2f       3f
-//    0+f/2    f+2f/2    2F+3f/2
-//       (i*f)+((i+1)*f
+//    0+width/2    width+2f/2    2F+3f/2
+//       (i*width)+((i+1)*width
 
 
 
-        float gtotal=1f;
-        float max= 0.6f;
-        float min= 0.2f;
-        int fromleft=0;
+
+        int from_left=0;
 
         for(int i=0;i<getChildCount();i++)
         {
 
             View view = getChildAt(i);
-            view.layout(fromleft,0,(int)(fromleft+f),getHeight());
-            fromleft+=f;
+            view.layout(from_left,0, from_left+width,getHeight());
+            from_left+=width;
 
 
         }
@@ -373,49 +276,17 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
         mViewPager.addOnPageChangeListener(this);
     }
 
-    float[] g={0,0,0};
-void m()
-{
-
-    float gtotal=1f;
-    float max= 0.6f;
-    float min= 0.2f;
-    int fromleft=0;
-
-    for(int i=0;i<getChildCount();i++)
-    {
-
-        View view = getChildAt(i);
-        view.layout(fromleft,0,(int)(fromleft+getWidth()/3),getHeight());
-        fromleft+=getWidth()/3;
-
-
-    }
 
 
 
 
 
-
-
-}
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-       // canvas.drawColor(Color.BLACK);
-
-
-    }
-
-    final Paint paint = new Paint();
 
 
 
 
 
     public interface HeaderTabsAdapter {
-        int getDrawbleResourse(int index);
+        int getDrawableRecourse(int index);
     }
 }

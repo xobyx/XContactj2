@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -185,6 +186,16 @@ public class StateView extends View {
         setVisibility(mEmptyView, visibility);
         setVisibility(mRetryView, visibility);
         setVisibility(mLoadingView, visibility);
+        if(mLoadingView!=null)
+        {
+            View view = mLoadingView.findViewById(R.id.progress_wheel);
+            if(view instanceof LoadingView)
+            {
+                ((LoadingView) view).reset();
+                Log.d("StateView", "loading view is rested..");
+
+            }
+        }
     }
 
     private void setVisibility(View view, int visibility){
@@ -235,6 +246,7 @@ public class StateView extends View {
         }
 
         showView(mLoadingView);
+        ((LoadingView) mLoadingView.findViewById(R.id.progress_wheel)).start();
         return mLoadingView;
     }
 

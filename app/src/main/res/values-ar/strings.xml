@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">XContactj</string>
-    <string name="action_settings">الأعداات</string>
+    <string name="app_name">Sudan Phonebook</string>
+    <string name="action_settings">الأعدادات</string>
 
     <string name="contact_photo_disp">الصورة</string>
     <string name="d_send_sms">إرسال رسالة</string>
@@ -16,9 +16,18 @@
     <string name="not_in_contact">غير مسجل</string>
     <string name="empty">فارغ</string>
     <string name="send_blancd">Send Balance to: %s </string>
-    <string name="close">Close</string>
-    <string name="all_contacts">All Contact</string>
-    <string name="add_new_contact">New Contact</string>
-    <string name="about_program">About</string>
+    <string name="close">أغلاق</string>
+    <string name="all_contacts">كل الأرقام</string>
+    <string name="add_new_contact">رفم جديد</string>
+    <string name="about_program">عن البرنامج</string>
+    <string name="about">تطوير أبي ماجد  (XOBYX) \n email: xobyxm@hotmail.com</string>
+    <string name="action_reply">رد</string>
+    <string name="action_share">مشاركه</string>
+    <string name="app_name_contacts">الأسماء</string>
+    <string name="app_name_details">تفاصيل جهة الاتصال</string>
+    <string name="call_static">التفاصيل</string>
+    <string name="cancel">إلغاء</string>
+    <string name="crash_dialog_comment_prompt">An unexpected error occurred forcing the     application to stop. Please help us fix this by sending us error data,     all you have to do is click OK.</string>
+    <string name="crash_dialog_ok_toast">شكرا لك</string>
 
 </resources>

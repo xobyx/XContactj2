@@ -6,11 +6,12 @@
     <attr name="d4" format="reference" />
     <attr name="d5" format="reference" />
     <attr name="d6" format="reference" />
+    <attr name="net_icon" format="reference"/>
     <attr name="send_sms" format="reference"/>
     <attr name="make_call" format="reference"/>
     <attr name="expand" format="reference"/>
     <attr name="history" format="reference"/>
-    <attr name="messges" format="reference"/>
+    <attr name="messages" format="reference"/>
     <attr name="p_net_text_color" format="color"/>
     <declare-styleable name="AZSideBar">
         <attr name="shape_background" format="color" />
@@ -54,6 +55,7 @@
     <declare-styleable name="LetterImageView">
         <attr name="randomColor" format="boolean" />
 
+        <attr name="draw_net_logo" format="boolean"/>
         <attr name="fchar" format="string" />
     </declare-styleable>
 
@@ -63,5 +65,9 @@
             <attr name="retryResource" format="reference" />
             <attr name="loadingResource" format="reference" />
         </declare-styleable>
+
+    <declare-styleable name="xViewPager">
+        <attr name="lock_move" format="boolean"/>
+    </declare-styleable>
 
 </resources>

@@ -4,7 +4,6 @@ package xobyx.xcontactj.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,35 +26,32 @@ import java.util.List;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.BaseRecycleAdapter;
-import xobyx.xcontactj.base.Base_CallLog;
-import xobyx.xcontactj.until.AsyncLoad;
+import xobyx.xcontactj.base.LogItem;
 
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CallHistoryFragment extends Fragment implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, AsyncLoad.IRun {
+public class CallHistoryFragment extends AsyncLoadFragment<LogItem> implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
 
 
     private static final String ARG_NET = "net";
     private static final String ARG_POS = "pos";
 
     private static final String ARG_NUMBERS_LIST = "numbers_list";
+
     private int callType;
     private CallHistoryAdapter mAdapter;
-    private ArrayList<Base_CallLog> vcall = new ArrayList<>();
-
+    private ArrayList<LogItem> vcalls = new ArrayList<>();
     private View hide;
-
     private ArrayList<String> mNumbers;
+
 
 
     public CallHistoryFragment() {
         // Required empty public constructor
     }
-
-
 
     public static CallHistoryFragment newInstance(ArrayList<String> numbersList) {
         CallHistoryFragment p = new CallHistoryFragment();
@@ -65,6 +61,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
         p.setArguments(s);
         return p;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,7 +77,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
     private void setupRecyclerView(RecyclerView rv) {
         rv.setLayoutManager(new LinearLayoutManager(rv.getContext()));
-        mAdapter = new CallHistoryAdapter(getActivity(), vcall, R.layout.child_calls);
+        mAdapter = new CallHistoryAdapter(getActivity(), vcalls, R.layout.child_calls);
         rv.setAdapter(mAdapter);
     }
 
@@ -110,33 +107,12 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
     }
 
-    AsyncLoad m;
+    public ArrayList<LogItem> Start() {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        m=new AsyncLoad(this);
-
-        if (m.getStatus() != AsyncTask.Status.RUNNING)
-            m.execute();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (this.m != null && this.m.getStatus() == AsyncTask.Status.RUNNING) {
-            this.m.cancel(true);
-        }
-
-    }
-
-    public void Start() {
-
+        ArrayList<LogItem>vcall =new ArrayList<>();
 
         if(mNumbers.size()==0)
-            return;
+            return null;
         String number;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             number = android.provider.CallLog.Calls.CACHED_NORMALIZED_NUMBER;
@@ -170,10 +146,10 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
             final int iDuration = cur.getColumnIndex(android.provider.CallLog.Calls.DURATION);
             final int iDate = cur.getColumnIndex(android.provider.CallLog.Calls.DATE);
             final int iType = cur.getColumnIndex(android.provider.CallLog.Calls.TYPE);
-            vcall.clear();
+
             while (cur.moveToNext()) {
                 try {
-                    Base_CallLog i = new Base_CallLog();
+                    LogItem i = new LogItem();
                     i.setDuration_int(cur.getInt(iDuration));
                     i.setType(cur.getInt(iType));
                     i.setNumber(cur.getString(iNumber));
@@ -191,7 +167,17 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
 
         }
+        return vcall;
     }
+
+    @Override
+    public void doAfterFinish(ArrayList<LogItem> result) {
+        vcalls.clear(); vcalls.addAll(result);
+        mAdapter.notifyDataSetChanged();
+        hide.setVisibility(vcalls.size() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+
 
     public int getCallType() {
         return callType;
@@ -224,30 +210,21 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
     }
 
-    @Override
-    public void doAfterFinish() {
 
-        mAdapter.notifyDataSetChanged();
-        hide.setVisibility(vcall.size() == 0 ? View.VISIBLE : View.GONE);
-    }
+    class CallHistoryAdapter extends BaseRecycleAdapter<ViewHolder, LogItem> {
 
+        int type = 0;
 
-
-
-    class CallHistoryAdapter extends BaseRecycleAdapter<ViewHolder, Base_CallLog> {
-
-        public CallHistoryAdapter(Context context, List<Base_CallLog> s, int layout) {
+        public CallHistoryAdapter(Context context, List<LogItem> s, int layout) {
             super(context, s, layout);
-            this.Filter = new FilterBuilder<Base_CallLog>() {
+            this.Filter = new FilterBuilder<LogItem>() {
                 @Override
-                public boolean IsMatch(Base_CallLog b) {
+                public boolean IsMatch(LogItem b) {
                     return b.getType() == type;
                 }
             };
 
         }
-
-        int type = 0;
 
         public void setType(int i) {
             if (type == i) return;
@@ -261,7 +238,7 @@ public class CallHistoryFragment extends Fragment implements AdapterView.OnItemS
 
 
         @Override
-        public void onBindViewHolder(ViewHolder numHolder, Base_CallLog item) {
+        public void onBindViewHolder(ViewHolder numHolder, LogItem item) {
 
             numHolder.callsNumberText.setText(item.getNumber());
             if (DateUtils.isToday(item.getDate_str().getTime()))

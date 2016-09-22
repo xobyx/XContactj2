@@ -1,28 +1,29 @@
 package xobyx.xcontactj.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import xobyx.xcontactj.R;
-import xobyx.xcontactj.fragments.DialerFragment;
-import xobyx.xcontactj.fragments.fragment_all_call_log;
+import xobyx.xcontactj.adapters.AllFragmentAdapter;
+import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.fragments.NetFragmentAll;
-import xobyx.xcontactj.fragments.fragment_all_sms;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.DialerActionModeHelper;
+import xobyx.xcontactj.until.ME;
 
-public class AllMainActivity extends AppCompatActivity implements DialerFragment.DialerHandler {
+public class AllMainActivity extends AppCompatActivity implements IDialerHandler {
 
 
     private TabLayout.OnTabSelectedListener Tab_Listener=new TabLayout.OnTabSelectedListener() {
@@ -42,6 +43,12 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
         }
     };
     public ArrayList<Contact> mNumberList;
+    private ViewPager mev;
+    private boolean dialer_state;
+    private DialerActionModeHelper DialerHelper;
+    private FloatingActionButton fab;
+    private AllFragmentAdapter fragment_adapter;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +56,21 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
         //  index = (LinearLayout) findViewById(R.id.index);
 
         setContentView(R.layout.activity_marge_contacts);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.all_main_activity);
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        final ViewPager mev=(ViewPager)findViewById(R.id.all_view_pagger);
+        mev=(ViewPager)findViewById(R.id.all_view_pagger);
+        DialerHelper=new DialerActionModeHelper(this);
+        fab = ((FloatingActionButton) findViewById(R.id.main_call));
 
-        mev.setAdapter(new asd(getSupportFragmentManager()));
+        fab.setOnClickListener(call_handler);
+
+        fragment_adapter = new AllFragmentAdapter(getSupportFragmentManager());
+        mev.setAdapter(fragment_adapter);
+
 
         tabLayout.setupWithViewPager(mev);
         //tabLayout.addTab(phone_tab);
@@ -70,6 +84,26 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
 
     }
 
+    private final View.OnClickListener call_handler = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            StartDialer("");
+        }
+    };
+
+    private void StartDialer(String dataString) {
+        if (ME.getCurrentNetwork(this) != 3) {
+            if (!dialer_state) {
+
+
+                DialerHelper.StartDialerActionMode(dataString);
+
+            }
+        }
+        else
+            Toast.makeText(this, "No Network..", Toast.LENGTH_SHORT).show();
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -107,71 +141,59 @@ public class AllMainActivity extends AppCompatActivity implements DialerFragment
 
 
 
+
+
+    @Override
+    public boolean getDialerState() {
+        return dialer_state;
+    }
+
+    @Override
+    public void onNumberChange(String v,int n) {
+
+        NetFragmentAll numberFragment = fragment_adapter.getNumberFragment();
+        if(numberFragment!=null)
+        {
+            numberFragment.SearchFor(v);
+        }
+    }
+
     @Override
     public void onBackPressed() {
-    //    if (mShow) {
-      //      final Fragment fragment = getSupportFragmentManager().findFragmentByTag("s");
-        //    if (fragment != null) {
-          ////      getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-           ///     mShow = false;
-             //   return;
-          //  }
-       // }
-        super.onBackPressed();
+        if (dialer_state) {
+            DialerHelper.finish();
+
+
+        }
+        else
+            super.onBackPressed();
+
     }
 
 
     @Override
     public void onVisibilityChange(boolean IsOpen) {
+        dialer_state = IsOpen;
 
+
+        findViewById(R.id.main_call).setVisibility(IsOpen ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public DialerActionModeHelper getDialerAction() {
-        return null;
+        return DialerHelper;
     }
 
     @Override
     public void onCall(CharSequence number) {
+        Intent y = new Intent(Intent.ACTION_CALL);
+        y.setData(Uri.fromParts("tel", String.valueOf(number), null));
+        startActivity(y);
 
     }
 
     @Override
-    public boolean getDialerState() {
-        return false;
-    }
-    class asd extends FragmentPagerAdapter
-
-    {
-        final Fragment[] list={NetFragmentAll.cv(),fragment_all_sms.newInstance(),fragment_all_call_log.newInstance()};
-        final private String[] b={"Phone","Messages","Phone Logs"};
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return  b[position];
-        }
-
-        public asd(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return list[0];
-                case 1:
-                    return list[1];
-                case 2:
-                    return list[2];
-
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
+    public Toolbar getToolBar() {
+        return toolbar;
     }
 }

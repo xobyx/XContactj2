@@ -25,6 +25,7 @@ public class ContentRestrictionException extends RuntimeException {
 
     public ContentRestrictionException() {
         super();
+
     }
 
     public ContentRestrictionException(String msg) {

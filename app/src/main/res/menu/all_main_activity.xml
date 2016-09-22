@@ -8,7 +8,7 @@
         app:showAsAction="never"
         android:title="@string/action_settings" />
 
-    <item android:id="@+id/action_sorted" app:showAsAction="always" android:icon="@mipmap/ic_launcher"
+    <item android:id="@+id/action_sorted" app:showAsAction="always" android:icon="@mipmap/ic_launcher2"
         android:title="Sorted Contact" />
 
 

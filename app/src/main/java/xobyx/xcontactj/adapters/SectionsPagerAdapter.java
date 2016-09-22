@@ -55,7 +55,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter implements Header
 
 
     @Override
-    public int getDrawbleResourse(int index) {
+    public int getDrawableRecourse(int index) {
         switch (index) {
             case 0:
                 return R.drawable.i_zain;

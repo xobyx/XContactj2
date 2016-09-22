@@ -19,5 +19,5 @@ public interface IDialerHandler {
 
     boolean getDialerState();
 
-    void onNumberChange(String v);
+    void onNumberChange(String v,int net);
 }

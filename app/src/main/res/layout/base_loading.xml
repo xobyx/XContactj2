@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_light">
 
-    <ProgressBar
+    <xobyx.xcontactj.views.LoadingView
         android:id="@+id/progress_wheel"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"

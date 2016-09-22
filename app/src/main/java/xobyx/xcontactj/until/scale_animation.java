@@ -14,10 +14,15 @@ public class scale_animation extends Animation {
     private int mwith;
     private int mhi;
 
+
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
         float degrees = 5 * interpolatedTime;
         final Matrix matrix = t.getMatrix();
+
+
+        int l =(int)((interpolatedTime / getDuration()) * 2f);
+
 
 
 

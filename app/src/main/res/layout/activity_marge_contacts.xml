@@ -29,7 +29,7 @@
         android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 
 
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -55,19 +55,18 @@
         android:id="@+id/all_view_pagger"/>
 
 
-    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/main_call"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        app:fabSize="normal"
-
+        android:layout_gravity="bottom|right|center"
+        android:layout_margin="16.0dip"
+        android:src="@drawable/dialer"
+        android:tint="#ffffff"
         app:borderWidth="0dp"
-
-
-
-        android:src="@android:drawable/ic_menu_call"/>
+        app:fabSize="normal"
+        />
 
 
     <FrameLayout

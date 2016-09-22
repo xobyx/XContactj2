@@ -8,8 +8,12 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.internal.view.SupportMenuInflater;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
@@ -54,6 +58,18 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     protected TabLayout tabHost;
     private boolean all;
     protected Contact mContact;
+    private View.OnClickListener fab_click_handler=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            MenuBuilder m=new MenuBuilder(ContactSpecificsActivity.this);
+
+            SupportMenuInflater s=new SupportMenuInflater(ContactSpecificsActivity.this);
+            s.inflate(R.menu.main_activity,m);
+            MenuPopupHelper ma=new MenuPopupHelper(ContactSpecificsActivity.this,m );
+            ma.setAnchorView(v);
+            ma.show();
+        }
+    };
 
 
     @Override
@@ -67,6 +83,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_detiles);
+        findViewById(R.id.activity_contact_det_fab).setOnClickListener(fab_click_handler);
 
         mContact = getContact();
         //tabHost.setBackgroundColor(getResources().getColor(ME.nColors[mContact.Net]));
@@ -81,6 +98,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         pager = (ViewPager) this.findViewById(R.id.pager);
 
         // init view pager
@@ -152,6 +170,11 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
 
         }
+    }
+
+    void showpopMenu(Fragment m)
+    {
+
     }
 
     protected void onApplyCustomTheme() {

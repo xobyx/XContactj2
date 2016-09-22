@@ -351,20 +351,31 @@
                 android:textSize="30dp" />
 
         </TableRow>
+ <TableRow android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:gravity="center_horizontal"> <View
+        android:id="@+id/call_log_network"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+
+        android:background="?attr/colorAccent"
+        android:layout_span="3"
+        android:layout_gravity="center_horizontal"/></TableRow>
     <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/selector_d_colorf"
+        android:layout_marginTop="10dp"
 
         android:gravity="center_horizontal"
         >
 
         <ImageView
 
+            android:layout_marginTop="10dp"
 
-
-            android:tint="?attr/colorPrimary"
+            android:tint="#ffffff"
             android:id="@+id/dill_collsop"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -373,37 +384,33 @@
             android:background="@drawable/selector_base"
             android:src="@drawable/dialer_selected" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/dill_call"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:src="@drawable/dialer"
+            android:tint="#ffffff"
+            app:borderWidth="0dp"
+            app:fabSize="normal"
+
+            />
+
         <ImageView
 
 
+            android:layout_marginTop="10dp"
 
-            android:tint="?attr/colorPrimary"
+            android:tint="#ffffff"
             android:id="@+id/dell_backspace"
             android:layout_width="0dp"
-
             android:layout_height="40dp"
             android:layout_column="0"
-            android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@drawable/selector_base"
             android:src="@drawable/ndelet" />
 
-        <ImageView
-            android:id="@+id/dill_call"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-
-
-            android:tint="?attr/colorPrimary"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_column="1"
-            android:layout_rowWeight="1"
-            android:layout_span="0"
-            android:layout_weight="1"
-            android:adjustViewBounds="false"
-            android:background="@drawable/selector_base"
-            android:src="@drawable/dialer"
-            android:clickable="true" />
 
     </TableRow>
 

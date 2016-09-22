@@ -11,7 +11,7 @@
         android:id="@+id/action_search"
 
         app:actionViewClass="android.support.v7.widget.SearchView"
-        android:icon="@drawable/search_d"
+
         app:showAsAction="always"
         android:title="@string/Search" />
     <item

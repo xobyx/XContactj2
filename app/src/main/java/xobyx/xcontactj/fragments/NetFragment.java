@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,12 +25,12 @@ import java.util.List;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.ContactSpecificsActivity;
 import xobyx.xcontactj.adapters.ContactsAdapter;
+import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.until.NetworkContactLoader;
 import xobyx.xcontactj.until.SettingHelp;
 import xobyx.xcontactj.until.XPickDialog;
-import xobyx.xcontactj.until.scale_animation;
 import xobyx.xcontactj.views.LetterImageView;
 import xobyx.xcontactj.views.ListViewH.PinnedHeaderListView;
 import xobyx.xcontactj.views.StateView;
@@ -54,7 +56,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     public AbsListView listView;
     int net;
     ContactsAdapter mAdapter;
-    protected DialerFragment.DialerHandler iDialer;
+    protected IDialerHandler iDialer;
     public StateView mStateView;
     // public ContentLoadingProgressBar mLoading;
 
@@ -71,11 +73,15 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
         return fragment;
     }
 
-    public static LayoutAnimationController getGridLayoutAnim() {
+    public  LayoutAnimationController getGridLayoutAnim() {
         LayoutAnimationController controller;
+        LinearLayout  k;
+
+
+
         //Animation anim = new AppAnimations.Rotate3dAnimation(90, 0, 0, 0, 0, true);
-        Animation anim = new scale_animation();
-        anim.setDuration(500);
+        Animation anim = AnimationUtils.loadAnimation(this.getActivity(),R.anim.jump_);
+        anim.setDuration(200);
         controller = new LayoutAnimationController(anim, 0.5f);
         controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
         return controller;
@@ -114,7 +120,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onCreate(Bundle var1) {
         super.onCreate(var1);
 
-        ///// FIXME: 2/27/2016  Add Custom SearchView ...
+
         //setHasOptionsMenu(false);
         if (this.getArguments() != null && this.getArguments().containsKey(ARG_SECTION_NUMBER))
             net = this.getArguments().getInt(ARG_SECTION_NUMBER, 0);
@@ -130,7 +136,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onAttach(Activity activity) {
 
         super.onAttach(activity);
-        this.iDialer = ((DialerFragment.DialerHandler) activity);
+        this.iDialer = ((IDialerHandler) activity);
 
     }
 
@@ -149,6 +155,9 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
                 p.putExtra("pos", ME.$[net].indexOf(d));
                 p.putExtra("net", net);
                 startActivity(p);
+
+
+
                 getActivity().overridePendingTransition(android.support.design.R.anim.abc_slide_in_top, android.support.design.R.anim.abc_slide_out_bottom);
             } else {
                 if (d.Phone.size() > 1) {
@@ -193,11 +202,13 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onResume() {
         super.onResume();
+        android.util.Log.d(getClass().getSimpleName(),"###onResume( ["+net+"] "+ ME.NET_N[net]+" )##");
 
     }
 
     public void SearchFor(String Qu)  {
 
+        if(mAdapter!=null)
         mAdapter.getFilter().filter(Qu);
 
 
@@ -215,7 +226,7 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
         mList=ME.$[net];
 
 
-        mShowNumber = SettingHelp.getShowNumb(getActivity().getBaseContext());
+
 
         mAdapter = new ContactsAdapter(getActivity(), mList, SettingHelp.getPhotoMode(getActivity().getBaseContext()) == 0);
 

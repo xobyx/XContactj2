@@ -1,24 +1,20 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:orientation="vertical"
-    android:weightSum="1"
-    tools:context="xobyx.xcontactj.activities.AboutActivity">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_height="0dp"
-    android:layout_weight=".5">
-    <xobyx.xcontactj.views.LetterImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        app:fchar="X"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top"
-        android:src="@drawable/big_ic" />
+    android:orientation="vertical">
 
-</LinearLayout>
+    <xobyx.xcontactj.views.LetterImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/about"
+        app:draw_net_logo="false"
+        app:fchar="X"
+        android:baselineAlignBottom="false"
+        android:cropToPadding="false"/>
+
 
     <TextView
         android:id="@+id/num_child_text"
@@ -29,7 +25,7 @@
         android:gravity="center_horizontal"
         android:text="@string/app_name"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/re"
@@ -40,5 +36,5 @@
         android:autoLink="email"
         android:background="#cce0e0e0"
         android:text="@string/about"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 </LinearLayout>

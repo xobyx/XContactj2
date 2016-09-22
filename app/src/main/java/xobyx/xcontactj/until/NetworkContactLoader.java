@@ -203,6 +203,10 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
 
     @Override
     protected void onStartLoading() {
+        if (mCursor != null&&!mCursor.isClosed()) {
+            mCursor.close();
+            mCursor=null;
+        }
         if (mList != null) {
             deliverResult(mList);
         }

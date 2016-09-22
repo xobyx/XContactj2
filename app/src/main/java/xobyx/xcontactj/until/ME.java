@@ -71,7 +71,7 @@ public class ME {
         try {
 
 
-            n = a.formatOutOfCountryKeepingAlphaChars(a.parse(h, "SD"), "SD");
+            n = a.formatOutOfCountryCallingNumber(a.parse(h, "SD"), "SD");
 
         } catch (NumberParseException e) {
             Log.d(TAG, "getNetForNumber: " + h);
@@ -310,6 +310,7 @@ public class ME {
             //M2: {62} index of method in array..
             Method[] declaredMethods = c.getDeclaredMethods();
             Method mk = declaredMethods[62];
+
 
             //M3:
             /*for (Method declaredMethod : declaredMethods) {

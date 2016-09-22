@@ -23,7 +23,7 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
 
     final static String WHATSAPP_ITEM = "vnd.android.cursor.item/vnd.com.whatsapp.profile";
     private final ContentObserver mContentObserver;
-    List<Contact> m;
+    List<Contact> mList;
     private Cursor mCursor;
     private boolean mContentChange;
     private int currentNetwork;
@@ -55,7 +55,7 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
             int IsPrimaryColumnIndex = mCursor.getColumnIndex(Contactables.IS_PRIMARY);
             int Photothumb = mCursor.getColumnIndex(Contactables.PHOTO_THUMBNAIL_URI);
             currentNetwork = getCurrentNetwork(this.getContext());
-            m = new ArrayList<>();
+            mList = new ArrayList<>();
 
 
             Contact b = null;
@@ -76,7 +76,7 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
                     b.Name = mCursor.getString(nameColumnIndex);
                     b.Lable = String.valueOf(b.Name.charAt(0));
 
-                    m.add(b);
+                    mList.add(b);
 
 
                 }
@@ -131,11 +131,25 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
 
 
             }
-            return m;
+            return mList;
         }
         return null;
     }
+    @Override
+    protected void onStartLoading() {
+        if (mCursor != null&&!mCursor.isClosed()) {
+            mCursor.close();
+            mCursor=null;
+        }
+        if (mList != null) {
+            deliverResult(mList);
+        }
+        if (mList == null || takeContentChanged()) {
 
+            forceLoad();
+
+        }
+    }
     @Override
     public void onCanceled(List<Contact> var1) {
         if (mCursor != null && mCursor.isClosed())
@@ -160,14 +174,26 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
         }
     }
 
+
+    @Override
+    protected void onStopLoading() {
+        // Attempt to cancel the current load task if possible.
+        cancelLoad();
+    }
+
     @Override
     protected void onReset() {
         super.onReset();
 
         // Ensure the loader is stopped
         onStopLoading();
+
+        if (mCursor != null && !mCursor.isClosed()) {
+            mCursor.close();
+        }
         mCursor = null;
-        m = null;
+        mList = null;
+
     }
 
 
@@ -175,25 +201,21 @@ public class ContactLoader extends AsyncTaskLoader<List<Contact>> {
     public void deliverResult(List<Contact> var1) {
         if (isReset()) {
             // An async query came in while the loader is stopped
+            if (mCursor != null) {
+                mCursor.close();
+            }
             if (var1 != null) return;
+
         }
+        if(mCursor!=null)mCursor.close();
         if (isStarted()) {
             super.deliverResult(var1);
         }
 
     }
 
-    @Override
-    protected void onStartLoading() {
-        if (m != null) {
-            deliverResult(m);
-        }
-        if (m == null || takeContentChanged()) {
 
-            forceLoad();
 
-        }
-    }
 
 
     /**

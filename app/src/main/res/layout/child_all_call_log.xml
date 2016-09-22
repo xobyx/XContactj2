@@ -42,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/imagecc"
-            android:background="@color/accent" />
+            android:background="?attr/colorAccent" />
 
         <LinearLayout
             android:id="@+id/linearLayout"

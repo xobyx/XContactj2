@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    tools:ignore="UnusedAttribute"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              tools:ignore="UnusedAttribute"
     >
 
-<!--just a background view for the header, so that it won't interfere with the headers changes and row-clicking-->
+    <!--just a background view for the header, so that it won't interfere with the headers changes and row-clicking-->
 
     <FrameLayout
         android:layout_width="40dp"
@@ -16,57 +16,73 @@
 
         <include layout="@layout/pinned_header_listview_side_header"/>
     </FrameLayout>
-<LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="6dp"
 
-    android:paddingLeft="6dp"
-    android:paddingRight="6dp"
-    android:paddingTop="6dp"
-    android:layout_weight="1">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
 
-    <xobyx.xcontactj.views.LetterImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/imagec"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:scaleType="centerCrop"/>
+        android:paddingBottom="6dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="6dp"
+        android:weightSum="1">
 
-    <xobyx.xcontactj.views.FontTextView
-        android:id="@+id/ptextname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <xobyx.xcontactj.views.LetterImageView android:id="@+id/imagec"
+                                               xmlns:app="http://schemas.android.com/apk/res-auto"
+                                               android:layout_width="55dp"
+                                               android:layout_height="55dp"
+                                               android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:orientation="vertical">
+
+            <xobyx.xcontactj.views.FontTextView
+                android:id="@+id/ptextname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
 
-        android:textColor="@color/background"
+                android:gravity="left|center_vertical"
 
-        app:font="RP.ttf"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingStart="10dp"
-        android:paddingRight="5dp"
-        android:paddingEnd="5dp"
-        android:singleLine="true"
-        android:text="أبي ماجد"
-        android:textSize="18sp"
-        tools:ignore="HardcodedText,NewApi"/>
-    <xobyx.xcontactj.views.FontTextView
-        app:font="RP.ttf"
-        android:id="@+id/numberc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+                android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:paddingStart="10dp"
+                android:singleLine="true"
+                android:text="أبي ماجد"
+                android:textColor="@color/background"
+                android:textSize="18sp"
+                app:font="RP.ttf"
+                tools:ignore="HardcodedText,NewApi"
+                />
 
-        android:layout_gravity="center|right"
-        android:gravity="center_vertical|center_horizontal"
+            <xobyx.xcontactj.views.FontTextView
+                android:id="@+id/numberc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
 
-        android:singleLine="true"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="15sp" />
+                android:paddingEnd="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:paddingStart="10dp"
+                android:singleLine="true"
 
-</LinearLayout>
+
+
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="12sp"
+                app:font="RP.ttf"
+                />
+        </LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

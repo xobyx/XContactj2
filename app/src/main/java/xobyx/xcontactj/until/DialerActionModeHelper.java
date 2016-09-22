@@ -3,32 +3,36 @@ package xobyx.xcontactj.until;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.view.ActionMode;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.MainActivity;
+import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.fragments.DialerFragment;
 
 /**
  * Created by xobyx on 8/6/2015.
  * For xobyx.xcontactj.until/XContactj
  */
-public class DialerActionModeHelper  {
+public class DialerActionModeHelper {
 
 
     private final Vibrator vibrator;
     private ActionMode mActionMode;
     private TextView number;
     private ImageView img;
-    private MainActivity mContext;
-    private NumberChangeListener mNumberChangeListener;
+    private AppCompatActivity mContext;
+
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -47,23 +51,22 @@ public class DialerActionModeHelper  {
 
             int net = ME.getNetForNumber(s.toString());
 
-            if (net < 3) {
-                img.setImageResource(ME.NetDrawables[net][0]);
-                if (mNumberChangeListener != null)
-                    mNumberChangeListener.onNumberChange(s.toString());
-            } else
-                img.setImageDrawable(null);
+
+            img.setImageResource(ME.NetDrawables[net][0]);
+            if (mContext != null)
+                ((IDialerHandler) mContext).onNumberChange(s.toString(),net);
 
 
         }
 
 
     };
+    private Toolbar actionBar;
 
-    public DialerActionModeHelper(MainActivity i) {
+    public DialerActionModeHelper(AppCompatActivity i) {
         mContext = i;
-        mNumberChangeListener=i.NumberChangeListener;
-        vibrator= (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+
+        vibrator = (Vibrator) i.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public ActionMode getActionMode() {
@@ -73,8 +76,14 @@ public class DialerActionModeHelper  {
     public void StartDialerActionMode(String dataString) {
 
 
-        setNumber(dataString, false);
+        //mContext.getSupportActionBar().hide();
+
+        ((IDialerHandler) mContext).getToolBar().setVisibility(View.GONE);
         mContext.startSupportActionMode(callback);
+        setNumber(dataString, false);
+        //startSupportActionMode(callback);
+
+
     }
 
     public void finish() {
@@ -91,7 +100,8 @@ public class DialerActionModeHelper  {
                 number.setText(f);
 
 
-            } else {
+            }
+            else {
                 number.append(f);
                 vibrator.vibrate(20);
             }
@@ -112,10 +122,11 @@ public class DialerActionModeHelper  {
 
     }
 
-    ActionMode.Callback callback=new ActionMode.Callback() {
+    ActionMode.Callback callback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
             final DialerFragment fragment = DialerFragment.newInstance(MainActivity.wn_id);
             mContext.getSupportFragmentManager().beginTransaction().replace(R.id.di_ground, fragment, "Dialer").commit();
             mode.setCustomView(LayoutInflater.from(mContext).inflate(R.layout.cot_action_mode, null));
@@ -140,18 +151,20 @@ public class DialerActionModeHelper  {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mNumberChangeListener.onNumberChange("");
+            ((IDialerHandler) mContext).onNumberChange("",4);
+            ((IDialerHandler) mContext).getToolBar().setVisibility(View.VISIBLE);
             final FragmentManager fm = mContext.getSupportFragmentManager();
-            fm.beginTransaction().setCustomAnimations(R.anim.snackbar_in,R.anim.snackbar_out).remove(fm.findFragmentByTag("Dialer")).commit();
+            fm.beginTransaction().setCustomAnimations(R.anim.snackbar_in, R.anim.snackbar_out).remove(fm.findFragmentByTag("Dialer")).commit();
 
         }
     };
+
     public String getNumber() {
         return String.valueOf(number.getText());
     }
 
     public interface NumberChangeListener {
-        void onNumberChange(String v);
+
 
     }
 }

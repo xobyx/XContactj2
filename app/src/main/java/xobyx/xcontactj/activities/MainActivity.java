@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
@@ -14,23 +15,27 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.acra.ACRA;
 
 import xobyx.xcontactj.MyApp;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
 import xobyx.xcontactj.adapters.SmAdapter;
-import xobyx.xcontactj.fragments.DialerFragment;
+import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.fragments.NetFragmentPick;
 import xobyx.xcontactj.gcm.RegistrationIntentService;
 import xobyx.xcontactj.until.DialerActionModeHelper;
-import xobyx.xcontactj.until.DialerActionModeHelper.NumberChangeListener;
 import xobyx.xcontactj.until.MDatabase;
 import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.until.SettingHelp;
@@ -40,7 +45,7 @@ import xobyx.xcontactj.views.xViewPager;
 import static xobyx.xcontactj.until.ME.NET_N;
 ///TODO: @{@link Se}
 
-public class MainActivity extends AppCompatActivity implements DialerFragment.DialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements IDialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
 
 
     public static String wn_name = null;
@@ -53,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
      * worked net
      */
     public static int wn_id;
-    private int default_network;
     /**
      * pick mode local
      */
@@ -66,23 +70,54 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     HeaderTabs tabs;
     /* Dialer Fragment handler */
     xViewPager mViewPager;
+    private int default_network;
     private DialerActionModeHelper DialerHelper;
-    private boolean dialer_state;
+    private boolean is_dialer_open=false;
     private final View.OnClickListener call_handler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            StartDialer("");
+
+            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
+
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Log.d(MainActivity.class.getSimpleName(),"dial anmi end");
+                    StartDialer("");
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            v.startAnimation(animation);
         }
     };
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
+
+
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_IDLE) return;
 
+            String c="";
+            try {
+               c = ME.getTelephonyService(MainActivity.this).getCallerName();
+            }
+            catch (RemoteException e) {
+                e.printStackTrace();
+            }
             int net = ME.getNetForNumber(incomingNumber);
             String s = getNetworkName(net);
-            Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, s+" "+c, Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -106,14 +141,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         }
     };
     private NetFragmentPick netFragmentPick;
-    public DialerActionModeHelper.NumberChangeListener NumberChangeListener = new NumberChangeListener() {
-        @Override
-        public void onNumberChange(String v) {
-            mViewPager.setCurrentItem(ME.getNetForNumber(v));
-            onQueryTextChange(v);
-        }
-    };
-
+    private Toolbar mToolbar;
 
 
     @Override
@@ -124,13 +152,15 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
         Intent mInt = getIntent();
 
+
         // ME.SetInternetSettingFor(0,this);
 
         setContentView(R.layout.activity_main_1);
 
-        final Toolbar viewById = (Toolbar) findViewById(R.id.toolbar);
-        viewById.inflateMenu(R.menu.main_activity);
-        setSupportActionBar(viewById);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.inflateMenu(R.menu.main_activity);
+        setSupportActionBar(mToolbar);
 
         wn_id = ME.getCurrentNetwork(this);
 
@@ -140,17 +170,19 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
             call_button.setOnClickListener(call_handler);
         }
 
-        if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
-            StartDialer(mInt.getDataString());
+        if (mInt.getAction() != null) {
+            if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
+                StartDialer(mInt.getDataString());
+
+            }
+            else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
+                pick_mode = true;
+                if (mInt.hasExtra("local")) {
+                    pick_mode_local = true;
+                }
+            }
 
         }
-        else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
-            pick_mode = true;
-        }
-        if (mInt.hasExtra("local")) {
-            pick_mode_local = true;
-        }
-
 
         // PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
 
@@ -160,20 +192,15 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
         vb.setBackgroundColor(SettingHelp.getBackground(getBaseContext()));
         tabs = (HeaderTabs) findViewById(R.id.mhrader);
-
-
-        mViewPager = (xViewPager) findViewById(R.id.pager);
-
-
-        mViewPager.setMoveEnabled(!pick_mode_local);
         if (pick_mode_local) {
 
             ///FIXME: //(for send_balance Activity we will not reach this code if they are no network )
             getSupportActionBar().setTitle("Pick Contact:");
-            tabs.setVisibility(View.GONE);
+            //changed://tabs.setVisibility(View.GONE);
             call_button.setVisibility(View.GONE);
+            tabs.setVisibility(View.GONE);
             netFragmentPick = NetFragmentPick.newInstance(wn_id);
-            getSupportFragmentManager().beginTransaction().replace(R.id.rep_me, netFragmentPick).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.repl, netFragmentPick).commit();
             //No need for Network Header in Pick a Contact mode..
 
 
@@ -181,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         else {
             //getActionBar().setTitle("Pick Contact:");
             //final ITelephony telephonyService = ME.getTelephonyService(this);
+            //changed:  moved from top;
+            tabs = (HeaderTabs) findViewById(R.id.mhrader);
+            mViewPager = (xViewPager) findViewById(R.id.pager);
+            mViewPager.setMoveEnabled(!pick_mode_local);
             startService(new Intent(this, RegistrationIntentService.class));
             ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
             DB = new MDatabase(getBaseContext());
@@ -215,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     private void setDefaultNetwork() {
         final int[] n = new int[1];
-        AlertDialog.Builder o = new AlertDialog.Builder(this);
+        AlertDialog.Builder o = new AlertDialog.Builder(this,R.style.Base_Theme_AppCompat_Light_Dialog);
 
         SmAdapter m = new SmAdapter();
         m.newInstance(MainActivity.this).SetupItems(R.array.net_names).SetupLayout(R.layout.r_header).setInflater(new SmAdapter.inflater() {
@@ -250,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     private void StartDialer(String dataString) {
         if (wn_id != 3) {
-            if (!dialer_state) {
+            if (!is_dialer_open) {
 
 
                 DialerHelper.StartDialerActionMode(dataString);
@@ -269,8 +300,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        // NetFragment item = null;
-        /* FIXME:search don't works when change show number... */
+
         NetFragment item = null;
         if (!pick_mode_local) {
             mViewPager.setMoveEnabled(newText.isEmpty());
@@ -288,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         }
         catch (Exception a) {
             Toast.makeText(this, a.getMessage(), Toast.LENGTH_LONG).show();
+            ACRA.getErrorReporter().handleException(a);
         }
 
 
@@ -311,14 +342,14 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_activity, menu);
 
-        final SearchView item = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        item.setOnQueryTextListener(this);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(this);
 
-        item.setOnCloseListener(new SearchView.OnCloseListener() {
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 mViewPager.setMoveEnabled(true);
-                //clear Query first..
+
                 return false;
             }
         });
@@ -378,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
     @Override
     public void onBackPressed() {
-        if (dialer_state) {
+        if (is_dialer_open) {
             DialerHelper.finish();
 
 
@@ -390,10 +421,15 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
 
 
     @Override
-    public void onVisibilityChange(boolean IsOpen) {
-        dialer_state = IsOpen;
-        if (!IsOpen) mViewPager.setMoveEnabled(true);
-        findViewById(R.id.main_call).setVisibility(IsOpen ? View.GONE : View.VISIBLE);
+    public void onVisibilityChange(boolean isopen) {
+        is_dialer_open=isopen;
+        if (isopen) {
+            mViewPager.setMoveEnabled(true);
+            findViewById(R.id.main_call).setVisibility(View.GONE);
+        }
+        else
+            findViewById(R.id.main_call).setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -410,8 +446,22 @@ public class MainActivity extends AppCompatActivity implements DialerFragment.Di
     }
 
     @Override
+    public Toolbar getToolBar() {
+        return mToolbar;
+    }
+
+    @Override
     public boolean getDialerState() {
-        return dialer_state;
+        return is_dialer_open;
+    }
+
+    @Override
+    public void onNumberChange(String v, int n) {
+
+        if (n < 3) {
+            mViewPager.setCurrentItem(n);
+        }
+        onQueryTextChange(v);
     }
 
     /**

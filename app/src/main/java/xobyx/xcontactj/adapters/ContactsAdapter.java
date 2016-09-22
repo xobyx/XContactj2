@@ -2,6 +2,7 @@ package xobyx.xcontactj.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.util.Locale;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.until.AsyncDrawer;
+import xobyx.xcontactj.until.AsyncPrefixTextNumber;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.views.LetterImageView;
 import xobyx.xcontactj.views.ListViewH.SearchablePinnedHeaderListViewAdapter;
@@ -98,10 +100,13 @@ public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Conta
 
         mTexth.setPrefixText(holder.Text, contact.Name, search_text);
         //ib.DrawImageString(contact, holder.Img, mClip, contact.Net);
-        if (contact.Phone.size() != 0)
+        if (contact.Phone.size() != 0&&search_text!=null)
             //   holder.Number.setText(t.Phone.get(0).Number);
-            mTexth.setPrefixText(holder.Number, contact.Phone.get(contact.mNumberCount).getNumber(), search_text);
-
+            //mTexth.setPrefixTextNumber(holder.Number, contact.Phone, search_text);
+        {
+            AsyncTask execute = new AsyncPrefixTextNumber(mTexth, holder.Number, contact, search_text);
+            execute.execute();
+        }
         holder.Img.setImageDrawable(null);
         if (contact.PhotoThumbUri == null) {
 
@@ -117,11 +122,23 @@ public class ContactsAdapter extends SearchablePinnedHeaderListViewAdapter<Conta
     @Override
     public boolean doFilter(final Contact item, final CharSequence constraint) {
         search_text = (String) constraint;
+
+        final String displayName = item.Name;
         if (TextUtils.isEmpty(constraint))
             return true;
-        final String displayName = item.Name;
-        return !TextUtils.isEmpty(displayName) && displayName.toLowerCase(Locale.getDefault())
-                .contains(constraint.toString().toLowerCase(Locale.getDefault()));
+
+        else if (displayName!=null&&!TextUtils.isEmpty(displayName) &&
+
+                FormatUtils.indexOfWordPrefix( displayName.toLowerCase(Locale.getDefault()),search_text.toLowerCase(Locale.getDefault()))!=-1)
+                return  true;
+        else if(Character.isDigit(search_text.charAt(0)))
+        {
+            for (Contact.Phones phones : item.Phone) {
+                if(FormatUtils.indexOfWordPrefix(phones.getNumber(),search_text)!=-1)
+                    return true;
+            }
+        }
+        return false;
     }
 
     @Override

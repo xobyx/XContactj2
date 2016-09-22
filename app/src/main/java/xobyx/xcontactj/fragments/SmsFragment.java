@@ -1,7 +1,6 @@
 package xobyx.xcontactj.fragments;
 
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -13,7 +12,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -47,14 +45,13 @@ import xobyx.xcontactj.R;
 import xobyx.xcontactj.activities.ContactSpecificsActivity;
 import xobyx.xcontactj.adapters.BaseRecycleAdapter;
 import xobyx.xcontactj.base.massage;
-import xobyx.xcontactj.until.AsyncLoad;
 import xobyx.xcontactj.views.FontTextView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouchListener {
+public class SmsFragment extends AsyncLoadFragment<massage> implements View.OnTouchListener {
 
     private static final String ARG_NUMBERS_LIST = "number_list";
     private ArrayList<String> Numbers;
@@ -72,7 +69,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
     private static final String ARG_ALL = "all";
 
 
-    private ArrayList<massage> items = new ArrayList<>();
+    private ArrayList<massage> items_b = new ArrayList<>();
     private ArrayList<String> mSendtoNumber = new ArrayList<>();
     private AdapterView.OnItemLongClickListener ItemLongClick = new AdapterView.OnItemLongClickListener() {
         @Override
@@ -94,7 +91,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
     private TextView text;
     private massage mLastFMessage;
     private RecyclerView recyclerView;
-    private AsyncLoad m;
+
 
 
     public SmsFragment() {
@@ -127,7 +124,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
     private void install(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.VERTICAL, false));
 
-        mAdapter = new SmsAdapter(getActivity(), items, R.layout.smshead);
+        mAdapter = new SmsAdapter(getActivity(), items_b, R.layout.smshead);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -183,7 +180,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
                 t.type = Telephony.Sms.MESSAGE_TYPE_SENT;
                 t.state = Telephony.Sms.STATUS_PENDING;
                 t.date = new Date();
-                items.add(t);
+                items_b.add(t);
                 mAdapter.notifyDataSetChanged();
 
                 //recyclerView.smoothScrollToPosition(items.size());
@@ -253,12 +250,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
 
     SmsAdapter mAdapter;
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        m = new AsyncLoad(this);
-        m.execute();
-    }
+
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -271,10 +263,10 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
 
     private static final Uri _uri = Uri.parse("content://sms/");
 
-    @SuppressLint("InlinedApi")
-    public void Start() {
+    public ArrayList<massage> Start() {
 
-        if(Numbers.size()==0)return;
+        ArrayList<massage> items =new ArrayList<>();
+        if(Numbers.size()==0) return null;
         // Uri m= Telephony.Threads;
         String m = "";
         //new String[]{"%" + contact.Phone.get(0).Fnumber.substring(4)}
@@ -295,7 +287,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
             final int data = d.getColumnIndex(Telephony.Sms.DATE);
             final int type = d.getColumnIndex(Telephony.Sms.TYPE);
             final int state = d.getColumnIndex(Telephony.Sms.STATUS);
-            items.clear();
+
             while (d.moveToNext()) {
                 massage a = new massage();
                 a.body = d.getString(body);
@@ -309,12 +301,18 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
             }
             d.close();
         }
+        return items;
     }
 
     @Override
-    public void doAfterFinish() {
+    public void doAfterFinish(ArrayList<massage> result) {
+        items_b.clear(); items_b.addAll(result);
         mAdapter.notifyDataSetChanged();
     }
+
+
+
+
 
     @Override
     public void onDestroy() {
@@ -343,9 +341,7 @@ public class SmsFragment extends Fragment implements AsyncLoad.IRun, View.OnTouc
 
         }
 
-        if (m != null && m.getStatus() == AsyncTask.Status.RUNNING) {
-            m.cancel(true);
-        }
+
 
     }
 

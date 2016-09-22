@@ -15,6 +15,7 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import xobyx.xcontactj.R;
+import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.until.AppAnimations;
 import xobyx.xcontactj.until.DialerActionModeHelper;
 
@@ -36,7 +37,7 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
     }
 
     private DialerActionModeHelper actionMode;
-    private DialerHandler dialerHandler;
+    private IDialerHandler dialerHandler;
     private boolean visible = true;
     private View.OnClickListener CallClickListener=new View.OnClickListener() {
         @Override
@@ -108,7 +109,7 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        dialerHandler=((DialerHandler) getActivity());
+        dialerHandler=((IDialerHandler) getActivity());
     }
 
     @Override
@@ -138,15 +139,6 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
             d.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
             d.show();
         }
-    }
-
-
-
-    public interface DialerHandler {
-        void onVisibilityChange(boolean IsOpen);
-        DialerActionModeHelper getDialerAction();
-        void onCall(CharSequence number);
-        boolean getDialerState();
     }
 
 
