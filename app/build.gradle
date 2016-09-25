@@ -6,21 +6,14 @@ repositories {
 }
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'xobyx'
-            keyPassword '13011221'
-            storeFile file('C:/Users/xobyx/AndroidStudioProjects/XContactj2/pkey.jks')
-            storePassword '13011221'
-        }
-    }
+   
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
         disable 'InvalidPackage'
     }
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22.0.2"
     def Properties versionProps = new Properties()
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.exists())
