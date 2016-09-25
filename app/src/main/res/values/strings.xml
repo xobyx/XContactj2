@@ -96,5 +96,6 @@
     <string name="app_name_details">Contact details</string>
     <string name="app_name_contacts">Contacts</string>
     <string name="call_static">Statics</string>
+    <string name="bein_font">bein.ttf</string>
 
 </resources>

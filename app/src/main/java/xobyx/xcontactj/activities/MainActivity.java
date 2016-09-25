@@ -25,8 +25,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.acra.ACRA;
 
+import io.fabric.sdk.android.Fabric;
 import xobyx.xcontactj.MyApp;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
@@ -77,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
         @Override
         public void onClick(View v) {
 
-            Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
+            throw new RuntimeException("This is a crash");
+           /* Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
 
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
                 }
             });
 
-            v.startAnimation(animation);
+            v.startAnimation(animation);*/
         }
     };
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
@@ -148,8 +152,10 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
     protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        //Fabric.with(this, new Crashlytics());
 
-
+        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).debuggable(true).build();
+        Fabric.with(fabric);
         Intent mInt = getIntent();
 
 
@@ -169,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             wn_name = getNetworkName();
             call_button.setOnClickListener(call_handler);
         }
-
+        call_button.setOnClickListener(call_handler);
         if (mInt.getAction() != null) {
             if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
                 StartDialer(mInt.getDataString());
@@ -271,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (n[0] != -1) {
-                    PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", which).commit();
+                    PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", which).apply();
 
                     dialog.dismiss();
                 }
@@ -318,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
         }
         catch (Exception a) {
             Toast.makeText(this, a.getMessage(), Toast.LENGTH_LONG).show();
-            ACRA.getErrorReporter().handleException(a);
+           // ACRA.getErrorReporter().handleException(a);
         }
 
 

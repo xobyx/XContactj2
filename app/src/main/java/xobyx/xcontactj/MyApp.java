@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.Tracker;
 
 import org.acra.ACRA;
@@ -17,6 +18,9 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by xobyx on 8/5/2015.
  * For xobyx.xcontactj/XContactj
@@ -52,11 +56,9 @@ public class MyApp extends Application {
         super.attachBaseContext(base);
 
         // The following line triggers the initialization of ACRA
-        ACRA.init(this);
-        ArrayList<String> m;
-        for (String s : m) {
+      //  ACRA.init(this);
 
-        }
+
     }
     static class mTraker
     {
@@ -64,7 +66,6 @@ public class MyApp extends Application {
     }
     public static Tracker tracker;
     private static MyApp mApp;
-    public static mTraker tracker$;
 
     private TelephonyManager mTelephonyManager;
     private DrmManagerClient drmManagerClient;

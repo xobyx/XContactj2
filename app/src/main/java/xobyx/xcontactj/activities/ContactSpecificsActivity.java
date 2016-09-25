@@ -139,7 +139,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
             //AttributeSet m;m.getAttributeValue(R.attr.actionBarDivider)
             tabHost.getTabAt(i)
                     .setIcon(getResources().getDrawable(icons[i]));
-            ;//.setText(text[i]);
+            //.setText(text[i]);
 
 
         }
