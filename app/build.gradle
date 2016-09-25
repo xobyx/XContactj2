@@ -28,7 +28,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'xcontactj-proguard.pro'
-            signingConfig signingConfigs.config
+            
             versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
         }
         debug {
