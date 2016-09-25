@@ -6,14 +6,7 @@ repositories {
 }
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'xobyx'
-            keyPassword '13011221'
-            storeFile file('C:/Users/xobyx/AndroidStudioProjects/XContactj2/pkey.jks')
-            storePassword '13011221'
-        }
-    }
+   
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -21,27 +14,21 @@ android {
     }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-    def Properties versionProps = new Properties()
-    def versionPropsFile = file('version.properties')
-    if (versionPropsFile.exists())
-        versionProps.load(new FileInputStream(versionPropsFile))
-    def code = (versionProps['VERSION_CODE'] ?: "0").toInteger() + 1
-    versionProps['VERSION_CODE'] = code.toString()
-    versionProps.store(versionPropsFile.newWriter(), null)
+    
     defaultConfig {
         applicationId "xobyx.xcontactj"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode code
+        versionCode 1067
         versionName "1.2"
 
-        signingConfig signingConfigs.config
+        
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'xcontactj-proguard.pro'
-            signingConfig signingConfigs.config
+            
             versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
         }
         debug {
