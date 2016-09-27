@@ -11,7 +11,8 @@ android:
     - android-21
     - sys-img-armeabi-v7a-android-22
     - extra-android-m2repository
-    - extra-google-google_play_services
+    - extra-android-m2repository
+    - extra-google-m2repository
 
 
 before_script:
