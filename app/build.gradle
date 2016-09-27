@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.nimbledroid.profiler'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -59,6 +60,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
         transitive = true;
     }
+    nimbledroid { apiKey "fd59d29d58c94c22bf823c3cd21250fe" }
 }
 
 
