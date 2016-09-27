@@ -10,4 +10,4 @@ before_script:
 test:
   script:
     - gradle-2.14.1/bin/gradle build
-    - gradle-2.14.1/bin/gradle clean assembleRelease ndUpload
+    - gradle-2.14.1/bin/gradle ndUpload

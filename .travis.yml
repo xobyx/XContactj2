@@ -9,6 +9,7 @@ android:
     - build-tools-21.1.2
     - android-15
     - android-21
+    - android-16
     - sys-img-armeabi-v7a-android-22
     - extra-android-m2repository
     - extra-google-m2repository
