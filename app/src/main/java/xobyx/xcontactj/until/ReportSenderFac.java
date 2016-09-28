@@ -14,8 +14,9 @@ import org.acra.sender.ReportSenderFactory;
 public class ReportSenderFac implements ReportSenderFactory {
     @NonNull
     @Override
-    public ReportSender create(Context context, ACRAConfiguration acraConfiguration) {
-        return new MyEmailReportSender(acraConfiguration);
+    public ReportSender create(Context context, ACRAConfiguration config) {
+        //return new MyEmailReportSender(acraConfiguration);
+        return new A(config, config.httpMethod(), config.reportType(), null);
 
     }
 }

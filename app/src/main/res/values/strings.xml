@@ -97,5 +97,7 @@
     <string name="app_name_contacts">Contacts</string>
     <string name="call_static">Statics</string>
     <string name="bein_font">bein.ttf</string>
+    <string name="TWITER_SECRET">yBjx4w6KYrYvDO2FwqUSV7yDJVLZ9O7SCL9bYgPWsR8zvDMgtM</string>
+    <string name="TWITER_KEY">4MwpnZrTImNF7I7tfzUoIBpk0</string>
 
 </resources>

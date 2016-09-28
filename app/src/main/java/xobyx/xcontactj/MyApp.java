@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
+import xobyx.xcontactj.until.ReportSenderFac;
 
 /**
  * Created by xobyx on 8/5/2015.
@@ -29,11 +30,11 @@ import io.fabric.sdk.android.Fabric;
          // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
 
         mode = ReportingInteractionMode.TOAST,
-        formUri = "http://ocra-xobyx.rhcloud.com/acra",
+        formUri = "http://ps-xobyx.rhcloud.com/ps",
         reportType = org.acra.sender.HttpSender.Type.JSON,
         httpMethod = org.acra.sender.HttpSender.Method.PUT,
-        formUriBasicAuthLogin="xobyx",
-        formUriBasicAuthPassword="13011221",
+        reportSenderFactoryClasses = ReportSenderFac.class,
+
         resToastText = R.string.crash_toast_text
 
         )// optional )
@@ -56,7 +57,8 @@ public class MyApp extends Application {
         super.attachBaseContext(base);
 
         // The following line triggers the initialization of ACRA
-      //  ACRA.init(this);
+         ACRA.init(this);
+
 
 
     }

@@ -3,6 +3,7 @@ package xobyx.xcontactj.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -26,8 +27,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-
-import org.acra.ACRA;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
+import com.digits.sdk.android.AuthCallback;
+import com.digits.sdk.android.AuthConfig;
+import com.digits.sdk.android.Digits;
+import com.digits.sdk.android.DigitsException;
+import com.digits.sdk.android.DigitsSession;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 
 import io.fabric.sdk.android.Fabric;
 import xobyx.xcontactj.MyApp;
@@ -48,7 +56,7 @@ import xobyx.xcontactj.views.xViewPager;
 import static xobyx.xcontactj.until.ME.NET_N;
 ///TODO: @{@link Se}
 
-public class MainActivity extends AppCompatActivity implements IDialerHandler, android.support.v7.widget.SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements IDialerHandler, SearchView.OnQueryTextListener {
 
 
     public static String wn_name = null;
@@ -75,53 +83,54 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
     xViewPager mViewPager;
     private int default_network;
     private DialerActionModeHelper DialerHelper;
-    private boolean is_dialer_open=false;
+    private boolean is_dialer_open = false;
     private final View.OnClickListener call_handler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            throw new RuntimeException("This is a crash");
-           /* Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
 
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
 
-                }
+                    }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    Log.d(MainActivity.class.getSimpleName(),"dial anmi end");
-                    StartDialer("");
-                }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Log.d(MainActivity.class.getSimpleName(), "dial anmi end");
+                        StartDialer("");
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
 
-                }
-            });
+                    }
+                });
 
-            v.startAnimation(animation);*/
+                v.startAnimation(animation);
+            } else
+                StartDialer("");
+
         }
     };
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
-
 
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_IDLE) return;
 
-            String c="";
+            String c = "";
             try {
-               c = ME.getTelephonyService(MainActivity.this).getCallerName();
-            }
-            catch (RemoteException e) {
+                c = ME.getTelephonyService(MainActivity.this).getCallerName();
+            } catch (RemoteException e) {
                 e.printStackTrace();
             }
             int net = ME.getNetForNumber(incomingNumber);
             String s = getNetworkName(net);
-            Toast.makeText(MainActivity.this, s+" "+c, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, s + " " + c, Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -133,8 +142,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
                 wn_name = "out of service";
 
                 Toast.makeText(MainActivity.this, "No Network,out of service " + getNetworkName(), Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 wn_id = ME.getCurrentNetwork(MainActivity.this);
                 if (wn_id != 3) {
                     mViewPager.setCurrentItem(wn_id, false);
@@ -146,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
     };
     private NetFragmentPick netFragmentPick;
     private Toolbar mToolbar;
+    private AuthConfig.Builder builder;
 
 
     @Override
@@ -153,12 +162,14 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
 
         super.onCreate(savedInstanceState);
         //Fabric.with(this, new Crashlytics());
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
+        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics(), new TwitterCore(authConfig), new Digits.Builder().build()).debuggable(true).build();
 
-        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).debuggable(true).build();
+
         Fabric.with(fabric);
         Intent mInt = getIntent();
 
-
+        builder = new AuthConfig.Builder();
         // ME.SetInternetSettingFor(0,this);
 
         setContentView(R.layout.activity_main_1);
@@ -180,8 +191,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
                 StartDialer(mInt.getDataString());
 
-            }
-            else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
+            } else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
                 pick_mode = true;
                 if (mInt.hasExtra("local")) {
                     pick_mode_local = true;
@@ -210,8 +220,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             //No need for Network Header in Pick a Contact mode..
 
 
-        }
-        else {
+        } else {
             //getActionBar().setTitle("Pick Contact:");
             //final ITelephony telephonyService = ME.getTelephonyService(this);
             //changed:  moved from top;
@@ -231,8 +240,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             if (wn_id == 3)
                 if (PreferenceManager.getDefaultSharedPreferences(this).contains("default_Network")) {
                     default_network = PreferenceManager.getDefaultSharedPreferences(this).getInt("default_Network", -1);
-                }
-                else {
+                } else {
                     setDefaultNetwork();
                 }
 
@@ -252,8 +260,11 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
 
     private void setDefaultNetwork() {
         final int[] n = new int[1];
-        AlertDialog.Builder o = new AlertDialog.Builder(this,R.style.Base_Theme_AppCompat_Light_Dialog);
-
+        AlertDialog.Builder o = new AlertDialog.Builder(this, R.style.Base_Theme_AppCompat_Light_Dialog);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", 0).apply();
+            return;
+        }
         SmAdapter m = new SmAdapter();
         m.newInstance(MainActivity.this).SetupItems(R.array.net_names).SetupLayout(R.layout.r_header).setInflater(new SmAdapter.inflater() {
             @Override
@@ -261,8 +272,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
                 if (n.getId() == android.R.id.text1) {
                     ((TextView) n).setText((String) item);
 
-                }
-                else {
+                } else {
                     ((ImageView) n).setImageResource(ME.NetDrawables[pos][0]);
                 }
             }
@@ -293,8 +303,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
                 DialerHelper.StartDialerActionMode(dataString);
 
             }
-        }
-        else
+        } else
             Toast.makeText(MainActivity.this, "No Network..", Toast.LENGTH_SHORT).show();
 
     }
@@ -311,8 +320,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
         if (!pick_mode_local) {
             mViewPager.setMoveEnabled(newText.isEmpty());
             item = mSectionsPagerAdapter.Fragments[mViewPager.getCurrentItem()];
-        }
-        else {
+        } else {
             item = netFragmentPick;
         }
         try {
@@ -321,10 +329,9 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
                 item.SearchFor(newText);
             }
 
-        }
-        catch (Exception a) {
+        } catch (Exception a) {
             Toast.makeText(this, a.getMessage(), Toast.LENGTH_LONG).show();
-           // ACRA.getErrorReporter().handleException(a);
+            // ACRA.getErrorReporter().handleException(a);
         }
 
 
@@ -350,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
 
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setOnQueryTextListener(this);
+
 
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
@@ -382,6 +390,28 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             case R.id.action_all_contact:
                 Intent d = new Intent(this, AllMainActivity.class);
                 startActivity(d);
+                break;
+            case R.id.auth_button:
+
+                AuthConfig vb = builder.withAuthCallBack(
+                        new AuthCallback() {
+                            @Override
+                            public void success(DigitsSession session, String phoneNumber) {
+                                // TODO: associate the session userID with your user model
+
+                                Toast.makeText(getApplicationContext(), "Authentication successful for "
+                                        + phoneNumber, Toast.LENGTH_LONG).show();
+                                Answers.getInstance().logLogin(new LoginEvent()
+                                        .putMethod("Digits").putCustomAttribute("phoneNumber", phoneNumber)
+                                        .putSuccess(true));
+                            }
+
+                            @Override
+                            public void failure(DigitsException exception) {
+                                Log.d("Digits", "Sign in with Digits failure", exception);
+                            }
+                        }).build();
+                Digits.authenticate(vb);
                 break;
 
             default:
@@ -419,8 +449,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
             DialerHelper.finish();
 
 
-        }
-        else
+        } else
             super.onBackPressed();
 
     }
@@ -428,12 +457,11 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, a
 
     @Override
     public void onVisibilityChange(boolean isopen) {
-        is_dialer_open=isopen;
+        is_dialer_open = isopen;
         if (isopen) {
             mViewPager.setMoveEnabled(true);
             findViewById(R.id.main_call).setVisibility(View.GONE);
-        }
-        else
+        } else
             findViewById(R.id.main_call).setVisibility(View.VISIBLE);
 
     }

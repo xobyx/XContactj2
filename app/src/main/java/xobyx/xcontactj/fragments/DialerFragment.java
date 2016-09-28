@@ -18,6 +18,8 @@ import xobyx.xcontactj.R;
 import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.until.AppAnimations;
 import xobyx.xcontactj.until.DialerActionModeHelper;
+import xobyx.xcontactj.until.ME;
+import xobyx.xcontactj.views.m;
 
 /**
  * f Link
@@ -142,4 +144,11 @@ public class DialerFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    public void setColor(int net) {
+        m view = ((m) getView().findViewById(R.id.dialer_network));
+        if(net==3)
+            view.setColor(0xFF4081);
+        else
+            view.setColor(ME.nColors[net]);
+    }
 }

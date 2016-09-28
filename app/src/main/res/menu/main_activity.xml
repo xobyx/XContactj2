@@ -8,6 +8,10 @@
         app:showAsAction="never"
         android:title="@string/action_settings" />
     <item
+        android:title="Item"
+        android:orderInCategory="101"
+        android:id="@+id/auth_button" />
+    <item
         android:id="@+id/action_search"
 
         app:actionViewClass="android.support.v7.widget.SearchView"

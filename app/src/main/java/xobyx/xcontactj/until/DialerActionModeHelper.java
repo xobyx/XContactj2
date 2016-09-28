@@ -55,6 +55,7 @@ public class DialerActionModeHelper {
             img.setImageResource(ME.NetDrawables[net][0]);
             if (mContext != null)
                 ((IDialerHandler) mContext).onNumberChange(s.toString(),net);
+                ((DialerFragment) mContext.getSupportFragmentManager().findFragmentByTag("Dialer")).setColor(net);
 
 
         }
@@ -81,6 +82,7 @@ public class DialerActionModeHelper {
         ((IDialerHandler) mContext).getToolBar().setVisibility(View.GONE);
         mContext.startSupportActionMode(callback);
         setNumber(dataString, false);
+
         //startSupportActionMode(callback);
 
 
