@@ -56,12 +56,20 @@ public class m extends View {
 
     public void setColor(int h)
     {
-        if(animator.isRunning())animator.cancel();
+       // if(animator.isRunning())animator.cancel();
         nrm=h;
         mm.setColor(h);
+        if(!animator.isStarted())animator.start();
 
-        animator.start();
+        //x.post(runnable);
     }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        animator.setFloatValues(0, right/2,0);
+    }
+
     ValueAnimator animator = new ValueAnimator();
     void intd()
     {
@@ -71,8 +79,10 @@ public class m extends View {
         tt.setColor(Color.WHITE);
 
         animator.setDuration(500);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.REVERSE);
         animator.setFloatValues(0, getWidth(),0);
-        animator.setInterpolator(new LinearInterpolator());
+        //animator.setInterpolator(new LinearInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -91,12 +101,13 @@ public class m extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
 
-                x.postDelayed(runnable,500);
+          //      x.postDelayed(runnable,500);
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                x.removeCallbacks(runnable);
+            //    x.removeCallbacks(runnable);
+
 
             }
 

@@ -162,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
 
         super.onCreate(savedInstanceState);
         //Fabric.with(this, new Crashlytics());
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
-        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics(), new TwitterCore(authConfig), new Digits.Builder().build()).debuggable(true).build();
+        //TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
+        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).build();
 
 
         Fabric.with(fabric);

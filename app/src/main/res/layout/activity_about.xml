@@ -16,20 +16,21 @@
         app:fchar="X"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|top"
-        android:src="@drawable/big_ic" />
+        android:src="@drawable/about" />
 
 </LinearLayout>
 
-    <TextView
+    <xobyx.xcontactj.views.FontTextView
         android:id="@+id/num_child_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:font="akbar.ttf"
+        android:textColor="?attr/colorPrimaryDark"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:text="@string/app_name"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        android:textStyle="bold" />
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/re"

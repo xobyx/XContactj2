@@ -8,36 +8,36 @@ import android.location.Country;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.Tracker;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.acra.sender.HttpSender;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
-import io.fabric.sdk.android.Fabric;
-import xobyx.xcontactj.until.ReportSenderFac;
+import xobyx.xcontactj.until.MReportSenderFactory;
 
 /**
  * Created by xobyx on 8/5/2015.
  * For xobyx.xcontactj/XContactj
  */
 @ReportsCrashes(
-         // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
+        // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
 
         mode = ReportingInteractionMode.TOAST,
-        formUri = "http://ps-xobyx.rhcloud.com/ps",
+        formUri = "http://ps-xobyx.rhcloud.com",
         reportType = org.acra.sender.HttpSender.Type.JSON,
-        httpMethod = org.acra.sender.HttpSender.Method.PUT,
-        reportSenderFactoryClasses = ReportSenderFac.class,
+
+        httpMethod = HttpSender.Method.POST,
+        reportSenderFactoryClasses = MReportSenderFactory.class,
 
         resToastText = R.string.crash_toast_text
 
-        )// optional )
+)// optional )
 
 
 public class MyApp extends Application {
@@ -57,15 +57,14 @@ public class MyApp extends Application {
         super.attachBaseContext(base);
 
         // The following line triggers the initialization of ACRA
-         ACRA.init(this);
-
+        ACRA.DEV_LOGGING = true;
+        ACRA.init(this);
 
 
     }
-    static class mTraker
-    {
 
-    }
+
+
     public static Tracker tracker;
     private static MyApp mApp;
 
@@ -77,7 +76,7 @@ public class MyApp extends Application {
         super.onCreate();
 
 
-        AsyncTask m=new AsyncTask() {
+        AsyncTask m = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
 
@@ -90,38 +89,31 @@ public class MyApp extends Application {
         m.execute();
 
 
-        ACRA.isACRASenderServiceProcess();
+        //ACRA.isACRASenderServiceProcess();
         loadDefaultPreferenceValues();
-
-
 
 
         Country country = new Country(Locale.getDefault().getCountry(), Country.COUNTRY_SOURCE_LOCALE);
         mCountryIso = country.getCountryIso();
+        Log.d("Xcontactj","Country :"+ mCountryIso);
         Context context = getApplicationContext();
-
-
-
-
-
 
 
         //activePendingMessages();
 
 
-
-        mApp=this;
-
-
+        mApp = this;
 
 
     }
+
     @SuppressLint("CommitPrefEdits")
     private void loadDefaultPreferenceValues() {
         // Load the default values
-        PreferenceManager.setDefaultValues(this,R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
     }
+
     public static MyApp getApplication() {
         return mApp;
     }

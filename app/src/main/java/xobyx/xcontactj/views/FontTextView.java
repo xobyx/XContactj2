@@ -24,8 +24,8 @@ public class FontTextView extends TextView {
         @Override
         public boolean onLayoutChild(CoordinatorLayout parent, FontTextView child, int layoutDirection) {
             //return
-            ViewCompat.setLayoutDirection(child,ViewCompat.LAYOUT_DIRECTION_RTL);
-           return super.onLayoutChild(parent, child, ViewCompat.LAYOUT_DIRECTION_RTL);
+            ViewCompat.setLayoutDirection(child, ViewCompat.LAYOUT_DIRECTION_RTL);
+            return super.onLayoutChild(parent, child, ViewCompat.LAYOUT_DIRECTION_RTL);
 
         }
     }
@@ -54,7 +54,9 @@ public class FontTextView extends TextView {
                 final String typefaceAssetPath = array.getString(
                         R.styleable.FontTextView_font);
 
-                setTypeface(getFont(context, typefaceAssetPath));
+                Typeface font = getFont(context, typefaceAssetPath);
+                if (font != null)
+                    setTypeface(font);
                 array.recycle();
             }
         }

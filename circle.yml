@@ -15,11 +15,11 @@ machine:
 
 deployment:
   production:
-    branch: production
+    
     commands:
       - gradle-2.14.1/bin/gradle build
   staging:
-    branch: master
+    
     commands:
       - gradle-2.14.1/bin/gradle build
 

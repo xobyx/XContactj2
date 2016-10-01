@@ -99,7 +99,7 @@
         app:fabSize="mini"
 
         app:layout_anchor="@+id/appbar"
-        app:layout_anchorGravity="bottom|center_horizontal"
+        app:layout_anchorGravity="bottom|right"
         android:layout_gravity="center_vertical|center_horizontal" />
 
 </android.support.design.widget.CoordinatorLayout>
