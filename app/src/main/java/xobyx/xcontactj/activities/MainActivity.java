@@ -29,13 +29,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
-import com.digits.sdk.android.AuthCallback;
-import com.digits.sdk.android.AuthConfig;
-import com.digits.sdk.android.Digits;
-import com.digits.sdk.android.DigitsException;
-import com.digits.sdk.android.DigitsSession;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
+
 
 import io.fabric.sdk.android.Fabric;
 import xobyx.xcontactj.MyApp;
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
     };
     private NetFragmentPick netFragmentPick;
     private Toolbar mToolbar;
-    private AuthConfig.Builder builder;
+
 
 
     @Override
@@ -169,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
         Fabric.with(fabric);
         Intent mInt = getIntent();
 
-        builder = new AuthConfig.Builder();
+
         // ME.SetInternetSettingFor(0,this);
 
         setContentView(R.layout.activity_main_1);
@@ -390,28 +384,6 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
             case R.id.action_all_contact:
                 Intent d = new Intent(this, AllMainActivity.class);
                 startActivity(d);
-                break;
-            case R.id.auth_button:
-
-                AuthConfig vb = builder.withAuthCallBack(
-                        new AuthCallback() {
-                            @Override
-                            public void success(DigitsSession session, String phoneNumber) {
-                                // TODO: associate the session userID with your user model
-
-                                Toast.makeText(getApplicationContext(), "Authentication successful for "
-                                        + phoneNumber, Toast.LENGTH_LONG).show();
-                                Answers.getInstance().logLogin(new LoginEvent()
-                                        .putMethod("Digits").putCustomAttribute("phoneNumber", phoneNumber)
-                                        .putSuccess(true));
-                            }
-
-                            @Override
-                            public void failure(DigitsException exception) {
-                                Log.d("Digits", "Sign in with Digits failure", exception);
-                            }
-                        }).build();
-                Digits.authenticate(vb);
                 break;
 
             default:

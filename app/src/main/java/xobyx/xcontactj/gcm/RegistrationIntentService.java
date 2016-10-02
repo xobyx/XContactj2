@@ -25,15 +25,13 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,31 +102,24 @@ public class RegistrationIntentService extends IntentService {
      *
      * @param token The new token.
      */
-    private boolean sendRegistrationToServer(String token) {
-        StringBuilder builder = new StringBuilder();
-        HttpClient client = new DefaultHttpClient();
-        HttpPost mpost=new HttpPost("http://x-xobyx.rhcloud.com/addgcm.php");
-        List<NameValuePair> m=new ArrayList<>();
-        m.add(new BasicNameValuePair("token", token));
-        try {
-            mpost.setEntity(new UrlEncodedFormEntity(m));
-            HttpResponse execute = client.execute(mpost);
+    private boolean sendRegistrationToServer(String token) throws IOException {
 
-            if(execute.getStatusLine().getStatusCode()== 200)
-            {
-             return true;
-            }
+        OkHttpClient client = new OkHttpClient();
 
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, "token="+token);
+        Request request = new Request.Builder()
+                .url("http://x-xobyx.rhcloud.com/addgcm.php")
+                .post(body)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .addHeader("cache-control", "no-cache")
+                .addHeader("app", "b9477573-b76e-5df2-eb31-e91eec83c0f0")
+                .build();
 
-        }
-        catch (ClientProtocolException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-           // e.printStackTrace();
-        }
-        return false;
+        Response response = client.newCall(request).execute();
+
+        return response.code()==200;
+
     }
 
     /**

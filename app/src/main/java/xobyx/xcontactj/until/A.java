@@ -16,55 +16,35 @@
 package xobyx.xcontactj.until;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.acra.ACRA;
 import org.acra.ACRAConstants;
 import org.acra.ReportField;
-import org.acra.annotation.ReportsCrashes;
 import org.acra.collector.CrashReportData;
 import org.acra.config.ACRAConfiguration;
-import org.acra.sender.HttpSender;
-import org.acra.sender.HttpSender.Method;
-import org.acra.sender.HttpSender.Type;
 import org.acra.sender.ReportSender;
 import org.acra.sender.ReportSenderException;
-import org.acra.sender.ReportSenderFactory;
-import org.acra.util.HttpRequest;
-import org.acra.collections.ImmutableSet;
+import org.acra.util.IOUtils;
 import org.acra.util.JSONReportBuilder.JSONReportException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
+import java.io.StringReader;
 
 import static org.acra.ACRA.LOG_TAG;
 
-/**
- * <p>
- * The {@link ReportSender} used by ACRA when {@link ReportsCrashes#formUri()}
- * has been defined in order to post crash data to a custom server-side data
- * collection script. It sends all data in a POST request with parameters named
- * with easy to understand names (basically a string conversion of
- * {@link ReportField} enum values) or based on your own conversion Map from
- * {@link ReportField} values to String.
- * </p>
- * <p>
- * <p>
- * To use specific POST parameter names, you can provide your own report fields
- * mapping scheme:
- * </p>
- * <p>
- * <pre>
- * Just create and declare a {@link ReportSenderFactory} that constructs a mapping
- * from each {@link ReportField} to another name.
- * </pre>
- */
+
 public class A implements ReportSender {
 
     /**
@@ -74,141 +54,177 @@ public class A implements ReportSender {
 
 
     private final ACRAConfiguration config;
-    @Nullable
-    private final Uri mFormUri;
-    private final Map<ReportField, String> mMapping;
-    private final Method mMethod;
-    private final Type mType;
-    @Nullable
-    private String mUsername;
-    @Nullable
-    private String mPassword;
 
-    /**
-     * <p>
-     * Create a new HttpSender instance with its destination taken from the supplied config.
-     * </p>
-     *
-     * @param config  AcraConfig declaring the
-     * @param method  HTTP {@link Method} to be used to send data. Currently only
-     *                {@link Method#POST} and {@link Method#PUT} are available. If
-     *                {@HttpSender.Method#PUT} is used, the {@link ReportField#REPORT_ID}
-     *                is appended to the formUri to be compliant with RESTful APIs.
-     * @param type    {@link Type} of encoding used to send the report body.
-     *                {@link Type#FORM} is a simple Key/Value pairs list as defined
-     *                by the application/x-www-form-urlencoded mime type.
-     * @param mapping Applies only to {@link Method#POST} method parameter. If null,
-     *                POST parameters will be named with {@link ReportField} values
-     *                converted to String with .toString(). If not null, POST
-     *                parameters will be named with the result of
-     *                mapping.get(ReportField.SOME_FIELD);
-     */
-    public A(@NonNull ACRAConfiguration config, @NonNull Method method, @NonNull Type type, @Nullable Map<ReportField, String> mapping) {
-        this(config, method, type, null, mapping);
-    }
 
-    /**
-     * <p>
-     * Create a new HttpPostSender instance with a fixed destination provided as
-     * a parameter. Configuration changes to the formUri are not applied.
-     * </p>
-     *
-     * @param config  AcraConfig declaring the
-     * @param method  HTTP {@link HttpSender.Method} to be used to send data. Currently only
-     *                {@link HttpSender.Method#POST} and {@Link HttpSender.Method#PUT} are available. If
-     *                {@HttpSender.Method#PUT} is used, the {@link ReportField#REPORT_ID}
-     *                is appended to the formUri to be compliant with RESTful APIs.
-     * @param type    {@link Type} of encoding used to send the report body.
-     *                {@link Type#FORM} is a simple Key/Value pairs list as defined
-     *                by the application/x-www-form-urlencoded mime type.
-     * @param formUri The URL of your server-side crash report collection script.
-     * @param mapping Applies only to {@link HttpSender.Method#POST} method parameter. If null,
-     *                POST parameters will be named with {@link ReportField} values
-     *                converted to String with .toString(). If not null, POST
-     *                parameters will be named with the result of
-     *                mapping.get(ReportField.SOME_FIELD);
-     */
-    public A(@NonNull ACRAConfiguration config, @NonNull Method method, @NonNull Type type, @Nullable String formUri, @Nullable Map<ReportField, String> mapping) {
+    public A(@NonNull ACRAConfiguration config) {
         this.config = config;
-        mMethod = method;
-        mFormUri = (formUri == null) ? null : Uri.parse(formUri);
-        mMapping = mapping;
-        mType = type;
-        mUsername = null;
-        mPassword = null;
+
     }
 
-    /**
-     * <p>
-     * Set credentials for this HttpSender that override (if present) the ones
-     * set globally.
-     * </p>
-     *
-     * @param username The username to set for HTTP Basic Auth.
-     * @param password The password to set for HTTP Basic Auth.
-     */
-    @SuppressWarnings("unused")
-    public void setBasicAuth(@Nullable String username, @Nullable String password) {
-        mUsername = username;
-        mPassword = password;
-    }
 
     @Override
     public void send(@NonNull Context context, @NonNull CrashReportData report) throws ReportSenderException {
 
         try {
-            URL reportUrl = mFormUri == null ? new URL(config.formUri()) : new URL(mFormUri.toString());
-            if (ACRA.DEV_LOGGING) ACRA.log.d(LOG_TAG, "Connect to " + reportUrl.toString());
 
-            final String login = mUsername != null ? mUsername : isNull(config.formUriBasicAuthLogin()) ? null : config.formUriBasicAuthLogin();
-            final String password = mPassword != null ? mPassword : isNull(config.formUriBasicAuthPassword()) ? null : config.formUriBasicAuthPassword();
 
-            final HttpRequest request = new HttpRequest(config);
-            request.setConnectionTimeOut(config.connectionTimeout());
-            request.setSocketTimeOut(config.socketTimeout());
-            request.setLogin(login);
-            request.setPassword(password);
-            Hashtable<String, String> hashtable = new Hashtable<>();
-            hashtable.put("X-Parse-Application-Id", "1");
-            request.setHeaders(hashtable);
+            final String mReport = this.buildJSONReport(report).toString();
 
+
+            if (ACRA.DEV_LOGGING) ACRA.log.d(LOG_TAG, "Report is " + mReport);
             // Generate report body depending on requested type
-            final String reportAsString=report.toJSON().toString();;
-            
+
 
             // Adjust URL depending on method
-            reportUrl = new URL(reportUrl.toString() + "/ps/classes/crashes/");
-            request.send(context, reportUrl, POST, reportAsString, mType);
+            /*reportUrl = new URL(reportUrl.toString() + "/ps/classes/crashes/");
+            request.send(context, reportUrl, POST, reportAsString, mType);*/
+            request(mReport);
 
-        } catch (@NonNull IOException e) {
+        } catch (@NonNull IOException | JSONReportException | IllegalStateException e) {
             throw new ReportSenderException("Error while sending " + config.reportType()
-                    + " report via Http " + mMethod.name(), e);
-        } catch (@NonNull JSONReportException e) {
-            throw new ReportSenderException("Error while sending " + config.reportType()
-                    + " report via Http " + mMethod.name(), e);
+                    + " report via Http POST", e);
         }
     }
+
+    private void request(String reportAsString) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, reportAsString);
+        Request requestx = new Request.Builder()
+                .url("http://ps-xobyx.rhcloud.com/ps/classes/crashes")
+                .post(body)
+                .addHeader("x-parse-application-id", "1")
+                .addHeader("content-type", "application/json")
+                .addHeader("cache-control", "no-cache")
+
+                .build();
+
+        Response response = client.newCall(requestx).execute();
+        int responseCode = response.code();
+        if (ACRA.DEV_LOGGING)
+            ACRA.log.d(LOG_TAG, "Request response : " + responseCode + " : " + response.message());
+        if ((responseCode >= 200) && (responseCode < 300)) {
+            // All is good
+            ACRA.log.i(LOG_TAG, "Request received by server");
+        } else if (responseCode == 401) {
+            //401 means the server rejected the authentication. The request must not be repeated. Discard it.
+            //This probably means that nothing can be sent with this configuration, maybe ACRA should disable itself after it?
+            ACRA.log.w(LOG_TAG, "401: Login validation error on server - request will be discarded");
+        } else if (responseCode == 403) {
+            // 403 is an explicit data validation refusal from the server. The request must not be repeated. Discard it.
+            ACRA.log.w(LOG_TAG, "403: Data validation error on server - request will be discarded");
+        } else if (responseCode == 405) {
+            //405 means the server doesn't allow this request method. The request must not be repeated. Discard it.
+            //This probably means that nothing can be sent with this configuration, maybe ACRA should disable itself after it?
+            ACRA.log.w(LOG_TAG, "405: Server rejected Http POST - request will be discarded");
+        } else if (responseCode == 409) {
+            // 409 means that the report has been received already. So we can discard it.
+            ACRA.log.w(LOG_TAG, "409: Server has already received this post - request will be discarded");
+        } else if ((responseCode >= 400) && (responseCode < 600)) {
+            ACRA.log.w(LOG_TAG, "Could not send ACRA Post responseCode=" + responseCode + " message=" + response.message());
+            throw new IOException("Host returned error code " + responseCode);
+        } else {
+            ACRA.log.w(LOG_TAG, "Could not send ACRA Post - request will be discarded. responseCode=" + responseCode + " message=" + response.message());
+        }
+
+    }
+
 
     @NonNull
-    private Map<String, String> remap(@NonNull Map<ReportField, String> report) {
-
-        Set<ReportField> fields = config.getReportFields();
-        if (fields.isEmpty()) {
-            fields = new ImmutableSet<ReportField>(ACRAConstants.DEFAULT_REPORT_FIELDS);
-        }
-
-        final Map<String, String> finalReport = new HashMap<String, String>(report.size());
-        for (ReportField field : fields) {
-            if (mMapping == null || mMapping.get(field) == null) {
-                finalReport.put(field.toString(), report.get(field));
-            } else {
-                finalReport.put(mMapping.get(field), report.get(field));
+    private JSONObject buildJSONReport(@NonNull CrashReportData errorContent) throws JSONReportException {
+        final JSONObject jsonReport = new JSONObject();
+        BufferedReader reader = null;
+        for (ReportField key : errorContent.keySet()) {
+            try {
+                // Each ReportField can be identified as a substructure and not
+                // a simple String value.
+                if (key.containsKeyValuePairs()) {
+                    final JSONObject subObject = new JSONObject();
+                    final String strContent = errorContent.getProperty(key);
+                    reader = new BufferedReader(new StringReader(strContent), 1024); //TODO: 1024 should be a constant. Use ACRAConstants.DEFAULT_BUFFER_SIZE_IN_BYTES ?
+                    String line;
+                    try {
+                        while ((line = reader.readLine()) != null) {
+                            addJSONFromProperty(subObject, line);
+                        }
+                    } catch (IOException e) {
+                        ACRA.log.w(LOG_TAG, "Error while converting " + key.name() + " to JSON.", e);
+                    }
+                    final String $ = key.name().replace("$", "").replace(".", "_");
+                    jsonReport.accumulate($, subObject);
+                } else {
+                    final String $ = key.name().replace("$", "").replace(".", "_");
+                    // This field is a simple String value, store it as it is
+                    jsonReport.accumulate($, guessType(errorContent.getProperty(key)));
+                }
+            } catch (JSONException e) {
+                throw new JSONReportException("Could not create JSON object for key " + key, e);
+            } finally {
+                IOUtils.safeClose(reader);
             }
         }
-        return finalReport;
+        return jsonReport;
     }
 
-    private boolean isNull(@Nullable String aString) {
-        return aString == null || ACRAConstants.NULL_VALUE.equals(aString);
+    private void addJSONFromProperty(@NonNull JSONObject destination, @NonNull String propertyString) throws JSONException {
+        final int equalsIndex = propertyString.indexOf('=');
+        if (equalsIndex > 0) {
+            final String currentKey = propertyString.substring(0, equalsIndex).trim().replace("$", "").replace(".", "_");
+            final String currentValue = propertyString.substring(equalsIndex + 1).trim();
+            Object value = guessType(currentValue);
+            if (value instanceof String) {
+                value = ((String) value).replaceAll("\\\\n", "\n");
+            }
+            final String[] splitKey = currentKey.split("\\.");
+            if (splitKey.length > 1) {
+                addJSONSubTree(destination, splitKey, value);
+            } else {
+                destination.accumulate(currentKey, value);
+            }
+        } else {
+            destination.put(propertyString.trim().replace("$", "").replace(".", "_"), true);
+        }
+    }
+
+    private static void addJSONSubTree(@NonNull JSONObject destination, @NonNull String[] keys, Object value) throws JSONException {
+        for (int i = 0; i < keys.length; i++) {
+            final String subKey = keys[i];
+            if (i < keys.length - 1) {
+                JSONObject intermediate = null;
+                if (destination.isNull(subKey)) {
+                    intermediate = new JSONObject();
+                    destination.accumulate(subKey, intermediate);
+                } else {
+                    final Object target = destination.get(subKey);
+                    if (target instanceof JSONObject) {
+                        intermediate = destination.getJSONObject(subKey);
+                    } else if (target instanceof JSONArray) {
+                        // Unexpected JSONArray, see issue #186
+                        final JSONArray wildCard = destination.getJSONArray(subKey);
+                        for (int j = 0; j < wildCard.length(); j++) {
+                            intermediate = wildCard.optJSONObject(j);
+                            if (intermediate != null) {
+                                // Found the original JSONObject we were looking for
+                                break;
+                            }
+                        }
+                    }
+
+                    if (intermediate == null) {
+                        ACRA.log.w(LOG_TAG, "Unknown json subtree type, see issue #186");
+                        // We should never get here, but if we do, drop this value to still send the report
+                        return;
+                    }
+                }
+                destination = intermediate;
+            } else {
+                destination.accumulate(subKey, value);
+            }
+        }
+    }
+
+    private Object guessType(String property) {
+        return null;
     }
 }
