@@ -13,8 +13,8 @@ android {
         abortOnError false
         disable 'InvalidPackage'
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
     
     defaultConfig {
         applicationId "xobyx.xcontactj"
@@ -50,12 +50,12 @@ dependencies {
     //noinspection GradleCompatible
     //noinspection GradleCompatible
     //noinspection GradleCompatible
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.google.android.gms:play-services-analytics:8.1.0'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
-    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:support-v4:22.2.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
         transitive = true;
     }
