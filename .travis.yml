@@ -20,3 +20,13 @@ android:
 
 before_install:
     - chmod +x gradlew
+
+deploy:
+  provider: releases
+  overwrite: true
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: "app/build/outputs/apk/app-debug.apk"
+  skip_cleanup: true
+  on:
+    tags: false    
