@@ -9,19 +9,19 @@
             android:layout_width="0dp"
             android:scaleType="centerCrop"
             android:layout_weight="1"
-            android:src="@drawable/new_zain"
+            android:src="@drawable/_zain"
             android:layout_height="match_parent"/>
         <ImageView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:src="@drawable/new_sudani"
+            android:src="@drawable/_sudani"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
         <ImageView
             android:scaleType="centerCrop"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:src="@drawable/new_mtn"
+            android:src="@drawable/_mtn"
             android:layout_height="match_parent"/>
     </LinearLayout>
 
