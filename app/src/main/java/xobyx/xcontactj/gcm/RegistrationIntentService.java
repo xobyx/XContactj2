@@ -87,7 +87,7 @@ public class RegistrationIntentService extends IntentService {
             Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-            sharedPreferences.edit().putBoolean("sent_token_to_server", false);
+            sharedPreferences.edit().putBoolean("sent_token_to_server", false).apply();;
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
        // Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
