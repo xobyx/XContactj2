@@ -11,11 +11,11 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: KEYSTORE
+          name: KEYSTORE_GEN
           command: echo $ENCODED_KEYSTORE | sed 's/ /\n/g' | base64 --decode >> ${HOME}/code/keystore.jks
       - run:
           name: KEYSTORE1
-          command: echo 'export KEYSTORE=${HOME}/repo/keystore.jks' >> $BASH_ENV
+          command: echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
