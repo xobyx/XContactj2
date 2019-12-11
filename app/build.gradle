@@ -9,12 +9,12 @@ repositories {
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'xobyx'
-            keyPassword '13011221'
-            storeFile file('C:/_old/Users/xobyx/AndroidStudioProjects/XContactj2/pkey.jks')
-            storePassword '13011221'
-        }
+       // config {
+       //     keyAlias 'xobyx'
+       //     keyPassword '13011221'
+       //     storeFile file('C:/_old/Users/xobyx/AndroidStudioProjects/XContactj2/pkey.jks')
+       //     storePassword '13011221'
+       // }
     }
     lintOptions {
         checkReleaseBuilds false
