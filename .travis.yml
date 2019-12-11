@@ -6,9 +6,9 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools-21.1.2
+    - build-tools-22.0.1
     - android-15
-    - android-21
+    - android-22
     - android-16
     - sys-img-armeabi-v7a-android-22
     - extra-android-m2repository
@@ -20,3 +20,14 @@ android:
 
 before_install:
     - chmod +x gradlew
+
+deploy:
+  provider: releases
+  overwrite: true
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: "app/build/outputs/apk/app-debug.apk"
+  skip_cleanup: true
+  on:
+    tags: true
+    

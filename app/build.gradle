@@ -21,8 +21,14 @@ android {
         abortOnError false
         disable 'InvalidPackage'
     }
+<<<<<<< HEAD
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
+=======
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+    
+>>>>>>> 90c772a96b32a9da3fcfa8c498e6b9bf99a1ae19
     defaultConfig {
         applicationId "xobyx.xcontactj"
         minSdkVersion 15
