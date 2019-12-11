@@ -37,7 +37,8 @@ android {
         targetSdkVersion 24
         versionCode 1069
         versionName "1.2"
-
+        //versionCode System.getenv("VC")
+        //versionName System.getenv("VN")
     }
     buildTypes {
         release {

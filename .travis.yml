@@ -6,11 +6,11 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools-22.0.1
+    - build-tools-25.0.0
     - android-15
-    - android-22
+    - android-24
     - android-16
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-24
     - extra-android-m2repository
     - extra-google-m2repository
 
@@ -19,6 +19,8 @@ android:
 
 
 before_install:
+    - echo $ENCODED_KEYSTORE | sed 's/ /\n/g' | base64 --decode >> ${HOME}/xobyx/XContactj2/keystore.jks
+    - echo 'export KEYSTORE=${HOME}/xobyx/XContactj2/keystore.jks' >> $BASH_ENV
     - chmod +x gradlew
 
 deploy:
