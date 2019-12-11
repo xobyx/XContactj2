@@ -12,6 +12,12 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Download Dependencies
+          command: echo $ENCODED_KEYSTORE | sed 's/ /\n/g' | base64 --decode >> ${HOME}/repo/keystore.jks
+      - run:
+          name: Download Dependencies
+          command: echo 'export KEYSTORE=${HOME}/repo/keystore.jks' >> $BASH_ENV
+      - run:
+          name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
           paths:
