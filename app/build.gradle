@@ -38,7 +38,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'xcontactj-proguard.pro'
             versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
-            signingConfig signingConfigs.config
+           // signingConfig signingConfigs.config
         }
 
     }
