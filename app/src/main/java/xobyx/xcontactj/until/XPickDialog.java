@@ -3,6 +3,7 @@ package xobyx.xcontactj.until;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatCheckedTextView;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,7 @@ public class XPickDialog {
         mDialog = m.create();
         mDialog.setContentView(R.layout.dialog_pick_contact);
         final Button cancel = (Button) mDialog.findViewById(R.id.cd_cancel);
-        final CheckBox defu = (CheckBox) mDialog.findViewById(R.id.cd_check_default);
+        final AppCompatCheckedTextView defu = (AppCompatCheckedTextView) mDialog.findViewById(R.id.cd_check_default);
         final ListView mList = (ListView) mDialog.findViewById(R.id.cd_list);
         final Button ok = (Button) mDialog.findViewById(R.id.cd_ok);
         mDialog.setOnCancelListener(onCancel);

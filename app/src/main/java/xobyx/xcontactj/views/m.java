@@ -26,6 +26,7 @@ public class m extends View {
     private float sm;
     private float circle_red=0f;
     private Paint tt;
+
     private Runnable runnable=new Runnable() {
         @Override
         public void run() {
@@ -59,7 +60,7 @@ public class m extends View {
        // if(animator.isRunning())animator.cancel();
         nrm=h;
         mm.setColor(h);
-        if(!animator.isStarted())animator.start();
+        if(!animator.isStarted())getHandler().post(runnable);
 
         //x.post(runnable);
     }
@@ -78,7 +79,7 @@ public class m extends View {
         tt=new Paint(mm);
         tt.setColor(Color.WHITE);
 
-        animator.setDuration(500);
+        animator.setDuration(1500);
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setRepeatMode(ValueAnimator.REVERSE);
         animator.setFloatValues(0, getWidth(),0);

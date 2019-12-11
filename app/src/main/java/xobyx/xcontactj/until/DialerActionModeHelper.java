@@ -156,7 +156,7 @@ public class DialerActionModeHelper {
             ((IDialerHandler) mContext).onNumberChange("",4);
             ((IDialerHandler) mContext).getToolBar().setVisibility(View.VISIBLE);
             final FragmentManager fm = mContext.getSupportFragmentManager();
-            fm.beginTransaction().setCustomAnimations(R.anim.snackbar_in, R.anim.snackbar_out).remove(fm.findFragmentByTag("Dialer")).commit();
+            fm.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).remove(fm.findFragmentByTag("Dialer")).commit();
 
         }
     };

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -28,7 +29,7 @@ import xobyx.xcontactj.R;
 import xobyx.xcontactj.until.Contact;
 import xobyx.xcontactj.until.ME;
 
-public class LetterImageView extends ImageView {
+public class LetterImageView extends android.support.v7.widget.AppCompatImageView {
 
 
     private char mLetter;
@@ -267,13 +268,19 @@ public class LetterImageView extends ImageView {
         super.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
            /* if(isLetter) {*/
-            if(animator.isRunning())animator.cancel();
+
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    if(animator.isRunning())animator.cancel();
+                }
+            });
             animator.setFloatValues(1f, 2f, 1f);
             Xc = event.getX();
             Xy = event.getY();
 
 
-            animator.start();
+
            /* }
             else {
                 setPivotX(getWidth() / 2f);
@@ -288,21 +295,21 @@ public class LetterImageView extends ImageView {
                 ViewCompat.setElevation(this, 20);
             }*/
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (animator.isRunning()) {
-                animator.cancel();
+
+
                 animator.setFloatValues(1f, 1.5f, 1f);
                 Xc = event.getX();
                 Xy = event.getY();
 
-
+if(!animator.isRunning())
                 animator.start();
             } else if(event.getAction() == MotionEvent.ACTION_UP||event.getAction() == MotionEvent.ACTION_CANCEL) {
-                animator.cancel();
+
 
 
             }
                //{} animator.start();
-        }
+
 
         return true;
 

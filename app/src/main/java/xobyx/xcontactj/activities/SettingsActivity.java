@@ -12,7 +12,9 @@ import android.preference.PreferenceFragment;
 import java.util.List;
 
 import xobyx.xcontactj.R;
+import xobyx.xcontactj.until.AsyncLoad;
 import xobyx.xcontactj.until.SettingHelp;
+import xobyx.xcontactj.until.UpdateHandler;
 
 /**
  * A {@link PreferenceActivity} that presents TouchedItem set of application settings. On
@@ -34,7 +36,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     private SharedPreferences.OnSharedPreferenceChangeListener mChange = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
             if (key.equals("List_Mode")) {
                 SettingsActivity.this.change = true;
                 int i = Integer.valueOf(sharedPreferences.getString(key, "0"));
@@ -56,6 +58,23 @@ public class SettingsActivity extends PreferenceActivity {
 
             } else if (key.equals("background")) {
                 SettingsActivity.this.change = true;
+
+
+            } else if (key.equals("subscribe_to_update")) {
+                final boolean aBoolean = sharedPreferences.getBoolean(key, true);
+                new AsyncLoad<Boolean>(new AsyncLoad.IRun<Boolean>() {
+                    @Override
+                    public Boolean Start() {
+                        return UpdateHandler.ChangeSubscribe(getApplicationContext(), aBoolean);
+                    }
+
+                    @Override
+                    public void doAfterFinish(Boolean result) {
+                        if(!result)sharedPreferences.edit().putBoolean(key,!aBoolean).apply();
+                    }
+                });
+
+
 
 
             }

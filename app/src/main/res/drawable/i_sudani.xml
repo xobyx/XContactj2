@@ -4,8 +4,8 @@
 
     <!-- Pressed -->
     <!--    Non focused states -->
-    <item android:drawable="@drawable/new_sudani_dark" android:state_focused="false" android:state_pressed="false" android:state_selected="false"></item>
-    <item android:drawable="@drawable/new_sudani" android:state_selected="true" />
+    <item android:drawable="@drawable/_sudanid" android:state_focused="false" android:state_pressed="false" android:state_selected="false"></item>
+    <item android:drawable="@drawable/_sudani" android:state_selected="true" />
 
-    <item android:drawable="@drawable/new_sudani" android:state_pressed="true" android:state_selected="false"></item>
+    <item android:drawable="@drawable/_sudani" android:state_pressed="true" android:state_selected="false"></item>
 </selector>

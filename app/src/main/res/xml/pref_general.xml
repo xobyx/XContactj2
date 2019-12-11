@@ -45,6 +45,9 @@
             android:key="acra.alwaysaccept"
 
             android:title="@string/pref_acra_alwaysaccept" />
+        <CheckBoxPreference android:key="subscribe_to_update"
+            android:defaultValue="true"
+            android:title="notify me when a new update released"/>
 
     </PreferenceCategory>
 

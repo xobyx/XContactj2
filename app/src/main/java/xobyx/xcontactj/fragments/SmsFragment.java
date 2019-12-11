@@ -328,14 +328,14 @@ public class SmsFragment extends AsyncLoadFragment<massage> implements View.OnTo
         if (Numbers.size() == 0 || text == null) return;
         if ( text.getText().length() != 0) {
             for (String s : mSendtoNumber) {
-                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(s, text.getText().toString()).commit();
+                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(s, text.getText().toString()).apply();
 
             }
 
         }
         else {
             for (String s : mSendtoNumber) {
-                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().remove(s).commit();
+                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().remove(s).apply();
 
             }
 

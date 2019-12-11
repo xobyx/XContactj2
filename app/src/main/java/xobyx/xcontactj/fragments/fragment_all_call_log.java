@@ -102,8 +102,8 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 AlertDialog.Builder m = new AlertDialog.Builder(getActivity(), R.style.Base_Theme_AppCompat_Light_Dialog);
-                SpannableString mt=new SpannableString("your call log static");
-                mt.setSpan(getCharStyle(0xFF4081),0,"your call log static".length(),0);
+                SpannableString mt = new SpannableString("your call log static");
+                mt.setSpan(getCharStyle(0xFF4081), 0, "Your Call log static".length(), 0);
                 m.setTitle(mt);
 
                 //m.setMessage(getStatic());
@@ -152,8 +152,7 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
                 // Filter(newText);
                 try {
                     adapter.getFilter().filter(newText);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return true;
@@ -163,7 +162,11 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
 
     public ArrayList<LogItem> getPhonelogs() {
         ArrayList<LogItem> temp = new ArrayList<>();
-
+        total_in = 0;
+        total_in_dur = 0;
+        total_out = 0;
+        total_out_dur = 0;
+        total_miss = 0;
 
         Cursor var1 = getActivity().getContentResolver().query(Uri.parse("content://call_log/calls"), null, null, null, "date DESC");
         if (var1 != null) {
@@ -177,11 +180,19 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
 
 
             while (var1.moveToNext()) {
+
+                String number_str = var1.getString(number);
+                if (number_str == null && !number_str.isEmpty()) {
+                    continue;
+                }
                 LogItem log = new LogItem();
 
 
                 log.setDateStr(var1.getLong(date));
                 log.setDateLong(var1.getLong(date));
+                int var10 = var1.getInt(duration);
+                log.setDuration_int(var10);
+                log.setDurationStr(FormatTime(var10));
 
                 int var11 = var1.getInt(type);
 
@@ -189,14 +200,19 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
                     case CallLog.Calls.INCOMING_TYPE:
                         log.setDrawableRes(R.drawable.call_incoming);
                         log.setType(1);
+                        ++total_in;
+                        total_in_dur += log.getDuration_int();
                         break;
                     case CallLog.Calls.OUTGOING_TYPE:
                         log.setDrawableRes(R.drawable.call_outgoing);
                         log.setType(2);
+                        ++total_out;
+                        total_out_dur += log.getDuration_int();
                         break;
                     case CallLog.Calls.MISSED_TYPE:
                         log.setDrawableRes(R.drawable.call_missed);
                         log.setType(3);
+                        ++total_miss;
                         break;
                     default:
                         log.setDrawableRes(R.drawable.ic_action_unknown);
@@ -206,26 +222,17 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
                 log.setID(var1.getInt(id));
 
 
-                int var10 = var1.getInt(duration);
-                log.setDuration_int(var10);
-                log.setDurationStr(FormatTime(var10));
+                log.setNumber(number_str);
+                final int net = ME.getNetForNumber(log.getNumber());
+                if (net != 3) {
+                    log.setNetworkColor(ME.nColors[net]);
+                    log.setNetDrawable(ME.NetDrawables[net][0]);
 
-                if (var1.getString(number) == null) {
-                    log.setNumber("No Number");
+                } else {
+                    log.setNetDrawable(R.drawable.ic_action_unknown);
+                    log.setNetworkColor(R.color.accent);
                 }
-                else {
-                    log.setNumber(var1.getString(number));
-                    final int net = ME.getNetForNumber(log.getNumber());
-                    if (net != 3) {
-                        log.setNetworkColor(ME.nColors[net]);
-                        log.setNetDrawable(ME.NetDrawables[net][0]);
 
-                    }
-                    else {
-                        log.setNetDrawable(R.drawable.ic_action_unknown);
-                        log.setNetworkColor(R.color.accent);
-                    }
-                }
 
                 log.setName(var1.getString(name));
                 log.setLookup_uri(var1.getString(lookup_uri));
@@ -239,31 +246,11 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
             var1.close();
         }
 
-        total_in = 0;
-        total_in_dur = 0;
-        total_out = 0;
-        total_out_dur = 0;
-        total_miss = 0;
-
-        for (LogItem var3 : temp) {
-            if (var3.getType() == 1) {
-                ++total_in;
-                total_in_dur += var3.getDuration_int();
-            }
-            else if (var3.getType() == 2) {
-                ++total_out;
-                total_out_dur += var3.getDuration_int();
-            }
-            else if (var3.getType() == 3) {
-                ++total_miss;
-            }
-        }
 
         Collections.sort(temp, mComp);
         return temp;
 
     }
-
 
 
     @Override
@@ -298,7 +285,7 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
 
 
         String[] x = {"Total Outgoing Call : " + total_out + " calls\n",
-                "Total Outgoing Calls Duration : " + FormatTime(total_out_dur) + "\n" ,
+                "Total Outgoing Calls Duration : " + FormatTime(total_out_dur) + "\n",
                 "Total Incoming Calls : " + total_in + " calls\n",
                 "Total Incoming Calls Duration : " + FormatTime(total_in_dur) + "\n",
                 "Total Missed Calls : " + total_miss + " calls"};
@@ -309,7 +296,7 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
 
         for (String s : x) {
             sp.append(s);
-            sp.setSpan(getCharStyle(0xFF4081), k + s.indexOf(':') + 2, k + s.length(), 0);
+            sp.setSpan(getCharStyle(16728193), k + s.indexOf(':') + 2, k + s.length(), 0);
             k += s.length();
         }
         // SpannableStringBuilder sm=new SpannableStringBuilder(k);
@@ -350,7 +337,6 @@ public class fragment_all_call_log extends AsyncLoadFragment<LogItem> {
     }
 
     class Comp implements Comparator<LogItem> {
-
 
 
         @Override

@@ -25,11 +25,11 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 
@@ -42,7 +42,7 @@ import xobyx.xcontactj.R;
 public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
-    private static final String[] TOPICS = {"global","all"};
+    private static final String[] TOPICS = {"global","all","update"};
     private boolean m;
 
     public RegistrationIntentService() {
@@ -87,7 +87,7 @@ public class RegistrationIntentService extends IntentService {
             Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-            sharedPreferences.edit().putBoolean("sent_token_to_server", false);
+            sharedPreferences.edit().putBoolean("sent_token_to_server", false).apply();
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
        // Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
@@ -109,16 +109,24 @@ public class RegistrationIntentService extends IntentService {
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(mediaType, "token="+token);
         Request request = new Request.Builder()
-                .url("http://x-xobyx.rhcloud.com/addgcm.php")
+                .url("http://xobyx.000webhostapp.com/addgcm.php")
                 .post(body)
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .addHeader("cache-control", "no-cache")
                 .addHeader("app", "b9477573-b76e-5df2-eb31-e91eec83c0f0")
                 .build();
+        Response response = null;
+        try {
+    response = client.newCall(request).execute();
+}
+catch (Exception t)
+{
+    return false;
+}
+finally {
+            return  null!=response&&response.code()==200;
+}
 
-        Response response = client.newCall(request).execute();
-
-        return response.code()==200;
 
     }
 
@@ -133,6 +141,7 @@ public class RegistrationIntentService extends IntentService {
         GcmPubSub pubSub = GcmPubSub.getInstance(this);
         for (String topic : TOPICS) {
             pubSub.subscribe(token, "/topics/" + topic, null);
+
         }
     }
     // [END subscribe_topics]

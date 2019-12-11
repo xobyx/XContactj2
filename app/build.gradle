@@ -4,39 +4,43 @@ apply plugin: 'com.nimbledroid.profiler'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    //maven { url 'http://artifactory.cfa.harvard.edu/artifactory/simple/jcenter'}
 }
 
 android {
-   
+    signingConfigs {
+        config {
+            keyAlias 'xobyx'
+            keyPassword '13011221'
+            storeFile file('C:/_old/Users/xobyx/AndroidStudioProjects/XContactj2/pkey.jks')
+            storePassword '13011221'
+        }
+    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
         disable 'InvalidPackage'
     }
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
-    
+    compileSdkVersion 24
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "xobyx.xcontactj"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 24
         versionCode 1069
         versionName "1.2"
 
-        
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'xcontactj-proguard.pro'
-            
             versionNameSuffix '-(' + defaultConfig.versionCode + ')-beta-aptoide'
+            signingConfig signingConfigs.config
         }
-        debug {
-        }
+
     }
-    productFlavors {
-    }
+
 }
 nimbledroid { apiKey "fd59d29d58c94c22bf823c3cd21250fe" }
 dependencies {
@@ -50,18 +54,21 @@ dependencies {
     //noinspection GradleCompatible
     //noinspection GradleCompatible
     //noinspection GradleCompatible
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.google.android.gms:play-services-analytics:8.1.0'
-    compile 'com.google.android.gms:play-services-gcm:8.1.0'
-    compile 'com.android.support:support-v4:22.2.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
         transitive = true;
     }
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
-}
+    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+    compile 'com.android.support:design:26.0.0-alpha1'
+    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
+    compile 'com.google.android.gms:play-services-analytics:11.0.4'
+    compile 'com.google.android.gms:play-services-gcm:11.0.4'
+    compile 'com.android.support:support-v4:26.0.0-alpha1'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.google.firebase:firebase-analytics:11.0.4'
 
+
+}
+apply plugin: 'com.google.gms.google-services'
 
 
 

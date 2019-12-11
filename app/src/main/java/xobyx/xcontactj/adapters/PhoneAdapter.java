@@ -3,6 +3,8 @@ package xobyx.xcontactj.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,8 +146,8 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
         }
     }
 
-    HashMap<Integer,Integer> integerHashMap=new HashMap<>();
-    HashMap<Integer, List<Contact.Phones>> mk=new HashMap<>();
+    private SparseIntArray integerHashMap=new SparseIntArray();
+    SparseArray<List<Contact.Phones>> mk= new SparseArray<>();
 
     int getSectionCount() {
       return mk.size();
@@ -325,12 +327,11 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.NumHolder> {
             numHolder.sms.setOnClickListener(new NumberOnClick(item, numberOnClickListener));
             numHolder.call_b.setOnClickListener(new NumberOnClick(item, numberOnClickListener));
         }
-        s.bottomMargin=5;
-        s.topMargin=5;
-        numHolder.cont.setLayoutParams(s);
+
+       // numHolder.cont.setLayoutParams(s);
     }
 
-    LinearLayout.MarginLayoutParams s=new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
     protected void bindHeader(NumHolder numHolder, int item) {
 
 

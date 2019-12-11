@@ -18,7 +18,7 @@ import xobyx.xcontactj.R;
  * c# to java
  */
 @CoordinatorLayout.DefaultBehavior(FontTextView.Behavior.class)
-public class FontTextView extends TextView {
+public class FontTextView extends android.support.v7.widget.AppCompatTextView {
 
     public static class Behavior extends CoordinatorLayout.Behavior<FontTextView> {
         @Override

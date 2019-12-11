@@ -1,9 +1,13 @@
 package xobyx.xcontactj.views;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.ColorFilter;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -38,7 +42,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
 
 
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view.setScaleType(ImageView.ScaleType.FIT_XY);
             view.setOnClickListener(this);
 
 
@@ -91,9 +95,11 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
      * @param positionOffsetPixels Value in pixels indicating the offset from position.
      */
     float pakl;
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+        int t= 3;
 
 
 
@@ -135,12 +141,14 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
 
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPageSelected(int i) {
 
 
         selected=i;
 
+   //     ((ImageView) this.getChildAt(i)).setImageAlpha(255);
 
         final View at = getChildAt(i);
         Runnable n = new Runnable() {
@@ -212,7 +220,7 @@ public class HeaderTabs extends ViewGroup implements ViewPager.OnPageChangeListe
                 }
             }
         };
-        postDelayed(itemSelector, 200);
+        postDelayed(itemSelector, 20);
 
 
     }

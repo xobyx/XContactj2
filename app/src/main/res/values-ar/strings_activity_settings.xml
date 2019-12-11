@@ -1,7 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="list_mode">
-        <item>List</item>
-        <item>Grid</item>
-    </string-array>
-</resources>
+<resources></resources>

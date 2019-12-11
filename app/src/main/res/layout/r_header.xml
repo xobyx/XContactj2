@@ -5,16 +5,17 @@
     android:orientation="horizontal"
 
     >
+
     <ImageView
         android:id="@+id/d_netimge"
-        android:paddingLeft="5dp"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/isudani1"
-
         android:contentDescription="@string/contact_photo_dis"
-        android:scaleType="center" />
+        android:paddingLeft="15dp"
+
+        android:scaleType="center"
+        android:src="@drawable/isudani1" />
 
 
     <xobyx.xcontactj.views.FontTextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,12 +23,11 @@
         android:id="@android:id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:paddingLeft="15dp"
         android:text="Sudani"
-        android:textColor="@color/background"
         android:textSize="20sp"
-        app:font="RP.ttf"
-        android:layout_gravity="center_vertical" />
+        app:font="RP.ttf" />
 
 
 

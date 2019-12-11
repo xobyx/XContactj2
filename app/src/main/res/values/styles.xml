@@ -24,7 +24,7 @@
         <item name="history">@drawable/history_w</item>
         <item name="actionModeStyle">@style/jt</item>
         <item name="messages">@drawable/messges_w</item>
-        <item name="actionModeCloseDrawable">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+
         <item name="android:windowBackground">@color/background_light</item>
         <item name="p_net_text_color">#ae000000</item>
     </style>

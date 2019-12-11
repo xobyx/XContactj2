@@ -11,13 +11,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.internal.widget.ThemeUtils;
+
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +40,10 @@ public class SendBalanceActivity extends Activity implements View.OnClickListene
     CharacterStyle r = new CharacterStyle() {
         @Override
         public void updateDrawState(TextPaint tp) {
-            tp.setColor(ThemeUtils.getThemeAttrColor(SendBalanceActivity.this, R.attr.colorPrimary));
+
+            TypedValue typedValue = new TypedValue();
+            if (SendBalanceActivity.this.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true))
+            tp.setColor(typedValue.data);
 
             tp.setTypeface(FontTextView.getFont(SendBalanceActivity.this,"bein.ttf"));
 

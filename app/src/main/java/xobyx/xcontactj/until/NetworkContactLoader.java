@@ -69,6 +69,7 @@ public class NetworkContactLoader extends AsyncTaskLoader<List<Contact>> {
             // mCancellationSignal = new CancellationSignal();
         }
         try {
+
             mCursor = getContext().getContentResolver().query(ME._uri, null, ME.DatabaseSelector[mNet], ME.getDatabaseArg[mNet], ME.sortBy);
             if (mCursor != null) {
                 try {

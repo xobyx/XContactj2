@@ -11,9 +11,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.internal.view.SupportMenuInflater;
-import android.support.v7.internal.view.menu.MenuBuilder;
-import android.support.v7.internal.view.menu.MenuPopupHelper;
+import android.support.v7.view.SupportMenuInflater;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
@@ -58,14 +58,14 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     protected TabLayout tabHost;
     private boolean all;
     protected Contact mContact;
-    private View.OnClickListener fab_click_handler=new View.OnClickListener() {
+    private View.OnClickListener fab_click_handler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MenuBuilder m=new MenuBuilder(ContactSpecificsActivity.this);
+            MenuBuilder m = new MenuBuilder(ContactSpecificsActivity.this);
 
-            SupportMenuInflater s=new SupportMenuInflater(ContactSpecificsActivity.this);
-            s.inflate(R.menu.main_activity,m);
-            MenuPopupHelper ma=new MenuPopupHelper(ContactSpecificsActivity.this,m );
+            SupportMenuInflater s = new SupportMenuInflater(ContactSpecificsActivity.this);
+            s.inflate(R.menu.main_activity, m);
+            MenuPopupHelper ma = new MenuPopupHelper(ContactSpecificsActivity.this, m);
             ma.setAnchorView(v);
             ma.show();
         }
@@ -113,17 +113,19 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
 
+        if (mContact != null && mContact.Name != null) {
+            CollapsingToolbarLayout collapsingToolbar =
+                    (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+            if (null != collapsingToolbar)
+                collapsingToolbar.setTitle(mContact.Name);
 
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        if (null != collapsingToolbar)
-            collapsingToolbar.setTitle(mContact.Name);
+            ((TextView) findViewById(R.id.toolbar_title)).setText(mContact.Name);
+            //collapsingToolbar.setContentScrimColor(ME.nColors[mNet]);
 
-        ((TextView) findViewById(R.id.toolbar_title)).setText(mContact.Name);
-        //collapsingToolbar.setContentScrimColor(ME.nColors[mNet]);
+            final LetterImageView imageView = (LetterImageView) findViewById(R.id.d_image);
+            SetupContactImage(imageView);
 
-        final LetterImageView imageView = (LetterImageView) findViewById(R.id.d_image);
-        SetupContactImage(imageView);
+        }
         //set startup page//
         pager.addOnPageChangeListener(this);
 
@@ -147,13 +149,9 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
     }
 
 
-
-
-
-
     @NonNull
     protected onCreateFragmentAdapter getFragmentAdapter() {
-        return new onCreateFragmentAdapter(getSupportFragmentManager(),mContact, mPos, mNet, lmessage, false);
+        return new onCreateFragmentAdapter(getSupportFragmentManager(), mContact, mPos, mNet, lmessage, false);
     }
 
     protected void SetupContactImage(LetterImageView imageView) {
@@ -162,8 +160,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
 
             // ((CircleImageView) findViewById(R.id.profile_image)).setImageURI(mContact.PhotoThumbUri);
 
-        }
-        else {
+        } else {
             imageView.setLetter(mContact.Name.charAt(0));
 
             imageView.setCustomColor(mContact.Net);
@@ -172,8 +169,7 @@ public class ContactSpecificsActivity extends AppCompatActivity implements ViewP
         }
     }
 
-    void showpopMenu(Fragment m)
-    {
+    void showpopMenu(Fragment m) {
 
     }
 

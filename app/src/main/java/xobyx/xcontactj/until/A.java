@@ -19,11 +19,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+
 
 import org.acra.ACRA;
 import org.acra.ACRAConstants;
@@ -41,6 +37,16 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import xobyx.xcontactj.activities.MainActivity;
 
 import static org.acra.ACRA.LOG_TAG;
 
@@ -68,7 +74,7 @@ public class A implements ReportSender {
         try {
 
 
-            final String mReport = this.buildJSONReport(report).toString();
+            final String mReport = this.buildJSONReport(report).accumulate("phone_net", MainActivity.wn_name).toString();
 
 
             if (ACRA.DEV_LOGGING) ACRA.log.d(LOG_TAG, "Report is " + mReport);
@@ -80,7 +86,7 @@ public class A implements ReportSender {
             request.send(context, reportUrl, POST, reportAsString, mType);*/
             request(mReport);
 
-        } catch (@NonNull IOException | JSONReportException | IllegalStateException e) {
+        } catch (@NonNull IOException|JSONException | JSONReportException | IllegalStateException e) {
             throw new ReportSenderException("Error while sending " + config.reportType()
                     + " report via Http POST", e);
         }
@@ -92,9 +98,10 @@ public class A implements ReportSender {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, reportAsString);
         Request requestx = new Request.Builder()
-                .url("http://ps-xobyx.rhcloud.com/ps/classes/crashes")
+                .url("https://parseapi.back4app.com/classes/crash")
                 .post(body)
-                .addHeader("x-parse-application-id", "1")
+                .addHeader("x-parse-application-id", "5eZnxFNdESOmlj4bIUQBON0TmrOPSy5hpfhhVA4i")
+                .addHeader("X-Parse-REST-API-Key","jjSTHrC19yGR9u2RnsyMSWQ58J80YcVPeYTXvOeL")
                 .addHeader("content-type", "application/json")
                 .addHeader("cache-control", "no-cache")
 
@@ -170,7 +177,7 @@ public class A implements ReportSender {
     private void addJSONFromProperty(@NonNull JSONObject destination, @NonNull String propertyString) throws JSONException {
         final int equalsIndex = propertyString.indexOf('=');
         if (equalsIndex > 0) {
-            final String currentKey = propertyString.substring(0, equalsIndex).trim().replace("$", "").replace(".", "_");
+            final String currentKey = propertyString.substring(0, equalsIndex).trim();
             final String currentValue = propertyString.substring(equalsIndex + 1).trim();
             Object value = guessType(currentValue);
             if (value instanceof String) {
@@ -180,7 +187,7 @@ public class A implements ReportSender {
             if (splitKey.length > 1) {
                 addJSONSubTree(destination, splitKey, value);
             } else {
-                destination.accumulate(currentKey, value);
+                destination.accumulate(currentKey.replace("$", "").replace(".", "_"), value);
             }
         } else {
             destination.put(propertyString.trim().replace("$", "").replace(".", "_"), true);
@@ -189,7 +196,7 @@ public class A implements ReportSender {
 
     private static void addJSONSubTree(@NonNull JSONObject destination, @NonNull String[] keys, Object value) throws JSONException {
         for (int i = 0; i < keys.length; i++) {
-            final String subKey = keys[i];
+            final String subKey = keys[i].replace("$", "").replace(".", "_");
             if (i < keys.length - 1) {
                 JSONObject intermediate = null;
                 if (destination.isNull(subKey)) {
@@ -224,7 +231,21 @@ public class A implements ReportSender {
         }
     }
 
-    private Object guessType(String property) {
-        return null;
+    @NonNull
+    private static Object guessType(@NonNull String value) {
+        if ("true".equalsIgnoreCase(value))
+            return true;
+        if ("false".equalsIgnoreCase(value))
+            return false;
+
+        if (value.matches("(?:^|\\s)([1-9](?:\\d*|(?:\\d{0,2})(?:,\\d{3})*)(?:\\.\\d*[1-9])?|0?\\.\\d*[1-9]|0)(?:\\s|$)")) {
+            final NumberFormat format = NumberFormat.getInstance(Locale.US);
+            try {
+                return format.parse(value);
+            } catch (ParseException ignored) {
+                // never mind
+            }
+        }
+        return value;
     }
 }

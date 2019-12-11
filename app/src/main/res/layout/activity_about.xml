@@ -33,7 +33,6 @@
         android:textSize="35sp" />
 
     <TextView
-        android:id="@+id/re"
         android:layout_width="302sp"
         android:layout_height="wrap_content"
 

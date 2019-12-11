@@ -1,46 +1,53 @@
 {
   "project_info": {
-    "project_id": "xcontactj-1242",
     "project_number": "120967154539",
-    "name": "XContactj"
+    "firebase_url": "https://xcontactj-1242.firebaseio.com",
+    "project_id": "xcontactj-1242"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:120967154539:android:04d0432fe2ebf671",
-        "client_id": "android:xobyx.xcontactj",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "xobyx.xcontactj",
-          "certificate_hash": []
+          "package_name": "xobyx.xcontactj"
         }
       },
-      "oauth_client": [],
-      "api_key": [],
+      "oauth_client": [
+        {
+          "client_id": "120967154539-jf126mggclb2e4irer8puetsn944ims1.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "120967154539-ai1tts6oikb27eo8altgukh17q166n4t.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "120967154539-92r1o8011g0ha2qe6pdjv030suo1u9pb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xobyx.xcontactj",
+            "certificate_hash": "c6a400aa9fb7bffb780c80385c7a722cfc18ce68"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXLVu7moIXiui8IO7PUiKJ95-mvETqYZk"
+        }
+      ],
       "services": {
         "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-74759478-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

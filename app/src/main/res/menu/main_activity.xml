@@ -7,10 +7,7 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/action_settings" />
-    <item
-        android:title="Item"
-        android:orderInCategory="101"
-        android:id="@+id/auth_button" />
+
     <item
         android:id="@+id/action_search"
 
@@ -24,7 +21,6 @@
         android:title="@string/all_contacts" />
 
     <item
-        android:id="@+id/action_new_contact"
 
         app:showAsAction="ifRoom"
         android:title="@string/add_new_contact" />

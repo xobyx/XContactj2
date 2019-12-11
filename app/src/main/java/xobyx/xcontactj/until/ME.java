@@ -366,6 +366,7 @@ public class ME {
         Cursor query = context.getContentResolver().query(uri, new String[]{ContactsContract.Contacts.LOOKUP_KEY}, null, null, "");
         if(query!=null && query.moveToFirst()) {
             id = query.getString(0);
+            query.close();
             if(id.isEmpty())return null;
         }
         else
@@ -452,7 +453,7 @@ public class ME {
 
         }
 
-
+        mCursor.close();
         return b;
     }
 

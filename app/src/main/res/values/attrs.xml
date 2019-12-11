@@ -13,7 +13,7 @@
     <attr name="history" format="reference"/>
     <attr name="messages" format="reference"/>
     <attr name="p_net_text_color" format="color"/>
-    <declare-styleable name="AZSideBar">
+<!--    <declare-styleable name="AZSideBar">
         <attr name="shape_background" format="color" />
         <attr name="selector_color" format="color" />
         <attr name="text_color" format="color" />
@@ -21,7 +21,7 @@
         <attr name="enable_animateion" format="boolean" />
 
 
-    </declare-styleable>
+    </declare-styleable>-->
     <declare-styleable name="HeaderTabs">
         <attr name="net1" format="reference" />
         <attr name="net2" format="reference" />

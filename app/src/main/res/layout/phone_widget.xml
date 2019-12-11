@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/d_wedgit"
+    xmlns:t="http://schemas.android.com/tools"
 
-    android:divider="#00000000"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:t="http://schemas.android.com/tools"
+    android:divider="#00000000"
 
     >
     <!--android:divider="#9146050b"
@@ -18,8 +17,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/selector_base"
-        android:divider="#00000000"
         android:clickable="true"
+        android:divider="#00000000"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minHeight="25dp"
@@ -27,8 +26,6 @@
         android:orientation="vertical">
 
         <ImageView
-            android:tint="?attr/colorAccent"
-            android:id="@+id/s_share"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
@@ -36,9 +33,10 @@
             android:focusableInTouchMode="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-
             android:scaleType="centerInside"
-            android:src="?attr/d1" />
+
+            android:src="?attr/d1"
+            android:tint="?attr/colorAccent" />
 
 
     </LinearLayout>
@@ -57,19 +55,18 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/s_delete"
-            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:clickable="false"
-
             android:longClickable="false"
+
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-
             android:scaleType="centerInside"
-            android:src="?attr/d2" />
+
+            android:src="?attr/d2"
+            android:tint="?attr/colorAccent" />
 
     </LinearLayout>
 
@@ -88,8 +85,6 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/s_moreinfo"
-            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
@@ -97,9 +92,10 @@
             android:longClickable="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-
             android:scaleType="centerInside"
-            android:src="?attr/d3" />
+
+            android:src="?attr/d3"
+            android:tint="?attr/colorAccent" />
 
     </LinearLayout>
 
@@ -118,8 +114,6 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/s_edit"
-            android:tint="?attr/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
@@ -127,10 +121,11 @@
             android:longClickable="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-
             android:scaleType="centerInside"
 
             android:src="?attr/d4"
+
+            android:tint="?attr/colorAccent"
             android:visibility="visible" />
 
     </LinearLayout>
@@ -145,12 +140,11 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minHeight="25dp"
-        android:textColor="@color/background"
         android:minWidth="25dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:textColor="@color/background">
 
         <ImageView
-            android:tint="?attr/colorAccent"
             android:id="@+id/s_blance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -160,10 +154,11 @@
             android:longClickable="false"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:textColor="@color/background"
-
             android:scaleType="centerInside"
-            android:src="?attr/d5" />
+            android:src="?attr/d5"
+
+            android:textColor="@color/background"
+            android:tint="?attr/colorAccent" />
 
     </LinearLayout>
 </LinearLayout>

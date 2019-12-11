@@ -29,9 +29,11 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 import io.fabric.sdk.android.Fabric;
+//import pub.devrel.easypermissions.EasyPermissions;
 import xobyx.xcontactj.MyApp;
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
     };
     private NetFragmentPick netFragmentPick;
     private Toolbar mToolbar;
-
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
 
         super.onCreate(savedInstanceState);
         //Fabric.with(this, new Crashlytics());
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         //TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
         Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).build();
 
@@ -222,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
             mViewPager = (xViewPager) findViewById(R.id.pager);
             mViewPager.setMoveEnabled(!pick_mode_local);
             startService(new Intent(this, RegistrationIntentService.class));
-            ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
+           // ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
             DB = new MDatabase(getBaseContext());
             mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());      //
 

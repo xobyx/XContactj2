@@ -29,7 +29,7 @@ import xobyx.xcontactj.until.MReportSenderFactory;
         // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
 
         mode = ReportingInteractionMode.TOAST,
-        formUri = "http://ps-xobyx.rhcloud.com",
+        formUri = "https://parseapi.back4app.com",
         reportType = org.acra.sender.HttpSender.Type.JSON,
 
         httpMethod = HttpSender.Method.POST,
@@ -57,7 +57,7 @@ public class MyApp extends Application {
         super.attachBaseContext(base);
 
         // The following line triggers the initialization of ACRA
-        ACRA.DEV_LOGGING = true;
+       ACRA.DEV_LOGGING = true;
         ACRA.init(this);
 
 
