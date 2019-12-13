@@ -19,8 +19,10 @@ android:
 
 
 before_install:
+    - echo $BASH_ENV
+....- ls
     - echo $ENCODED_KEYSTORE | sed 's/ /\n/g' | base64 --decode >> ${HOME}/keystore.jks
-    - echo 'export KEYSTORE=${HOME}/keystore.jks' >> $BASH_ENV
+    - echo 'export KEYSTORE=${HOME}/keystore.jks' >> "$BASH_ENV"
     - chmod +x gradlew
 
 deploy:
