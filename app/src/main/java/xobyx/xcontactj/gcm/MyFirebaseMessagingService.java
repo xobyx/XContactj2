@@ -39,10 +39,9 @@ import xobyx.xcontactj.until.DownlodService;
 import xobyx.xcontactj.until.UpdateHandler;
 import xobyx.xcontactj.until.mDownlodService;
 
-// Renaming to MyFirebaseMessagingService for clarity, though file name remains for now
-public class MyGcmListenerService extends FirebaseMessagingService {
+public class MyFirebaseMessagingService extends FirebaseMessagingService { // Class name updated
 
-    private static final String TAG = "MyFirebaseMsgService"; // Renamed TAG
+    private static final String TAG = "MyFirebaseMsgService";
 
     /**
      * Called when message is received.
@@ -61,11 +60,12 @@ public class MyGcmListenerService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             Map<String, String> data = remoteMessage.getData();
             String message = data.get("message");
-            String title = data.get("title") != null ? data.get("title") : "";
+            String title = data.get("title") != null ? data.get("title") : "Notification"; // Default title
+            String channelId = xobyx.xcontactj.MyApp.GENERAL_MESSAGES_CHANNEL_ID; // Default channel
 
             // Example: Replicate old logic for "/topics/update"
-            // This part needs careful review and adaptation to FCM data structure
             if (remoteMessage.getFrom() != null && remoteMessage.getFrom().startsWith("/topics/update")) {
+                channelId = xobyx.xcontactj.MyApp.APP_UPDATES_CHANNEL_ID; // Use updates channel
                 if (data.containsKey("ver") && data.containsKey("url")) {
                     try {
                         final int ver = Integer.parseInt(data.get("ver"));
@@ -75,32 +75,38 @@ public class MyGcmListenerService extends FirebaseMessagingService {
                                     .putInt("ver", ver)
                                     .putString("url", data.get("url"))
                                     .apply();
-                            // Ensure mDownlodService is appropriate for FCM context
-                            final PendingIntent servicePendingIntent = PendingIntent.getService(getBaseContext(), 0,
-                                    new Intent(getApplicationContext(), mDownlodService.class), PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE); // Added mutability flag
-                            sendNotification(title, message, servicePendingIntent);
+                            final PendingIntent servicePendingIntent = PendingIntent.getService(
+                                    this, // Use service context
+                                    0,
+                                    new Intent(this, mDownlodService.class), // Use service context
+                                    PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+                            sendNotification(title, message, channelId, servicePendingIntent);
                         }
                     } catch (NumberFormatException e) {
                         Log.e(TAG, "Error parsing version from FCM message", e);
+                        com.google.firebase.crashlytics.FirebaseCrashlytics.getInstance().recordException(e);
                     }
                 }
             } else {
                  // Handle other data messages
-                 // For now, just show a generic notification if it has title and message
-                 if (title != null && message != null) {
-                    sendNotification(title, message, null);
+                 if (message != null) { // Only send notification if there's a message
+                    sendNotification(title, message, channelId, null);
                  }
             }
         }
 
-        // Check if message contains a notification payload.
-        // Note: Notification messages received while app is in background are handled by the system tray.
-        // Notification messages received while app is in foreground are delivered here.
+        // Check if message contains a notification payload from FCM console, etc.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             String title = remoteMessage.getNotification().getTitle() != null ? remoteMessage.getNotification().getTitle() : "Notification";
             String body = remoteMessage.getNotification().getBody();
-            sendNotification(title, body, null);
+            // Notification payloads from FCM often specify their own channel or use a default one.
+            // If channel_id is present in notification payload, use it, otherwise default.
+            String channelId = remoteMessage.getNotification().getChannelId();
+            if (channelId == null) {
+                channelId = xobyx.xcontactj.MyApp.GENERAL_MESSAGES_CHANNEL_ID;
+            }
+            sendNotification(title, body, channelId, null);
         }
 
 
@@ -126,59 +132,50 @@ public class MyGcmListenerService extends FirebaseMessagingService {
      * Create and show a simple notification containing the received FCM message.
      *
      * @param messageBody FCM message body received.
+      * @param channelId ID of the notification channel to use.
+      * @param pendingIntent Optional PendingIntent for the notification action.
      */
-    private void sendNotification(String title, String messageBody, PendingIntent pendingIntent) { // Parameter changed for clarity
+    private void sendNotification(String title, String messageBody, String channelId, @Nullable PendingIntent pendingIntent) {
         PendingIntent resultPendingIntent = pendingIntent;
         if (resultPendingIntent == null) {
-            Intent intent = new Intent(this, MainActivity.class); // Changed getBaseContext() to this
+            Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            // ComponentName componentName = intent.getComponent(); // Not needed for this simple case
-            // if (componentName != null) {
-            //     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            //     stackBuilder.addParentStack(componentName);
-            //     stackBuilder.addNextIntent(intent);
-            //     resultPendingIntent = stackBuilder.getPendingIntent(REQUEST_CODE_START_ACTIVITY, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE); // Added mutability
-            // } else {
-            //     resultPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_START_ACTIVITY, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE); // Added mutability
-            // }
-            // Simplified PendingIntent creation for foreground notification click
-             resultPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_START_ACTIVITY, intent,
-                    PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE); // Added mutability flags
+            resultPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_START_ACTIVITY, intent,
+                    PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
 
-        // String channelId = getString(R.string.default_notification_channel_id); // TODO: Create notification channels for Android O+
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this /*, channelId */) // Pass 'this' for context
-                .setSmallIcon(R.mipmap.ic_launcher) // Ensure this is a valid small icon (often white/transparent)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.mipmap.ic_launcher) // TODO: Replace with a proper small icon (e.g., transparent silhouette)
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Set priority
+                .setDefaults(NotificationCompat.DEFAULT_ALL) // Will use channel's defaults on O+ if set there
                 .setContentIntent(resultPendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // TODO: Since android Oreo notification channel is needed.
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        //     NotificationChannel channel = new NotificationChannel(channelId,
-        //             "Channel human readable title",
-        //             NotificationManager.IMPORTANCE_DEFAULT);
-        //     notificationManager.createNotificationChannel(channel);
-        // }
+        // NotificationChannel creation is done in MyApp.onCreate()
+        // No need to create channel here if it's guaranteed to be done by Application start.
 
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        if (notificationManager != null) {
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        } else {
+            Log.e(TAG, "NotificationManager not found, cannot send notification.");
+        }
     }
 
-
-    private NotificationCompat.Builder getBuilder(String Title, String message, PendingIntent resultPendingIntent) {
-        return new NotificationCompat.Builder(this) // Pass 'this' for context
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(Title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setContentIntent(resultPendingIntent);
-    }
+    // This getBuilder method is now redundant as its logic is incorporated into sendNotification.
+    // private NotificationCompat.Builder getBuilder(String Title, String message, PendingIntent resultPendingIntent) {
+    //     return new NotificationCompat.Builder(this)
+    //             .setSmallIcon(R.mipmap.ic_launcher)
+    //             .setContentTitle(Title)
+    //             .setContentText(message)
+    //             .setAutoCancel(true)
+    //             .setDefaults(NotificationCompat.DEFAULT_ALL)
+    //             .setContentIntent(resultPendingIntent);
+    // }
 }
 
 

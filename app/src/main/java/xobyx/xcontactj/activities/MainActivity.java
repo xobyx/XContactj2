@@ -1,12 +1,13 @@
 package xobyx.xcontactj.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager; // AndroidX
 import com.google.android.material.floatingactionbutton.FloatingActionButton; // AndroidX
 import androidx.viewpager.widget.ViewPager; // AndroidX
 import androidx.appcompat.app.AlertDialog; // AndroidX
@@ -26,106 +27,87 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.LoginEvent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+// Removed Fabric and old Crashlytics imports
 
-import io.fabric.sdk.android.Fabric;
-//import pub.devrel.easypermissions.EasyPermissions;
-import xobyx.xcontactj.MyApp;
+import xobyx.xcontactj.MyApp; // Assuming MyApp is updated or compatible
 import xobyx.xcontactj.R;
 import xobyx.xcontactj.adapters.SectionsPagerAdapter;
 import xobyx.xcontactj.adapters.SmAdapter;
 import xobyx.xcontactj.base.IDialerHandler;
 import xobyx.xcontactj.fragments.NetFragment;
 import xobyx.xcontactj.fragments.NetFragmentPick;
-import xobyx.xcontactj.gcm.RegistrationIntentService;
+// Removed import for xobyx.xcontactj.gcm.RegistrationIntentService;
 import xobyx.xcontactj.until.DialerActionModeHelper;
 import xobyx.xcontactj.until.MDatabase;
 import xobyx.xcontactj.until.ME;
 import xobyx.xcontactj.until.SettingHelp;
 import xobyx.xcontactj.views.HeaderTabs;
-import xobyx.xcontactj.views.xViewPager;
+import xobyx.xcontactj.views.xViewPager; // This custom view might need internal updates for AndroidX ViewPager
 
 import static xobyx.xcontactj.until.ME.NET_N;
-///TODO: @{@link Se}
 
+// Removed unclear TODO: @{@link Se}
 public class MainActivity extends AppCompatActivity implements IDialerHandler, SearchView.OnQueryTextListener {
 
+    // Instance variables instead of static
+    private String wn_name = null;
+    private MDatabase DB;
+    private boolean pick_mode = false; // Default to false
+    private int wn_id;
 
-    public static String wn_name = null;
-    public static MDatabase DB;
-    /**
-     * pick mode
-     */
-    public static boolean pick_mode;
-    /**
-     * worked net
-     */
-    public static int wn_id;
-    /**
-     * pick mode local
-     */
-    public boolean pick_mode_local;
+    // pick_mode_local was already an instance variable. Initialize explicitly.
+    public boolean pick_mode_local = false;
     public FloatingActionButton call_button;
     SectionsPagerAdapter mSectionsPagerAdapter;
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+
     HeaderTabs tabs;
-    /* Dialer Fragment handler */
-    xViewPager mViewPager;
-    private int default_network;
+    xViewPager mViewPager; // Custom ViewPager, ensure it's compatible with AndroidX ViewPager if it extends it.
+    private int default_network = 0; // Default to a valid network index if possible
     private DialerActionModeHelper DialerHelper;
     private boolean is_dialer_open = false;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private NetFragmentPick netFragmentPick; // For pick_mode_local
+    private Toolbar mToolbar;
+
     private final View.OnClickListener call_handler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // KitKat check is quite old
                 Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_);
-
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
+                    public void onAnimationStart(Animation animation) {}
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        Log.d(MainActivity.class.getSimpleName(), "dial anmi end");
+                        Log.d(MainActivity.class.getSimpleName(), "dial anim end");
                         StartDialer("");
                     }
-
                     @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
+                    public void onAnimationRepeat(Animation animation) {}
                 });
-
                 v.startAnimation(animation);
-            } else
+            } else {
                 StartDialer("");
-
+            }
         }
     };
+
+    // TODO: Ensure this listener is registered in onResume/onStart and unregistered in onPause/onStop if used.
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
-
-
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_IDLE) return;
-
             String c = "";
             try {
-                c = ME.getTelephonyService(MainActivity.this).getCallerName();
+                c = ME.getTelephonyService(MainActivity.this).getCallerName(); // ME class might need review
             } catch (RemoteException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Consider logging to Crashlytics
             }
             int net = ME.getNetForNumber(incomingNumber);
-            String s = getNetworkName(net);
+            String s = getNetworkNameForListener(net); // Use instance method
             Toast.makeText(MainActivity.this, s + " " + c, Toast.LENGTH_LONG).show();
         }
 
@@ -134,312 +116,316 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
             super.onServiceStateChanged(serviceState);
             int i = serviceState.getState();
             if (i == ServiceState.STATE_EMERGENCY_ONLY || i == ServiceState.STATE_OUT_OF_SERVICE) {
-                wn_id = 3;
-                wn_name = "out of service";
-
+                MainActivity.this.wn_id = 3; // Update instance variable
+                MainActivity.this.wn_name = "out of service"; // Update instance variable
                 Toast.makeText(MainActivity.this, "No Network,out of service " + getNetworkName(), Toast.LENGTH_SHORT).show();
             } else {
-                wn_id = ME.getCurrentNetwork(MainActivity.this);
-                if (wn_id != 3) {
-                    mViewPager.setCurrentItem(wn_id, false);
-
-                    Toast.makeText(MainActivity.this, "Found Network" + getNetworkName(), Toast.LENGTH_SHORT).show();
+                MainActivity.this.wn_id = ME.getCurrentNetwork(MainActivity.this); // Update instance variable
+                if (MainActivity.this.wn_id != 3) {
+                    if (mViewPager != null) {
+                        mViewPager.setCurrentItem(MainActivity.this.wn_id, false);
+                    }
+                    Toast.makeText(MainActivity.this, "Found Network: " + getNetworkName(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
     };
-    private NetFragmentPick netFragmentPick;
-    private Toolbar mToolbar;
-    private FirebaseAnalytics mFirebaseAnalytics;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        // Fabric initialization removed, Firebase Crashlytics initializes automatically.
-        // Old Fabric code:
-        // //Fabric.with(this, new Crashlytics());
-        // //TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
-        // Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).build();
-        // Fabric.with(fabric);
-
-        Intent mInt = getIntent();
-
-
-        // ME.SetInternetSettingFor(0,this);
-
         setContentView(R.layout.activity_main_1);
 
+        DB = new MDatabase(getApplicationContext()); // Use ApplicationContext for DB
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.inflateMenu(R.menu.main_activity);
-        setSupportActionBar(mToolbar);
+        initViews();
+        handleIntentAction(getIntent()); // Sets pick_mode, pick_mode_local, wn_id, wn_name
+        setupModeSpecificUi();
 
-        wn_id = ME.getCurrentNetwork(this);
+        // TODO: If PhoneStateListener is to be used, register it here or in onResume, and unregister in onPause/onStop.
+        // Example:
+        // TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        // if (telephonyManager != null) {
+        //     telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_SERVICE_STATE);
+        // }
+    }
 
-        call_button = (FloatingActionButton) findViewById(R.id.main_call);
-        if (wn_id != 3) {
-            wn_name = getNetworkName();
+    private void initViews() {
+        mToolbar = findViewById(R.id.toolbar);
+        if (mToolbar != null) { // Guard against null if layout is incorrect
+            mToolbar.inflateMenu(R.menu.main_activity);
+            setSupportActionBar(mToolbar);
+        }
+
+        call_button = findViewById(R.id.main_call);
+        if (call_button != null) {
             call_button.setOnClickListener(call_handler);
         }
-        call_button.setOnClickListener(call_handler);
-        if (mInt.getAction() != null) {
-            if (mInt.getAction().equals(Intent.ACTION_DIAL)) {
-                StartDialer(mInt.getDataString());
-
-            } else if (mInt.getAction().equals(Intent.ACTION_PICK)) {
-                pick_mode = true;
-                if (mInt.hasExtra("local")) {
-                    pick_mode_local = true;
-                }
-            }
-
-        }
-
-        // PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(QKPreference.DELIVERY_VIBRATE.getKey(),true).commit();
-
-        // Set up the action bar.
 
         View vb = findViewById(R.id.rep_me);
-
-        vb.setBackgroundColor(SettingHelp.getBackground(getBaseContext()));
-        tabs = (HeaderTabs) findViewById(R.id.mhrader);
-        if (pick_mode_local) {
-
-            ///FIXME: //(for send_balance Activity we will not reach this code if they are no network )
-            getSupportActionBar().setTitle("Pick Contact:");
-            //changed://tabs.setVisibility(View.GONE);
-            call_button.setVisibility(View.GONE);
-            tabs.setVisibility(View.GONE);
-            netFragmentPick = NetFragmentPick.newInstance(wn_id);
-            getSupportFragmentManager().beginTransaction().replace(R.id.repl, netFragmentPick).commit();
-            //No need for Network Header in Pick a Contact mode..
-
-
-        } else {
-            //getActionBar().setTitle("Pick Contact:");
-            //final ITelephony telephonyService = ME.getTelephonyService(this);
-            //changed:  moved from top;
-            tabs = (HeaderTabs) findViewById(R.id.mhrader);
-            mViewPager = (xViewPager) findViewById(R.id.pager);
-            mViewPager.setMoveEnabled(!pick_mode_local);
-            // startService(new Intent(this, RegistrationIntentService.class)); // Removed call to obsolete GCM registration service
-           // ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
-            DB = new MDatabase(getBaseContext());
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());      //
-
-
-            mViewPager.setAdapter(mSectionsPagerAdapter);
-            tabs.setViewPager(mViewPager);
-            DialerHelper = new DialerActionModeHelper(this);
-
-            if (wn_id == 3)
-                if (PreferenceManager.getDefaultSharedPreferences(this).contains("default_Network")) {
-                    default_network = PreferenceManager.getDefaultSharedPreferences(this).getInt("default_Network", -1);
-                } else {
-                    setDefaultNetwork();
-                }
-
-            mViewPager.setCurrentItem(wn_id != 3 ? wn_id : default_network);
-
-
+        if (vb != null) {
+            vb.setBackgroundColor(SettingHelp.getBackground(this)); // 'this' context is fine
         }
+        tabs = findViewById(R.id.mhrader);
+        mViewPager = findViewById(R.id.pager);
+    }
+
+    private void handleIntentAction(Intent intent) {
+        this.wn_id = ME.getCurrentNetwork(this);
+        if (this.wn_id != 3) { // Assuming 3 means "no network" or "error"
+            this.wn_name = getNetworkName();
+        } else {
+            this.wn_name = "No Network"; // Default name
+        }
+
+        if (intent != null && intent.getAction() != null) {
+            if (Intent.ACTION_DIAL.equals(intent.getAction())) {
+                StartDialer(intent.getDataString());
+            } else if (Intent.ACTION_PICK.equals(intent.getAction())) {
+                this.pick_mode = true;
+                this.pick_mode_local = intent.hasExtra("local");
+            }
+        }
+    }
+
+    private void setupModeSpecificUi() {
+        if (this.pick_mode_local) {
+            setupPickModeUi();
+        } else {
+            setupNormalModeUi();
+        }
+    }
+
+    private void setupPickModeUi() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Pick Contact:");
+        }
+        if (call_button != null) call_button.setVisibility(View.GONE);
+        if (tabs != null) tabs.setVisibility(View.GONE);
+
+        netFragmentPick = NetFragmentPick.newInstance(this.wn_id);
+        getSupportFragmentManager().beginTransaction().replace(R.id.repl, netFragmentPick).commit();
+    }
+
+    private void setupNormalModeUi() {
+        if (mViewPager == null || tabs == null) {
+            Log.e("MainActivity", "ViewPager or Tabs not initialized for Normal Mode");
+            return;
+        }
+        mViewPager.setMoveEnabled(!this.pick_mode); // pick_mode_local is often the same as pick_mode here
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        tabs.setViewPager(mViewPager);
+        DialerHelper = new DialerActionModeHelper(this);
+
+        if (this.wn_id == 3) { // No network
+            if (PreferenceManager.getDefaultSharedPreferences(this).contains("default_Network")) {
+                default_network = PreferenceManager.getDefaultSharedPreferences(this).getInt("default_Network", 0);
+            } else {
+                setDefaultNetwork(); // This shows a dialog which might set default_network
+            }
+        }
+        mViewPager.setCurrentItem(this.wn_id != 3 ? this.wn_id : default_network);
     }
 
     private String getNetworkName() {
-        return NET_N[wn_id];
+        if (this.wn_id < 0 || this.wn_id >= ME.NET_N.length) return "Unknown";
+        return ME.NET_N[this.wn_id];
     }
 
-    private String getNetworkName(int id) {
-        return NET_N[id];
+    private String getNetworkNameForListener(int id) { // Used by listener to avoid instance field access timing issues
+        if (id < 0 || id >= ME.NET_N.length) return "Unknown";
+        return ME.NET_N[id];
     }
 
     private void setDefaultNetwork() {
-        final int[] n = new int[1];
-        AlertDialog.Builder o = new AlertDialog.Builder(this, R.style.Base_Theme_AppCompat_Light_Dialog);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", 0).apply();
-            return;
-        }
-        SmAdapter m = new SmAdapter();
-        m.newInstance(MainActivity.this).SetupItems(R.array.net_names).SetupLayout(R.layout.r_header).setInflater(new SmAdapter.inflater() {
-            @Override
-            public void inflate(View n, int pos, Object item) {
-                if (n.getId() == android.R.id.text1) {
-                    ((TextView) n).setText((String) item);
+        final int[] selectedNetwork = new int[]{-1}; // Effectively final for lambda
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Base_Theme_AppCompat_Light_Dialog);
 
+        // KitKat check for this specific preference behavior seems too granular for current Android versions.
+        // If this was a workaround for an old bug, it might no longer be needed.
+        // Forcing default to 0 if no network on KitKat+
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        //     PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", 0).apply();
+        //     this.default_network = 0; // Update instance variable
+        //     if (mViewPager != null && this.wn_id == 3) mViewPager.setCurrentItem(this.default_network);
+        //     return;
+        // }
+
+        SmAdapter dialogAdapter = new SmAdapter();
+        dialogAdapter.newInstance(this).SetupItems(R.array.net_names).SetupLayout(R.layout.r_header).setInflater(
+            (view, pos, item) -> {
+                if (view.getId() == android.R.id.text1) {
+                    ((TextView) view).setText((String) item);
                 } else {
-                    ((ImageView) n).setImageResource(ME.NetDrawables[pos][0]);
+                    ((ImageView) view).setImageResource(ME.NetDrawables[pos][0]);
                 }
-            }
-        });
-        o.setCancelable(false).setMessage("No Network Founded plz Select your default Network..").setTitle("No Network Founded")
-                .setSingleChoiceItems(m.BuildAdapter(), -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        n[0] = which;
-                    }
-                }).setPositiveButton("Select", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (n[0] != -1) {
-                    PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putInt("default_Network", which).apply();
+            });
 
+        builder.setCancelable(false)
+            .setMessage("No Network Founded plz Select your default Network..") // Consider string resources
+            .setTitle("No Network Founded") // Consider string resources
+            .setSingleChoiceItems(dialogAdapter.BuildAdapter(), -1, (dialog, which) -> selectedNetwork[0] = which)
+            .setPositiveButton("Select", (dialog, which) -> { // Consider string resources
+                if (selectedNetwork[0] != -1) {
+                    PreferenceManager.getDefaultSharedPreferences(MainActivity.this)
+                        .edit()
+                        .putInt("default_Network", selectedNetwork[0])
+                        .apply();
+                    this.default_network = selectedNetwork[0];
+                    if (mViewPager != null && this.wn_id == 3) { // If still no actual network, use this default
+                        mViewPager.setCurrentItem(this.default_network);
+                    }
                     dialog.dismiss();
                 }
-            }
-        }).show();
+            })
+            .show();
     }
 
     private void StartDialer(String dataString) {
-        if (wn_id != 3) {
+        if (this.wn_id != 3) { // Not "no network"
             if (!is_dialer_open) {
-
-
-                DialerHelper.StartDialerActionMode(dataString);
-
+                if (DialerHelper != null) {
+                    DialerHelper.StartDialerActionMode(dataString);
+                } else {
+                    Log.e("MainActivity", "DialerHelper not initialized in StartDialer");
+                }
             }
-        } else
-            Toast.makeText(MainActivity.this, "No Network..", Toast.LENGTH_SHORT).show();
-
+        } else {
+            Toast.makeText(MainActivity.this, "No Network..", Toast.LENGTH_SHORT).show(); // Consider string resource
+        }
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        return false; // Typically true if handled
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-
         NetFragment item = null;
-        if (!pick_mode_local) {
-            mViewPager.setMoveEnabled(newText.isEmpty());
-            item = mSectionsPagerAdapter.Fragments[mViewPager.getCurrentItem()];
+        if (!this.pick_mode_local) {
+            if (mViewPager != null && mSectionsPagerAdapter != null && mSectionsPagerAdapter.Fragments != null &&
+                mViewPager.getCurrentItem() < mSectionsPagerAdapter.Fragments.length) {
+                mViewPager.setMoveEnabled(newText.isEmpty());
+                item = mSectionsPagerAdapter.Fragments[mViewPager.getCurrentItem()];
+            }
         } else {
             item = netFragmentPick;
         }
+
         try {
             if (item != null) {
-
                 item.SearchFor(newText);
             }
-
-        } catch (Exception a) {
+        } catch (Exception a) { // Catching generic Exception is broad
             Toast.makeText(this, a.getMessage(), Toast.LENGTH_LONG).show();
-            // ACRA.getErrorReporter().handleException(a);
+            // ACRA.getErrorReporter().handleException(a); // Old ACRA, consider FirebaseCrashlytics.logException(a);
+            Log.e("MainActivity", "Error in onQueryTextChange: " + newText, a);
         }
-
-
-        return true;
+        return true; // Usually true if the action is handled
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-    }
+    // onDestroy, onCreateOptionsMenu, onOptionsItemSelected, onActivityResult, onBackPressed,
+    // onVisibilityChange, getDialerAction, onCall, getToolBar, getDialerState, onNumberChange
+    // remain largely the same but now use instance variables where appropriate.
 
     @Override
     protected void onDestroy() {
-        if (DB != null)
-            DB.Close();
+        // Unregister PhoneStateListener if it was registered
+        // Example:
+        // TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        // if (telephonyManager != null) {
+        //     telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+        // }
+
+        if (DB != null) {
+            DB.Close(); // Instance DB
+        }
         super.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_activity, menu);
-
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setOnQueryTextListener(this);
-
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mViewPager.setMoveEnabled(true);
-
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnCloseListener(() -> {
+                if (mViewPager != null) {
+                    mViewPager.setMoveEnabled(true);
+                }
                 return false;
-            }
-        });
-
+            });
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify TouchedItem parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_about:
-                AboutActivity.ShowAboutActivity(this);
-                break;
-            case R.id.action_search:
-                break;
-            case R.id.action_settings:
-                Intent i = new Intent(this.getBaseContext(), SettingsActivity.class);
-                startActivityForResult(i, 0);
-                break;
-            case R.id.action_all_contact:
-                Intent d = new Intent(this, AllMainActivity.class);
-                startActivity(d);
-                break;
-
-            default:
-                break;
-
+        if (id == R.id.action_about) {
+            AboutActivity.ShowAboutActivity(this);
+            return true;
+        } else if (id == R.id.action_search) {
+            // Search action is handled by SearchView setup
+            return true;
+        } else if (id == R.id.action_settings) {
+            // TODO: Migrate from startActivityForResult to ActivityResultLauncher
+            // Example:
+            // final ActivityResultLauncher<Intent> settingsLauncher = registerForActivityResult(
+            //        new ActivityResultContracts.StartActivityForResult(),
+            //        result -> { if (result.getResultCode() == Activity.RESULT_OK) { recreate(); } });
+            // Intent intent = new Intent(this, SettingsActivity.class);
+            // settingsLauncher.launch(intent);
+            Intent i = new Intent(this, SettingsActivity.class); // Use 'this' for context
+            startActivityForResult(i, 0); // Deprecated: Consider using ActivityResultLauncher
+            return true;
+        } else if (id == R.id.action_all_contact) {
+            Intent d = new Intent(this, AllMainActivity.class);
+            startActivity(d);
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns TouchedItem fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-
     @Override
-    protected void onActivityResult(int var1, int var2, Intent var3) {
-        super.onActivityResult(var1, var2, var3);
-        if (var2 == RESULT_OK) {
-            //    finish();
-            //   startActivity(getIntent());
-            Bundle t = new Bundle();
-            t.putInt("ListMode", 0);
-
-            onSaveInstanceState(t);
+    // TODO: Migrate from onActivityResult to ActivityResultLauncher (see settingsLauncher example in onOptionsItemSelected)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { // Parameters updated to standard names
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) { // requestCode check might be needed if there are multiple startActivityForResult calls
+            // The recreate() call is a heavy way to refresh UI.
+            // Consider more targeted updates if possible, e.g., via LiveData or event bus.
+            Bundle t = new Bundle(); // This bundle seems unused before onSaveInstanceState
+            t.putInt("ListMode", 0); // If this is to set a default, it's unusual here
+            // onSaveInstanceState(t); // Calling onSaveInstanceState directly is not standard practice.
             recreate();
-
-
         }
-
     }
 
     @Override
     public void onBackPressed() {
         if (is_dialer_open) {
-            DialerHelper.finish();
-
-
-        } else
+            if (DialerHelper != null) DialerHelper.finish();
+        } else {
             super.onBackPressed();
-
+        }
     }
-
 
     @Override
     public void onVisibilityChange(boolean isopen) {
-        is_dialer_open = isopen;
-        if (isopen) {
-            mViewPager.setMoveEnabled(true);
-            findViewById(R.id.main_call).setVisibility(View.GONE);
-        } else
-            findViewById(R.id.main_call).setVisibility(View.VISIBLE);
-
+        this.is_dialer_open = isopen;
+        View mainCallButton = findViewById(R.id.main_call); // Re-fetch or ensure call_button is not null
+        if (mainCallButton != null) {
+            if (isopen) {
+                if (mViewPager != null) mViewPager.setMoveEnabled(true); // Should be false if dialer is open?
+                mainCallButton.setVisibility(View.GONE);
+            } else {
+                mainCallButton.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -449,10 +435,29 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
 
     @Override
     public void onCall(CharSequence number) {
-        Intent y = new Intent(Intent.ACTION_CALL);
-        y.setData(Uri.fromParts("tel", String.valueOf(number), null));
-        startActivity(y);
+        // TODO: CRITICAL - Add runtime permission check for Manifest.permission.CALL_PHONE before dispatching ACTION_CALL.
+        // Example:
+        // if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+        //     Intent callIntent = new Intent(Intent.ACTION_CALL);
+        //     callIntent.setData(Uri.fromParts("tel", String.valueOf(number), null));
+        //     startActivity(callIntent);
+        // } else {
+        //     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, YOUR_REQUEST_CODE_CALL_PHONE);
+        // }
+        // onRequestPermissionsResult would then handle the result and make the call if granted.
 
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.fromParts("tel", String.valueOf(number), null));
+        try {
+            startActivity(callIntent);
+        } catch (SecurityException e) {
+            Log.e("MainActivity", "CALL_PHONE permission not granted or intent couldn't be handled.", e);
+            Toast.makeText(this, "Cannot make call. Permission missing or no app can handle the call.", Toast.LENGTH_LONG).show();
+            // Optionally, could redirect to ACTION_DIAL here if ACTION_CALL fails due to permission (though DIAL is less direct)
+            // Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+            // dialIntent.setData(Uri.fromParts("tel", String.valueOf(number), null));
+            // startActivity(dialIntent);
+        }
     }
 
     @Override
@@ -467,18 +472,9 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
 
     @Override
     public void onNumberChange(String v, int n) {
-
-        if (n < 3) {
+        if (mViewPager != null && n < 3) { // Assuming 3 is a valid upper bound for network tabs
             mViewPager.setCurrentItem(n);
         }
-        onQueryTextChange(v);
+        onQueryTextChange(v); // This might trigger search based on number change
     }
-
-    /**
-     * A placeholder fragment containing TouchedItem simple view.
-     */
-
-
 }
-
-

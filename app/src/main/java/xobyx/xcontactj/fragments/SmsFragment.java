@@ -324,21 +324,34 @@ public class SmsFragment extends AsyncLoadFragment<massage> implements View.OnTo
     @Override
     public void onPause() {
         super.onPause();
-        ///FIXME:always crash
-        if (Numbers.size() == 0 || text == null) return;
-        if ( text.getText().length() != 0) {
-            for (String s : mSendtoNumber) {
-                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().putString(s, text.getText().toString()).apply();
-
+        // FIXME:always crash (Original comment)
+        try {
+            if (getActivity() == null || Numbers == null || Numbers.isEmpty() || text == null || mSendtoNumber == null) {
+                return;
             }
 
-        }
-        else {
-            for (String s : mSendtoNumber) {
-                getActivity().getSharedPreferences("sms", Context.MODE_APPEND).edit().remove(s).apply();
+            String textToSave = text.getText().toString();
+            SharedPreferences.Editor editor = getActivity().getSharedPreferences("sms", Context.MODE_PRIVATE).edit(); // MODE_APPEND is not valid, use MODE_PRIVATE
 
+            if (!textToSave.isEmpty()) {
+                for (String s : mSendtoNumber) {
+                    if (s != null) { // Guard against null numbers in list
+                        editor.putString(s, textToSave);
+                    }
+                }
+            } else {
+                for (String s : mSendtoNumber) {
+                    if (s != null) { // Guard against null numbers in list
+                        editor.remove(s);
+                    }
+                }
             }
-
+            editor.apply();
+        } catch (Exception e) {
+            // Log to Crashlytics
+            com.google.firebase.crashlytics.FirebaseCrashlytics.getInstance().recordException(e);
+            // Optionally, log locally as well if needed during development
+            android.util.Log.e("SmsFragment", "Error in onPause: " + e.getMessage(), e);
         }
 
 
@@ -369,13 +382,25 @@ public class SmsFragment extends AsyncLoadFragment<massage> implements View.OnTo
 
         public SmsAdapter(Context context, List<massage> s, int layout) {
             super(context, s, layout);
-            //FIXME: Crash
-            this.Filter = new FilterBuilder<massage>() {
-                @Override
-                public boolean IsMatch(massage b) {
-                    return b.addres != null && b.addres.equals(mType);
-                }
-            };
+            //FIXME: Crash (Original comment)
+            try {
+                this.Filter = new FilterBuilder<massage>() {
+                    @Override
+                    public boolean IsMatch(massage b) {
+                        if (b == null) { // Guard against null massage object
+                            return false;
+                        }
+                        // b.addres != null check is already good
+                        return b.addres != null && b.addres.equals(mType);
+                    }
+                };
+            } catch (Exception e) {
+                // Log to Crashlytics
+                com.google.firebase.crashlytics.FirebaseCrashlytics.getInstance().recordException(e);
+                android.util.Log.e("SmsAdapter", "Error in constructor FilterBuilder: " + e.getMessage(), e);
+                // Fallback: No filter or a dummy filter if FilterBuilder is critical for adapter function
+                this.Filter = item -> true; // Example: show all items if filter setup fails
+            }
 
         }
 

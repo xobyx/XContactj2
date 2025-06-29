@@ -160,22 +160,76 @@ public class AsyncDrawer {
 
             Bitmap temp = null;
             if (mMode == TYPE.NORMAL_OVAL) {
-///FIXME: java.lang.NullPointerException
-                final Uri uri = lookupContact(mContentResolver, Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, this.look));
-                final InputStream stream = Contacts.openContactPhotoInputStream(mContentResolver, uri);
-                if (stream != null) {
-                    final Bitmap a = BitmapFactory.decodeStream(stream).copy(Bitmap.Config.ARGB_8888, true);
-                    temp = GetBitmapClippedCircle(a, 3);
-
-                } else {
+                // FIXME: java.lang.NullPointerException (Original comment)
+                if (this.look == null || this.look.isEmpty()) {
+                    Log.w("AsyncDrawer", "Lookup key is null or empty.");
                     temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                } else {
+                    final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, this.look);
+                    final Uri uri = lookupContact(mContentResolver, contactUri); // Use the fully formed contactUri
+
+                    if (uri != null) {
+                        InputStream stream = null;
+                        try {
+                            stream = Contacts.openContactPhotoInputStream(mContentResolver, uri, true); // Request high-res photo
+                            if (stream != null) {
+                                Bitmap a = BitmapFactory.decodeStream(stream);
+                                if (a != null) {
+                                    // Ensure bitmap is mutable for canvas operations if GetBitmapClippedCircle modifies it directly
+                                    Bitmap mutableBitmap = a.copy(Bitmap.Config.ARGB_8888, true);
+                                    if (mutableBitmap != null) {
+                                      temp = GetBitmapClippedCircle(mutableBitmap, 3);
+                                    } else { // a.copy failed
+                                       temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                                       Log.w("AsyncDrawer", "Failed to copy bitmap.");
+                                    }
+                                    if (!a.isRecycled() && a != mutableBitmap) { // Recycle original if copy was made
+                                        a.recycle();
+                                    }
+                                } else { // decodeStream returned null
+                                    temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                                    Log.w("AsyncDrawer", "BitmapFactory.decodeStream returned null for URI: " + uri);
+                                }
+                            } else { // openContactPhotoInputStream returned null
+                                temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                                Log.w("AsyncDrawer", "openContactPhotoInputStream returned null for URI: " + uri);
+                            }
+                        } catch (Exception e) { // Catch any other exceptions during stream processing
+                            Log.e("AsyncDrawer", "Error decoding contact photo: " + uri, e);
+                            com.google.firebase.crashlytics.FirebaseCrashlytics.getInstance().recordException(e);
+                            temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                        } finally {
+                            if (stream != null) {
+                                try {
+                                    stream.close();
+                                } catch (java.io.IOException e) {
+                                    // Log this if necessary
+                                }
+                            }
+                        }
+                    } else { // lookupContact returned null
+                        temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                        Log.w("AsyncDrawer", "lookupContact returned null for lookup key: " + this.look);
+                    }
                 }
+            } else {
+                // Handle other mMode types if they are supposed to produce a bitmap.
+                // If not, temp will remain null. For safety, assign a default or ensure SaveImage handles null.
+                // For now, if other modes don't set temp, it will be null.
+                // Consider if a placeholder is needed for other modes too if photo loading fails.
+            }
+
+            if (temp != null) { // Only save if bitmap is not null
+                SaveImage(ME.getMD5Hex(look != null ? look : ""), temp); // Ensure 'look' isn't null for getMD5Hex
+            } else if (mMode == TYPE.NORMAL_OVAL) {
+                // If it was supposed to be NORMAL_OVAL and temp is still null, it means loading failed.
+                // Optionally, create a default placeholder here to return instead of null.
+                // temp = BitmapFactory.decodeResource(mRes, R.drawable.ic_action_unknown);
+                // And then you could call SaveImage with this placeholder.
             }
 
 
-            SaveImage(ME.getMD5Hex(look), temp);
-
-            return temp;
+            return temp; // Can return null if photo not found/decoded and no placeholder assigned
 
         }
 

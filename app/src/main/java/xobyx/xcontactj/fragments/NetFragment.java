@@ -264,10 +264,21 @@ public class NetFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoaderReset(Loader<List<Contact>> loader) {
-        //
-        // // FIXME: 2/26/2016 This Make list emtye without reload it..{@link loader}
-        // ME.$[net].clear();
-        loader = null;
+        // FIXME: 2/26/2016 This Make list emtye without reload it..{@link loader}
+        // The original FIXME was about ME.$[net].clear().
+        // Standard practice is to clear the adapter's data.
+        if (mAdapter != null) {
+            // Assuming ContactsAdapter has a method to clear or set new data (e.g., setData(null) or clear())
+            // For now, as a placeholder if such a method doesn't exist:
+            // mAdapter.clear(); // or mAdapter.setData(new ArrayList<>());
+            // If the adapter is re-created in onLoadFinished, setting listView's adapter to null might be an option
+            if (listView != null) {
+                listView.setAdapter(null);
+            }
+            mAdapter = null; // Release reference to old adapter
+        }
+        // loader = null; // Assigning loader to null has no effect on the LoaderManager's state of this loader.
+                         // The LoaderManager handles the loader lifecycle.
     }
 
 

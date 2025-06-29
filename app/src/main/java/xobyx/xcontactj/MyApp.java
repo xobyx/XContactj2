@@ -1,12 +1,19 @@
 package xobyx.xcontactj;
 
 import android.annotation.SuppressLint;
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.NotificationChannel; // Added
+import android.app.NotificationManager; // Added
 import android.content.Context;
 import android.drm.DrmManagerClient;
 import android.location.Country;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+// import android.os.AsyncTask; // Replaced with ExecutorService
+import android.os.Build; // Added
+import androidx.preference.PreferenceManager; // AndroidX
+
+import java.util.concurrent.ExecutorService; // Added
+import java.util.concurrent.Executors; // Added
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -71,23 +78,26 @@ public class MyApp extends Application {
     private TelephonyManager mTelephonyManager;
     private DrmManagerClient drmManagerClient;
 
+    public static final String GENERAL_MESSAGES_CHANNEL_ID = "general_messages_channel";
+    public static final String APP_UPDATES_CHANNEL_ID = "app_updates_channel";
+
+    // Executor for application scope background tasks
+    private final ExecutorService applicationScopeExecutor = Executors.newSingleThreadExecutor();
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mApp = this; // Set static instance early
 
+        createNotificationChannels();
 
-        AsyncTask m = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-
-                AnalyticsTrackers.initialize(MyApp.this);
-                tracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
+        applicationScopeExecutor.execute(() -> {
+            AnalyticsTrackers.initialize(MyApp.this);
+            tracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
+            if (tracker != null) { // Good practice to check
                 tracker.enableAutoActivityTracking(true);
-                return null;
             }
-        };
-        m.execute();
-
+        });
 
         //ACRA.isACRASenderServiceProcess();
         loadDefaultPreferenceValues();
@@ -129,5 +139,32 @@ public class MyApp extends Application {
 
     public DrmManagerClient getDrmManagerClient() {
         return drmManagerClient;
+    }
+
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // General Messages Channel
+            NotificationChannel generalChannel = new NotificationChannel(
+                    GENERAL_MESSAGES_CHANNEL_ID,
+                    "General Messages", // User visible name
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            generalChannel.setDescription("Channel for general app notifications"); // User visible description
+
+            // App Updates Channel
+            NotificationChannel updatesChannel = new NotificationChannel(
+                    APP_UPDATES_CHANNEL_ID,
+                    "App Updates", // User visible name
+                    NotificationManager.IMPORTANCE_HIGH); // Updates might be more important
+            updatesChannel.setDescription("Channel for app update notifications");
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(generalChannel);
+                manager.createNotificationChannel(updatesChannel);
+                Log.d("MyApp", "Notification channels created.");
+            } else {
+                Log.e("MyApp", "NotificationManager not found, channels not created.");
+            }
+        }
     }
 }

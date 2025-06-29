@@ -217,6 +217,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <!-- GcmReceiver is no longer needed with FCM -->
+        <!--
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -227,14 +229,19 @@
                 <category android:name="xobyx.xcontactj" />
             </intent-filter>
         </receiver>
+        -->
 
+        <!-- FCM Service -->
         <service
-            android:name=".gcm.MyGcmListenerService"
+            android:name=".gcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- MyInstanceIDListenerService and RegistrationIntentService are removed as they are obsolete with FCM -->
+        <!--
         <service
             android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false">
@@ -245,6 +252,7 @@
         <service
             android:name=".gcm.RegistrationIntentService"
             android:exported="false" />
+        -->
 
         <meta-data
             android:name="io.fabric.ApiKey"
