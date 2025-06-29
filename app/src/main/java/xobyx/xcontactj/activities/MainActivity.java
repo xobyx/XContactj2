@@ -7,12 +7,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton; // AndroidX
+import androidx.viewpager.widget.ViewPager; // AndroidX
+import androidx.appcompat.app.AlertDialog; // AndroidX
+import androidx.appcompat.app.AppCompatActivity; // AndroidX
+import androidx.appcompat.widget.SearchView; // AndroidX
+import androidx.appcompat.widget.Toolbar; // AndroidX
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
@@ -157,13 +157,14 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
     protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //Fabric.with(this, new Crashlytics());
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        //TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
-        Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).build();
+        // Fabric initialization removed, Firebase Crashlytics initializes automatically.
+        // Old Fabric code:
+        // //Fabric.with(this, new Crashlytics());
+        // //TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.TWITER_KEY), getResources().getString(R.string.TWITER_SECRET));
+        // Fabric fabric = new Fabric.Builder(this).kits(new Crashlytics()).build();
+        // Fabric.with(fabric);
 
-
-        Fabric.with(fabric);
         Intent mInt = getIntent();
 
 
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements IDialerHandler, S
             tabs = (HeaderTabs) findViewById(R.id.mhrader);
             mViewPager = (xViewPager) findViewById(R.id.pager);
             mViewPager.setMoveEnabled(!pick_mode_local);
-            startService(new Intent(this, RegistrationIntentService.class));
+            // startService(new Intent(this, RegistrationIntentService.class)); // Removed call to obsolete GCM registration service
            // ((MyApp) getApplicationContext()).getTelephonyManager().listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE | PhoneStateListener.LISTEN_CELL_INFO);
             DB = new MDatabase(getBaseContext());
             mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());      //

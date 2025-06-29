@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-apply plugin: 'com.nimbledroid.profiler'
+// apply plugin: 'io.fabric' // Fabric plugin removed
+// apply plugin: 'com.nimbledroid.profiler' // Removed Nimbledroid plugin
 
 repositories {
-    maven { url 'https://maven.fabric.io/public' }
+    // maven { url 'https://maven.fabric.io/public' } // Fabric repo removed from project level
     //maven { url 'http://artifactory.cfa.harvard.edu/artifactory/simple/jcenter'}
 }
 
 android {
+    namespace "xobyx.xcontactj" // Added namespace
     signingConfigs {
        // config {
        //     keyAlias 'xobyx'
@@ -28,13 +29,13 @@ android {
         disable 'InvalidPackage'
     }
 
-    compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 33 // Updated compileSdkVersion
+    buildToolsVersion "25.0.0" // This is largely ignored by modern AGP, can be removed later
 
     defaultConfig {
         applicationId "xobyx.xcontactj"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 33 // Updated targetSdkVersion
         versionCode 1069
         versionName "1.2"
         //versionCode System.getenv("VC")
@@ -52,33 +53,41 @@ android {
     }
 
 }
-nimbledroid { apiKey "fd59d29d58c94c22bf823c3cd21250fe" }
+//nimbledroid { apiKey "fd59d29d58c94c22bf823c3cd21250fe" } // Removed Nimbledroid plugin configuration
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    //compile 'frankiesardo:icepick:3.2.0'
-    //provided 'frankiesardo:icepick-processor:3.2.0'
-    // compile 'com.github.lzyzsd:circleprogress:1.1.0'
-    //  compile 'com.klinkerapps:android-chips:1.0.0'
-    //compile 'me.leolin:ShortcutBadger:1.1.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //implementation 'frankiesardo:icepick:3.2.0'
+    //provided 'frankiesardo:icepick-processor:3.2.0' // 'provided' should be 'compileOnly' if needed
+    // implementation 'com.github.lzyzsd:circleprogress:1.1.0'
+    //  implementation 'com.klinkerapps:android-chips:1.0.0'
+    //implementation 'me.leolin:ShortcutBadger:1.1.1'
     //noinspection GradleCompatible
     //noinspection GradleCompatible
     //noinspection GradleCompatible
     //noinspection GradleCompatible
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
-        transitive = true;
-    }
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
-    compile 'com.android.support:design:26.0.0-alpha1'
-    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
-    compile 'com.google.android.gms:play-services-analytics:11.0.4'
-    compile 'com.google.android.gms:play-services-gcm:11.0.4'
-    compile 'com.android.support:support-v4:26.0.0-alpha1'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.google.firebase:firebase-analytics:11.0.4'
+    // implementation('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') // Removed Fabric Crashlytics
+
+    // Android Support library dependencies replaced with AndroidX
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics' // Version managed by BoM
+    implementation 'com.google.firebase:firebase-messaging' // Version managed by BoM, replaces GCM
+    implementation 'com.google.firebase:firebase-crashlytics' // Version managed by BoM
+
+    // Other Play Services (Note: play-services-analytics is older, consider migrating to Firebase Analytics fully)
+    implementation 'com.google.android.gms:play-services-analytics:18.0.4' // Updated version, but ideally use only Firebase Analytics
+
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1' // To be updated in a separate step
 
 
 }
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 

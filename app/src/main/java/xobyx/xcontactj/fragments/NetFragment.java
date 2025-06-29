@@ -3,10 +3,10 @@ package xobyx.xcontactj.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import androidx.annotation.Nullable; // AndroidX
+import androidx.fragment.app.Fragment; // AndroidX
+import androidx.loader.app.LoaderManager; // AndroidX
+import androidx.loader.content.Loader; // AndroidX
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
