@@ -15,6 +15,7 @@ public class massage implements Parcelable {
     public int type;
     public Date date;
     public int state;
+    public long id; // Added for SMS ID
 
     @Override
     public int describeContents() {
@@ -28,6 +29,7 @@ public class massage implements Parcelable {
         dest.writeInt(this.type);
         dest.writeLong(date != null ? date.getTime() : -1);
         dest.writeInt(this.state);
+        dest.writeLong(this.id); // Write ID
     }
 
     public massage() {
@@ -40,6 +42,7 @@ public class massage implements Parcelable {
         long tmpDate = in.readLong();
         this.date = tmpDate == -1 ? null : new Date(tmpDate);
         this.state = in.readInt();
+        this.id = in.readLong(); // Read ID
     }
 
     public static final Creator<massage> CREATOR = new Creator<massage>() {
